@@ -7,6 +7,7 @@ import { ThemeSelector } from "@/components/dashboard/ThemeSelector";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 import { UploadModal, MAX_FILE_SIZE } from "@/components/dashboard/UploadModal";
 import { PlanUpgradeModal } from "@/components/dashboard/PlanUpgradeModal";
+import { PlanStatus } from "@/components/dashboard/PlanStatus";
 import { auth, db, storage } from "@/lib/firebase";
 import { getThemeColors, getThemeBackgroundImage } from "@/lib/theme-colors";
 import {
