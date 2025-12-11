@@ -6,6 +6,7 @@ import { MaintenanceConfig } from "@shared/api";
 const DEFAULT_CONFIG: MaintenanceConfig = {
   enabled: false,
   message: "The system is currently under maintenance. Please try again later.",
+  mode: "fullscreen",
   lastUpdated: new Date().toISOString(),
 };
 
@@ -20,7 +21,12 @@ export function useMaintenanceMode() {
       doc(db, "appConfig", "maintenance"),
       (doc) => {
         if (doc.exists()) {
-          setMaintenanceConfig(doc.data() as MaintenanceConfig);
+          const data = doc.data() as MaintenanceConfig;
+          setMaintenanceConfig({
+            ...DEFAULT_CONFIG,
+            ...data,
+            mode: (data.mode || "fullscreen") as any,
+          });
         } else {
           setMaintenanceConfig(DEFAULT_CONFIG);
         }
@@ -39,6 +45,7 @@ export function useMaintenanceMode() {
   return {
     isMaintenanceEnabled: maintenanceConfig.enabled,
     maintenanceMessage: maintenanceConfig.message,
+    maintenanceMode: maintenanceConfig.mode,
     loading,
   };
 }
