@@ -1,12 +1,6 @@
 import { useState, useEffect } from "react";
 import { getThemeColors } from "@/lib/theme-colors";
-import {
-  collection,
-  getDocs,
-  getDoc,
-  doc,
-  query,
-} from "firebase/firestore";
+import { collection, getDocs, getDoc, doc, query } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { UserRole, canViewStats } from "@/lib/auth-utils";
 import {
@@ -49,10 +43,7 @@ const ROLE_COLORS = {
   founder: "#F59E0B",
 };
 
-export function AdminGlobalStats({
-  theme,
-  userRole,
-}: AdminGlobalStatsProps) {
+export function AdminGlobalStats({ theme, userRole }: AdminGlobalStatsProps) {
   const colors = getThemeColors(theme);
   const [stats, setStats] = useState<GlobalStats>({
     totalUsers: 0,
@@ -185,7 +176,10 @@ export function AdminGlobalStats({
 
       {loading ? (
         <div className="p-8 text-center">
-          <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2" style={{ borderColor: colors.accent }}></div>
+          <div
+            className="inline-block animate-spin rounded-full h-6 w-6 border-b-2"
+            style={{ borderColor: colors.accent }}
+          ></div>
           <p className="mt-2" style={{ color: colors.textSecondary }}>
             Loading statistics...
           </p>
@@ -204,7 +198,10 @@ export function AdminGlobalStats({
               <p style={{ color: colors.textSecondary }} className="text-sm">
                 Total Users
               </p>
-              <p className="text-2xl font-bold mt-2" style={{ color: colors.accent }}>
+              <p
+                className="text-2xl font-bold mt-2"
+                style={{ color: colors.accent }}
+              >
                 {stats.totalUsers}
               </p>
             </div>
@@ -218,7 +215,10 @@ export function AdminGlobalStats({
               <p style={{ color: colors.textSecondary }} className="text-sm">
                 Active Users
               </p>
-              <p className="text-2xl font-bold mt-2" style={{ color: "#22C55E" }}>
+              <p
+                className="text-2xl font-bold mt-2"
+                style={{ color: "#22C55E" }}
+              >
                 {stats.activeUsers}
               </p>
             </div>
@@ -232,7 +232,10 @@ export function AdminGlobalStats({
               <p style={{ color: colors.textSecondary }} className="text-sm">
                 Total Storage
               </p>
-              <p className="text-2xl font-bold mt-2" style={{ color: "#A855F7" }}>
+              <p
+                className="text-2xl font-bold mt-2"
+                style={{ color: "#A855F7" }}
+              >
                 {formatStorage(stats.totalStorage)}
               </p>
             </div>
@@ -246,8 +249,14 @@ export function AdminGlobalStats({
               <p style={{ color: colors.textSecondary }} className="text-sm">
                 Premium Users
               </p>
-              <p className="text-2xl font-bold mt-2" style={{ color: "#F59E0B" }}>
-                {stats.planDistribution.reduce((acc, p) => acc + (p.name !== "Free" ? p.value : 0), 0)}
+              <p
+                className="text-2xl font-bold mt-2"
+                style={{ color: "#F59E0B" }}
+              >
+                {stats.planDistribution.reduce(
+                  (acc, p) => acc + (p.name !== "Free" ? p.value : 0),
+                  0,
+                )}
               </p>
             </div>
           </div>

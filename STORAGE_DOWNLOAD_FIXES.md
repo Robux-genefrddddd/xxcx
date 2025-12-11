@@ -3,11 +3,13 @@
 ## Issues Fixed
 
 ### 1. **Storage Counter Resets on Page Reload** ✅
+
 **Problem:** When you reload the dashboard, storage displayed as "0MB / 100MB" even though files were uploaded.
 
 **Root Cause:** Storage used was only stored in React local state (`userPlan.storageUsed`), not persisted to Firestore. On page reload, the state was reset.
 
-**Solution:** 
+**Solution:**
+
 - Storage is now persisted to Firestore after file operations
 - When page loads, storage is loaded from Firestore along with user plan
 - Storage updates in three scenarios:
@@ -16,17 +18,21 @@
   3. After file deletion
 
 **Files Modified:**
+
 - `client/pages/Dashboard.tsx` - Added Firestore persistence for storage
 
 ### 2. **Download Failures** ✅
+
 **Problem:** "Firebase storage failed download" errors when trying to download files.
 
-**Root Cause:** 
+**Root Cause:**
+
 - Insufficient error messages made debugging difficult
 - No distinction between different failure types (permissions, file not found, etc.)
 - Firebase Storage errors weren't being caught properly
 
 **Solution:**
+
 - Added detailed error handling in download function
 - Specific error messages for common issues:
   - "Access denied" → authentication/permission problem
@@ -35,20 +41,24 @@
 - Better logging for debugging
 
 **Files Modified:**
+
 - `client/components/dashboard/FilesList.tsx` - Improved error handling
 
 ### 3. **No Upload Limit Enforcement** ✅
+
 **Problem:** Could upload unlimited files, bypassing the storage limit.
 
 **Root Cause:** No storage limit check before uploading files.
 
 **Solution:**
+
 - Added storage limit validation before upload
 - Checks if file size would exceed user's plan storage limit
 - Shows clear error message with remaining storage and required space
 - Prevents upload if it would exceed limit
 
 **Files Modified:**
+
 - `client/pages/Dashboard.tsx` - Added storage limit check
 
 ## Code Changes
@@ -56,12 +66,14 @@
 ### Storage Persistence (Dashboard.tsx)
 
 **In `loadFiles()` function:**
+
 ```typescript
 // Now saves storage to Firestore when files are loaded
 await updateDoc(planRef, { storageUsed: totalSize });
 ```
 
 **In `handleFileUpload()` function:**
+
 ```typescript
 // Storage limit check before upload
 if (newStorageTotal > userPlan.storageLimit) {
@@ -73,6 +85,7 @@ await updateDoc(planRef, { storageUsed: newStorageUsed });
 ```
 
 **In `handleDeleteFile()` function:**
+
 ```typescript
 // After deletion, subtract from storage
 await updateDoc(planRef, { storageUsed: newStorageUsed });
@@ -81,6 +94,7 @@ await updateDoc(planRef, { storageUsed: newStorageUsed });
 ### Download Error Handling (FilesList.tsx)
 
 **Better error messages:**
+
 ```typescript
 if (errorMsg.includes("auth/unauthenticated")) {
   throw new Error("Access denied. Please try logging in again.");
@@ -92,6 +106,7 @@ if (errorMsg.includes("auth/unauthenticated")) {
 ## Testing
 
 ### Test Storage Persistence
+
 1. Upload a file (e.g., 5MB)
 2. Verify storage shows "5MB / 100MB"
 3. **Reload the page** - Storage should still show "5MB / 100MB" ✅
@@ -100,6 +115,7 @@ if (errorMsg.includes("auth/unauthenticated")) {
 6. Reload again - Should still be "8MB / 100MB" ✅
 
 ### Test Upload Limit
+
 1. Create a user with 10MB plan limit (for testing)
 2. Upload a 7MB file
 3. Storage shows "7MB / 10MB"
@@ -108,6 +124,7 @@ if (errorMsg.includes("auth/unauthenticated")) {
 6. Verify upload is blocked ✅
 
 ### Test Download
+
 1. Upload a file
 2. Click download button
 3. File should download successfully
@@ -117,6 +134,7 @@ if (errorMsg.includes("auth/unauthenticated")) {
    - Specific Firebase error - Other issue
 
 ### Test File Deletion
+
 1. Upload a file (e.g., 5MB) - Storage shows "5MB / 100MB"
 2. Delete the file
 3. Storage should update to "0MB / 100MB"
@@ -131,8 +149,8 @@ Storage is persisted in the `userPlans` collection:
   "userPlans": {
     "[userId]": {
       "type": "free",
-      "storageLimit": 104857600,  // 100MB in bytes
-      "storageUsed": 5242880,      // 5MB in bytes (now persisted!)
+      "storageLimit": 104857600, // 100MB in bytes
+      "storageUsed": 5242880, // 5MB in bytes (now persisted!)
       "validatedAt": "2024-01-15T10:30:00Z"
     }
   }
@@ -142,6 +160,7 @@ Storage is persisted in the `userPlans` collection:
 ## Storage Calculation
 
 Storage is calculated and stored in **bytes** for accuracy:
+
 - 1KB = 1,024 bytes
 - 1MB = 1,024 × 1,024 bytes
 - 1GB = 1,024 × 1,024 × 1,024 bytes
@@ -163,6 +182,7 @@ match /files/{userId}/{allPaths=**} {
 ## Browser Console Debugging
 
 If issues persist, check browser console (F12 → Console) for:
+
 - Storage persistence logs
 - Download error details
 - Firebase authentication status

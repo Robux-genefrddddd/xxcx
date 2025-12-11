@@ -5,7 +5,13 @@ import { AdminKeyManagement } from "./AdminKeyManagement";
 import { AdminUserManagement } from "./AdminUserManagement";
 import { AdminMaintenanceMode } from "./AdminMaintenanceMode";
 import { AdminGlobalStats } from "./AdminGlobalStats";
-import { UserRole, canAccessAdmin, canManageKeys, canManageUsers, canViewStats } from "@/lib/auth-utils";
+import {
+  UserRole,
+  canAccessAdmin,
+  canManageKeys,
+  canManageUsers,
+  canViewStats,
+} from "@/lib/auth-utils";
 
 interface AdminPanelProps {
   theme: string;
@@ -15,11 +21,7 @@ interface AdminPanelProps {
 
 type AdminTab = "keys" | "users" | "maintenance" | "stats";
 
-export function AdminPanel({
-  theme,
-  userRole,
-  userId,
-}: AdminPanelProps) {
+export function AdminPanel({ theme, userRole, userId }: AdminPanelProps) {
   const colors = getThemeColors(theme);
   const [activeTab, setActiveTab] = useState<AdminTab>("keys");
 
@@ -86,10 +88,7 @@ export function AdminPanel({
               style={{
                 backgroundColor:
                   activeTab === tab.id ? colors.accent : "transparent",
-                color:
-                  activeTab === tab.id
-                    ? "#FFFFFF"
-                    : colors.textSecondary,
+                color: activeTab === tab.id ? "#FFFFFF" : colors.textSecondary,
               }}
             >
               {tab.icon}

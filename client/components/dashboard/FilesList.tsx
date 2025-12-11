@@ -57,35 +57,47 @@ export function FilesList({
 
         return bytes;
       } catch (storageError) {
-        const errorMsg = storageError instanceof Error ? storageError.message : String(storageError);
+        const errorMsg =
+          storageError instanceof Error
+            ? storageError.message
+            : String(storageError);
         console.error(`Download attempt ${retryCount + 1} failed:`, errorMsg);
 
         // Check if we should retry
         if (
           (errorMsg.includes("retry-limit-exceeded") ||
-           errorMsg.includes("network") ||
-           errorMsg.includes("timeout")) &&
+            errorMsg.includes("network") ||
+            errorMsg.includes("timeout")) &&
           retryCount < MAX_RETRIES
         ) {
           // Exponential backoff: 1s, 2s, 4s
           const delay = INITIAL_DELAY * Math.pow(2, retryCount);
-          console.log(`Retrying in ${delay}ms (attempt ${retryCount + 1}/${MAX_RETRIES})`);
+          console.log(
+            `Retrying in ${delay}ms (attempt ${retryCount + 1}/${MAX_RETRIES})`,
+          );
 
           await new Promise((resolve) => setTimeout(resolve, delay));
           return downloadWithRetry(retryCount + 1);
         }
 
         // Check for common Firebase Storage errors
-        if (errorMsg.includes("auth/unauthenticated") || errorMsg.includes("permission-denied")) {
+        if (
+          errorMsg.includes("auth/unauthenticated") ||
+          errorMsg.includes("permission-denied")
+        ) {
           throw new Error("Access denied. Please try logging in again.");
         } else if (errorMsg.includes("storage/object-not-found")) {
-          throw new Error("File not found in storage. It may have been deleted.");
+          throw new Error(
+            "File not found in storage. It may have been deleted.",
+          );
         } else if (errorMsg.includes("retry-limit-exceeded")) {
           throw new Error(
-            "Download timed out due to slow connection. Please check your internet and try again."
+            "Download timed out due to slow connection. Please check your internet and try again.",
           );
         } else if (errorMsg.includes("network")) {
-          throw new Error("Network error. Please check your connection and try again.");
+          throw new Error(
+            "Network error. Please check your connection and try again.",
+          );
         } else {
           throw new Error(`Storage error: ${errorMsg}`);
         }
@@ -117,7 +129,8 @@ export function FilesList({
       }, 100);
     } catch (error) {
       console.error("Error downloading file:", error);
-      const errorMessage = error instanceof Error ? error.message : "Unknown error";
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
       alert(`Failed to download file: ${errorMessage}`);
     } finally {
       setDownloadingId(null);

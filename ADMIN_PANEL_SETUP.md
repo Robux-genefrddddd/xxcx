@@ -7,6 +7,7 @@ The Admin Panel is a comprehensive management system for administrators and foun
 ## User Roles & Permissions
 
 ### User Role
+
 - **Default role** for all new accounts
 - **Permissions:**
   - No admin access
@@ -14,6 +15,7 @@ The Admin Panel is a comprehensive management system for administrators and foun
   - Cannot access `/dashboard` admin routes
 
 ### Admin Role
+
 - **Limited management access**
 - **Permissions:**
   - View user management interface
@@ -23,6 +25,7 @@ The Admin Panel is a comprehensive management system for administrators and foun
   - Cannot perform critical actions (delete users, create keys)
 
 ### Founder Role
+
 - **Full administrative access**
 - **Permissions:**
   - Full user management (create, update, delete users)
@@ -64,6 +67,7 @@ Once you have founder access:
 ## Admin Panel Features
 
 ### 1. Premium Keys Management (Founder Only)
+
 - **Location:** Admin Panel → Premium Keys tab
 - **Features:**
   - Generate new premium license keys
@@ -77,6 +81,7 @@ Once you have founder access:
   - Status changes to "used" when redeemed
 
 ### 2. User Management (Admin & Founder)
+
 - **Location:** Admin Panel → Users tab
 - **Features:**
   - View all system users with details:
@@ -93,6 +98,7 @@ Once you have founder access:
     - Full user management
 
 ### 3. Maintenance Mode (Founder Only)
+
 - **Location:** Admin Panel → Maintenance tab
 - **Features:**
   - Toggle maintenance mode on/off
@@ -105,6 +111,7 @@ Once you have founder access:
   - Scheduled downtime notifications
 
 ### 4. Global Statistics (Admin & Founder)
+
 - **Location:** Admin Panel → Statistics tab
 - **Displays:**
   - Total number of users
@@ -125,6 +132,7 @@ Once you have founder access:
 The system automatically creates these Firestore collections:
 
 - **userRoles** - User role assignments
+
   ```
   userRoles/{userId}
   {
@@ -133,6 +141,7 @@ The system automatically creates these Firestore collections:
   ```
 
 - **premiumKeys** - Premium license keys
+
   ```
   premiumKeys/{keyId}
   {
@@ -164,6 +173,7 @@ firebase deploy --only firestore:rules
 ```
 
 **Key Rules:**
+
 - Only founders can modify roles and create keys
 - Only founders can enable maintenance mode
 - Admins can view but not modify sensitive data
@@ -228,22 +238,26 @@ No additional environment variables are required. The admin system uses existing
 ## Troubleshooting
 
 ### Admin Tab Not Showing
+
 - Verify your role is "admin" or "founder" in Firestore
 - Hard refresh the page or clear browser cache
 - Check browser console for errors
 - Verify Firebase connection is working
 
 ### Cannot Generate Keys
+
 - Verify you have "founder" role (not just "admin")
 - Check Firestore rules are deployed
 - Verify `premiumKeys` collection exists in Firestore
 
 ### Maintenance Message Not Displaying
+
 - Verify maintenance mode is enabled in Admin Panel
 - Check that `appConfig/maintenance` document exists
 - Verify Firestore rules allow maintenance mode access
 
 ### Statistics Not Loading
+
 - Check that you have "admin" or "founder" role
 - Verify network connection and Firebase status
 - Check browser console for error messages
@@ -261,17 +275,18 @@ const role = await getUserRole(userId);
 await updateUserRole(userId, newRole);
 
 // Permission checking helpers
-canAccessAdmin(role);           // admin/founder only
-canCreateKeys(role);             // founder only
-canManageUsers(role);            // admin/founder
+canAccessAdmin(role); // admin/founder only
+canCreateKeys(role); // founder only
+canManageUsers(role); // admin/founder
 canPerformCriticalActions(role); // founder only
-canToggleMaintenance(role);      // founder only
-canViewStats(role);              // admin/founder
+canToggleMaintenance(role); // founder only
+canViewStats(role); // admin/founder
 ```
 
 ## Future Enhancements
 
 Potential features to add:
+
 - Audit logs for all admin actions
 - Two-factor authentication for founder accounts
 - API key management
@@ -283,6 +298,7 @@ Potential features to add:
 ## Support
 
 For issues or questions about the Admin Panel:
+
 1. Check this documentation
 2. Review Firestore rules in `firestore.rules`
 3. Check browser console for error messages

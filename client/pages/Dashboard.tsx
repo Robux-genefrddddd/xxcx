@@ -210,7 +210,8 @@ export default function Dashboard() {
       // Check storage limit
       const newStorageTotal = userPlan.storageUsed + file.size;
       if (newStorageTotal > userPlan.storageLimit) {
-        const remainingStorage = (userPlan.storageLimit - userPlan.storageUsed) / (1024 * 1024);
+        const remainingStorage =
+          (userPlan.storageLimit - userPlan.storageUsed) / (1024 * 1024);
         setUploadError(
           `Storage limit exceeded. You have ${remainingStorage.toFixed(1)}MB remaining but this file is ${(file.size / (1024 * 1024)).toFixed(2)}MB`,
         );
@@ -320,7 +321,10 @@ export default function Dashboard() {
           }
 
           const planRef = doc(db, "userPlans", auth.currentUser.uid);
-          const newStorageUsed = Math.max(0, userPlan.storageUsed - fileSizeBytes);
+          const newStorageUsed = Math.max(
+            0,
+            userPlan.storageUsed - fileSizeBytes,
+          );
           await updateDoc(planRef, { storageUsed: newStorageUsed });
         } catch (error) {
           console.error("Error updating storage after deletion:", error);

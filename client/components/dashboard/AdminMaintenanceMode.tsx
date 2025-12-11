@@ -1,11 +1,7 @@
 import { useState, useEffect } from "react";
 import { AlertCircle, Save } from "lucide-react";
 import { getThemeColors } from "@/lib/theme-colors";
-import {
-  doc,
-  getDoc,
-  setDoc,
-} from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { UserRole, canToggleMaintenance } from "@/lib/auth-utils";
 
@@ -26,7 +22,8 @@ export function AdminMaintenanceMode({
   const colors = getThemeColors(theme);
   const [config, setConfig] = useState<MaintenanceConfig>({
     enabled: false,
-    message: "The system is currently under maintenance. Please try again later.",
+    message:
+      "The system is currently under maintenance. Please try again later.",
   });
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -44,7 +41,9 @@ export function AdminMaintenanceMode({
         const data = configDoc.data();
         setConfig({
           enabled: data.enabled || false,
-          message: data.message || "The system is currently under maintenance. Please try again later.",
+          message:
+            data.message ||
+            "The system is currently under maintenance. Please try again later.",
         });
       }
     } catch (error) {
@@ -124,8 +123,12 @@ export function AdminMaintenanceMode({
       <div
         className="p-4 rounded-lg border flex items-start gap-3"
         style={{
-          backgroundColor: config.enabled ? "rgba(239, 68, 68, 0.1)" : "rgba(59, 130, 246, 0.1)",
-          borderColor: config.enabled ? "rgba(239, 68, 68, 0.3)" : "rgba(59, 130, 246, 0.3)",
+          backgroundColor: config.enabled
+            ? "rgba(239, 68, 68, 0.1)"
+            : "rgba(59, 130, 246, 0.1)",
+          borderColor: config.enabled
+            ? "rgba(239, 68, 68, 0.3)"
+            : "rgba(59, 130, 246, 0.3)",
         }}
       >
         <AlertCircle
@@ -134,7 +137,9 @@ export function AdminMaintenanceMode({
         />
         <div>
           <p className="font-semibold" style={{ color: colors.text }}>
-            {config.enabled ? "Maintenance Mode is ACTIVE" : "Maintenance Mode is INACTIVE"}
+            {config.enabled
+              ? "Maintenance Mode is ACTIVE"
+              : "Maintenance Mode is INACTIVE"}
           </p>
           <p style={{ color: colors.textSecondary }} className="text-sm mt-1">
             {config.enabled
@@ -145,10 +150,13 @@ export function AdminMaintenanceMode({
       </div>
 
       {/* Toggle Switch */}
-      <div className="flex items-center justify-between p-4 rounded-lg border" style={{
-        backgroundColor: colors.card,
-        borderColor: colors.border,
-      }}>
+      <div
+        className="flex items-center justify-between p-4 rounded-lg border"
+        style={{
+          backgroundColor: colors.card,
+          borderColor: colors.border,
+        }}
+      >
         <div>
           <h4 className="font-semibold" style={{ color: colors.text }}>
             Enable Maintenance Mode
@@ -167,18 +175,26 @@ export function AdminMaintenanceMode({
           <span
             className="inline-block h-6 w-6 transform rounded-full bg-white transition-transform"
             style={{
-              transform: config.enabled ? "translateX(28px)" : "translateX(2px)",
+              transform: config.enabled
+                ? "translateX(28px)"
+                : "translateX(2px)",
             }}
           />
         </button>
       </div>
 
       {/* Message Editor */}
-      <div className="p-4 rounded-lg border" style={{
-        backgroundColor: colors.card,
-        borderColor: colors.border,
-      }}>
-        <label className="block font-semibold mb-3" style={{ color: colors.text }}>
+      <div
+        className="p-4 rounded-lg border"
+        style={{
+          backgroundColor: colors.card,
+          borderColor: colors.border,
+        }}
+      >
+        <label
+          className="block font-semibold mb-3"
+          style={{ color: colors.text }}
+        >
           Maintenance Message
         </label>
         <textarea
@@ -194,7 +210,8 @@ export function AdminMaintenanceMode({
           }}
         />
         <p style={{ color: colors.textSecondary }} className="text-xs mt-2">
-          This message will be displayed to all users when maintenance mode is enabled.
+          This message will be displayed to all users when maintenance mode is
+          enabled.
         </p>
       </div>
 
@@ -243,7 +260,10 @@ export function AdminMaintenanceMode({
               borderColor: "rgba(239, 68, 68, 0.3)",
             }}
           >
-            <AlertCircle className="w-8 h-8 mx-auto mb-3" style={{ color: "#EF4444" }} />
+            <AlertCircle
+              className="w-8 h-8 mx-auto mb-3"
+              style={{ color: "#EF4444" }}
+            />
             <h3 className="font-bold mb-2" style={{ color: "#EF4444" }}>
               Maintenance Mode
             </h3>

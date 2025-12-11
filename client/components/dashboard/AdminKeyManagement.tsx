@@ -137,7 +137,10 @@ export function AdminKeyManagement({
       >
         {loading ? (
           <div className="px-6 py-8 text-center">
-            <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2" style={{ borderColor: colors.accent }}></div>
+            <div
+              className="inline-block animate-spin rounded-full h-6 w-6 border-b-2"
+              style={{ borderColor: colors.accent }}
+            ></div>
             <p className="mt-2" style={{ color: colors.textSecondary }}>
               Loading keys...
             </p>
@@ -219,9 +222,15 @@ export function AdminKeyManagement({
                           title="Copy to clipboard"
                         >
                           {copiedId === key.id ? (
-                            <Check className="w-4 h-4" style={{ color: "#22C55E" }} />
+                            <Check
+                              className="w-4 h-4"
+                              style={{ color: "#22C55E" }}
+                            />
                           ) : (
-                            <Copy className="w-4 h-4" style={{ color: colors.textSecondary }} />
+                            <Copy
+                              className="w-4 h-4"
+                              style={{ color: colors.textSecondary }}
+                            />
                           )}
                         </button>
                       </div>
@@ -246,7 +255,10 @@ export function AdminKeyManagement({
                         {key.assignedEmail || "-"}
                       </p>
                     </td>
-                    <td className="px-6 py-4" style={{ color: colors.textSecondary }}>
+                    <td
+                      className="px-6 py-4"
+                      style={{ color: colors.textSecondary }}
+                    >
                       {key.createdAt}
                     </td>
                     {canCreateKeys(userRole) && (
@@ -256,7 +268,10 @@ export function AdminKeyManagement({
                           className="p-2 rounded hover:opacity-60 transition-opacity"
                           title="Delete key"
                         >
-                          <Trash2 className="w-4 h-4" style={{ color: "#EF4444" }} />
+                          <Trash2
+                            className="w-4 h-4"
+                            style={{ color: "#EF4444" }}
+                          />
                         </button>
                       </td>
                     )}
@@ -280,7 +295,10 @@ export function AdminKeyManagement({
           <p style={{ color: colors.textSecondary }} className="text-sm">
             Total Keys
           </p>
-          <p className="text-2xl font-bold mt-2" style={{ color: colors.accent }}>
+          <p
+            className="text-2xl font-bold mt-2"
+            style={{ color: colors.accent }}
+          >
             {keys.length}
           </p>
         </div>

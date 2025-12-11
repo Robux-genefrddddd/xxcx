@@ -11,7 +11,11 @@ import {
   query,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { UserRole, canPerformCriticalActions, canManageUsers } from "@/lib/auth-utils";
+import {
+  UserRole,
+  canPerformCriticalActions,
+  canManageUsers,
+} from "@/lib/auth-utils";
 
 interface AdminUser {
   id: string;
@@ -72,7 +76,7 @@ export function AdminUserManagement({
           const fileQuery = query(collection(db, "files"));
           const filesSnapshot = await getDocs(fileQuery);
           const userFile = filesSnapshot.docs.find(
-            (doc) => doc.data().userId === userId
+            (doc) => doc.data().userId === userId,
           );
           if (userFile) {
             // Try to extract from user context if available
@@ -121,7 +125,9 @@ export function AdminUserManagement({
       return;
     }
 
-    if (!confirm("Are you sure? This will delete the user and all their data.")) {
+    if (
+      !confirm("Are you sure? This will delete the user and all their data.")
+    ) {
       return;
     }
 
@@ -163,7 +169,10 @@ export function AdminUserManagement({
       >
         {loading ? (
           <div className="px-6 py-8 text-center">
-            <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2" style={{ borderColor: colors.accent }}></div>
+            <div
+              className="inline-block animate-spin rounded-full h-6 w-6 border-b-2"
+              style={{ borderColor: colors.accent }}
+            ></div>
             <p className="mt-2" style={{ color: colors.textSecondary }}>
               Loading users...
             </p>
@@ -301,7 +310,10 @@ export function AdminUserManagement({
                     <td className="px-6 py-4" style={{ color: colors.text }}>
                       {formatStorage(user.storageUsed)}
                     </td>
-                    <td className="px-6 py-4" style={{ color: colors.textSecondary }}>
+                    <td
+                      className="px-6 py-4"
+                      style={{ color: colors.textSecondary }}
+                    >
                       {user.createdAt}
                     </td>
                     {canManageUsers(userRole) && (
@@ -345,7 +357,10 @@ export function AdminUserManagement({
           <p style={{ color: colors.textSecondary }} className="text-sm">
             Total Users
           </p>
-          <p className="text-2xl font-bold mt-2" style={{ color: colors.accent }}>
+          <p
+            className="text-2xl font-bold mt-2"
+            style={{ color: colors.accent }}
+          >
             {users.length}
           </p>
         </div>
@@ -359,8 +374,14 @@ export function AdminUserManagement({
           <p style={{ color: colors.textSecondary }} className="text-sm">
             Admins
           </p>
-          <p className="text-2xl font-bold mt-2" style={{ color: colors.primary }}>
-            {users.filter((u) => u.role === "admin" || u.role === "founder").length}
+          <p
+            className="text-2xl font-bold mt-2"
+            style={{ color: colors.primary }}
+          >
+            {
+              users.filter((u) => u.role === "admin" || u.role === "founder")
+                .length
+            }
           </p>
         </div>
         <div

@@ -7,7 +7,7 @@ export async function getUserRole(userId: string): Promise<UserRole> {
   try {
     const userDocRef = doc(db, "userRoles", userId);
     const userDocSnap = await getDoc(userDocRef);
-    
+
     if (userDocSnap.exists()) {
       const role = userDocSnap.data().role as UserRole;
       return role;
@@ -22,7 +22,10 @@ export async function getUserRole(userId: string): Promise<UserRole> {
   }
 }
 
-export async function updateUserRole(userId: string, newRole: UserRole): Promise<void> {
+export async function updateUserRole(
+  userId: string,
+  newRole: UserRole,
+): Promise<void> {
   try {
     const userDocRef = doc(db, "userRoles", userId);
     await updateDoc(userDocRef, { role: newRole });
