@@ -464,7 +464,7 @@ export function AdminKeyManagement({
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div
           className="p-4 rounded-lg border"
           style={{
@@ -494,6 +494,39 @@ export function AdminKeyManagement({
           </p>
           <p className="text-2xl font-bold mt-2" style={{ color: "#22C55E" }}>
             {keys.filter((k) => k.status === "used").length}
+          </p>
+        </div>
+        <div
+          className="p-4 rounded-lg border"
+          style={{
+            backgroundColor: colors.card,
+            borderColor: colors.border,
+          }}
+        >
+          <p style={{ color: colors.textSecondary }} className="text-sm">
+            Lifetime Keys
+          </p>
+          <p className="text-2xl font-bold mt-2" style={{ color: "#A855F7" }}>
+            {keys.filter((k) => k.type === "lifetime").length}
+          </p>
+        </div>
+        <div
+          className="p-4 rounded-lg border"
+          style={{
+            backgroundColor: colors.card,
+            borderColor: colors.border,
+          }}
+        >
+          <p style={{ color: colors.textSecondary }} className="text-sm">
+            Expired Keys
+          </p>
+          <p className="text-2xl font-bold mt-2" style={{ color: "#F59E0B" }}>
+            {
+              keys.filter(
+                (k) =>
+                  k.expiresAt && new Date(k.expiresAt) < new Date()
+              ).length
+            }
           </p>
         </div>
       </div>
