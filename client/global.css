@@ -100,13 +100,13 @@
 
 @layer base {
   :root {
-    --bg-primary: #0E0E0F;
+    --bg-primary: #0e0e0f;
     --bg-secondary: #111214;
     --bg-card: #141518;
-    --text-primary: #FFFFFF;
-    --text-muted: #9CA3AF;
-    --border-color: #1F2124;
-    --color-primary: #60A5FA;
+    --text-primary: #ffffff;
+    --text-muted: #9ca3af;
+    --border-color: #1f2124;
+    --color-primary: #60a5fa;
   }
 
   * {

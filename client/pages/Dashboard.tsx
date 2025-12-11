@@ -55,13 +55,14 @@ interface User {
   role: "admin" | "user";
 }
 
-const LOGO_URL = "https://marketplace.canva.com/Dz63E/MAF4KJDz63E/1/tl/canva-user-icon-MAF4KJDz63E.png";
+const LOGO_URL =
+  "https://marketplace.canva.com/Dz63E/MAF4KJDz63E/1/tl/canva-user-icon-MAF4KJDz63E.png";
 
 export default function Dashboard() {
   const { theme, setTheme } = useTheme();
   const { user, userPlan, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-  
+
   const [activeTab, setActiveTab] = useState("files");
   const [userName, setUserName] = useState("User");
   const [userEmail, setUserEmail] = useState("");
@@ -78,7 +79,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (authLoading) return;
-    
+
     if (!user) {
       navigate("/login");
       return;
@@ -92,7 +93,10 @@ export default function Dashboard() {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: colors.background }}>
+      <div
+        className="min-h-screen flex items-center justify-center"
+        style={{ backgroundColor: colors.background }}
+      >
         <div className="text-center space-y-4">
           <div className="w-12 h-12 border-4 border-gray-700 border-t-blue-500 rounded-full animate-spin mx-auto"></div>
           <p style={{ color: colors.textMuted }}>Loading...</p>
@@ -331,7 +335,10 @@ export default function Dashboard() {
                       : "transparent",
                   color:
                     activeTab === item.id ? colors.primary : colors.textMuted,
-                  borderLeft: activeTab === item.id ? `3px solid ${colors.primary}` : "3px solid transparent",
+                  borderLeft:
+                    activeTab === item.id
+                      ? `3px solid ${colors.primary}`
+                      : "3px solid transparent",
                   paddingLeft: "13px",
                 }}
               >
@@ -360,10 +367,16 @@ export default function Dashboard() {
               }}
             />
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold truncate" style={{ color: colors.text }}>
+              <p
+                className="text-sm font-semibold truncate"
+                style={{ color: colors.text }}
+              >
                 {userName}
               </p>
-              <p className="text-xs truncate" style={{ color: colors.textMuted }}>
+              <p
+                className="text-xs truncate"
+                style={{ color: colors.textMuted }}
+              >
                 {userEmail}
               </p>
             </div>
@@ -375,19 +388,25 @@ export default function Dashboard() {
                 {userPlan.type === "premium" ? (
                   <Crown className="w-4 h-4 text-yellow-500" />
                 ) : (
-                  <FolderOpen className="w-4 h-4" style={{ color: colors.primary }} />
+                  <FolderOpen
+                    className="w-4 h-4"
+                    style={{ color: colors.primary }}
+                  />
                 )}
-                <span className="text-xs font-medium" style={{ color: colors.text }}>
+                <span
+                  className="text-xs font-medium"
+                  style={{ color: colors.text }}
+                >
                   {userPlan.type === "premium" ? "Premium Plan" : "Free Plan"}
                 </span>
               </div>
-              
+
               {userPlan.type === "free" && (
                 <>
                   <div className="flex justify-between text-xs">
                     <span style={{ color: colors.text }}>Storage</span>
                     <span style={{ color: colors.textMuted }}>
-                      {(storagePercentage).toFixed(0)}%
+                      {storagePercentage.toFixed(0)}%
                     </span>
                   </div>
                   <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
@@ -401,7 +420,7 @@ export default function Dashboard() {
                   </div>
                 </>
               )}
-              
+
               {userPlan.type === "free" && (
                 <button
                   onClick={() => setShowPlanModal(true)}
@@ -418,7 +437,9 @@ export default function Dashboard() {
 
               {userPlan.type === "premium" && (
                 <div className="p-2 rounded-lg bg-gradient-to-r from-emerald-500/20 to-teal-500/20 border border-emerald-500/30">
-                  <p className="text-xs text-emerald-400 font-medium">Unlimited Storage</p>
+                  <p className="text-xs text-emerald-400 font-medium">
+                    Unlimited Storage
+                  </p>
                 </div>
               )}
             </div>
@@ -457,11 +478,15 @@ export default function Dashboard() {
         >
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold mb-1" style={{ color: colors.text }}>
-                Welcome back, {userName}! 
+              <h1
+                className="text-3xl font-bold mb-1"
+                style={{ color: colors.text }}
+              >
+                Welcome back, {userName}!
               </h1>
               <p style={{ color: colors.textMuted }}>
-                {activeTab === "files" && "Manage and share your files securely"}
+                {activeTab === "files" &&
+                  "Manage and share your files securely"}
                 {activeTab === "users" && "Manage team members and permissions"}
                 {activeTab === "theme" && "Customize your interface appearance"}
               </p>
@@ -491,7 +516,10 @@ export default function Dashboard() {
                   borderColor: colors.border,
                 }}
               >
-                <h3 className="text-lg font-bold mb-4" style={{ color: colors.text }}>
+                <h3
+                  className="text-lg font-bold mb-4"
+                  style={{ color: colors.text }}
+                >
                   Storage Usage Trend
                 </h3>
                 <StorageChart theme={theme} />
@@ -522,10 +550,16 @@ export default function Dashboard() {
                       />
                     </div>
                     <div>
-                      <p className="font-semibold text-lg" style={{ color: colors.text }}>
+                      <p
+                        className="font-semibold text-lg"
+                        style={{ color: colors.text }}
+                      >
                         Click to upload or drag and drop
                       </p>
-                      <p style={{ color: colors.textMuted }} className="text-sm mt-1">
+                      <p
+                        style={{ color: colors.textMuted }}
+                        className="text-sm mt-1"
+                      >
                         PNG, JPG, PDF or any file up to 1GB
                       </p>
                     </div>
@@ -553,7 +587,10 @@ export default function Dashboard() {
                     borderColor: colors.border,
                   }}
                 >
-                  <h2 className="text-xl font-bold flex items-center gap-2" style={{ color: colors.text }}>
+                  <h2
+                    className="text-xl font-bold flex items-center gap-2"
+                    style={{ color: colors.text }}
+                  >
                     <FolderOpen className="w-5 h-5" />
                     My Files {files.length > 0 && `(${files.length})`}
                   </h2>
@@ -573,7 +610,10 @@ export default function Dashboard() {
                     </div>
                   ) : files.length === 0 ? (
                     <div className="px-6 py-12 text-center">
-                      <FolderOpen className="w-12 h-12 mx-auto mb-3" style={{ color: colors.textMuted, opacity: 0.5 }} />
+                      <FolderOpen
+                        className="w-12 h-12 mx-auto mb-3"
+                        style={{ color: colors.textMuted, opacity: 0.5 }}
+                      />
                       <p style={{ color: colors.textMuted }}>
                         No files yet. Upload one to get started!
                       </p>
@@ -594,13 +634,22 @@ export default function Dashboard() {
                               backgroundColor: `rgba(96, 165, 250, 0.1)`,
                             }}
                           >
-                            <FolderOpen className="w-4 h-4" style={{ color: colors.primary }} />
+                            <FolderOpen
+                              className="w-4 h-4"
+                              style={{ color: colors.primary }}
+                            />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="font-medium truncate" style={{ color: colors.text }}>
+                            <p
+                              className="font-medium truncate"
+                              style={{ color: colors.text }}
+                            >
                               {file.name}
                             </p>
-                            <p className="text-sm" style={{ color: colors.textMuted }}>
+                            <p
+                              className="text-sm"
+                              style={{ color: colors.textMuted }}
+                            >
                               {file.size} • {file.uploadedAt}
                             </p>
                           </div>
@@ -619,7 +668,12 @@ export default function Dashboard() {
                             </span>
                           )}
                           <button
-                            onClick={() => handleDownloadFile(file.storagePath || "", file.name)}
+                            onClick={() =>
+                              handleDownloadFile(
+                                file.storagePath || "",
+                                file.name,
+                              )
+                            }
                             className="p-2 rounded-lg hover:bg-opacity-50 transition-colors"
                             title="Download"
                             style={{ color: colors.textMuted }}
@@ -661,7 +715,10 @@ export default function Dashboard() {
                   borderColor: colors.border,
                 }}
               >
-                <h3 className="text-lg font-bold mb-4 flex items-center gap-2" style={{ color: colors.text }}>
+                <h3
+                  className="text-lg font-bold mb-4 flex items-center gap-2"
+                  style={{ color: colors.text }}
+                >
                   <Users className="w-5 h-5" />
                   Add New User
                 </h3>
@@ -733,7 +790,10 @@ export default function Dashboard() {
                     borderColor: colors.border,
                   }}
                 >
-                  <h2 className="text-xl font-bold flex items-center gap-2" style={{ color: colors.text }}>
+                  <h2
+                    className="text-xl font-bold flex items-center gap-2"
+                    style={{ color: colors.text }}
+                  >
                     <Users className="w-5 h-5" />
                     Team Members
                   </h2>
@@ -746,9 +806,7 @@ export default function Dashboard() {
                 >
                   {users.length === 0 ? (
                     <div className="px-6 py-8 text-center">
-                      <p style={{ color: colors.textMuted }}>
-                        No users yet
-                      </p>
+                      <p style={{ color: colors.textMuted }}>No users yet</p>
                     </div>
                   ) : (
                     users.map((user) => (
@@ -767,10 +825,16 @@ export default function Dashboard() {
                             {user.name.charAt(0).toUpperCase()}
                           </div>
                           <div>
-                            <p className="font-medium" style={{ color: colors.text }}>
+                            <p
+                              className="font-medium"
+                              style={{ color: colors.text }}
+                            >
                               {user.name}
                             </p>
-                            <p className="text-sm" style={{ color: colors.textMuted }}>
+                            <p
+                              className="text-sm"
+                              style={{ color: colors.textMuted }}
+                            >
                               {user.email}
                             </p>
                           </div>
@@ -819,7 +883,10 @@ export default function Dashboard() {
                   borderColor: colors.border,
                 }}
               >
-                <h3 className="text-lg font-bold mb-6 flex items-center gap-2" style={{ color: colors.text }}>
+                <h3
+                  className="text-lg font-bold mb-6 flex items-center gap-2"
+                  style={{ color: colors.text }}
+                >
                   <Palette className="w-5 h-5" />
                   Select Theme
                 </h3>
@@ -846,23 +913,28 @@ export default function Dashboard() {
                   ].map((t) => (
                     <button
                       key={t.id}
-                      onClick={() => setTheme(t.id as "dark" | "light" | "blue")}
+                      onClick={() =>
+                        setTheme(t.id as "dark" | "light" | "blue")
+                      }
                       className={`p-6 rounded-xl border-2 transition-all hover:scale-105`}
                       style={{
                         backgroundColor: colors.sidebar,
-                        borderColor:
-                          theme === t.id
-                            ? "#3B82F6"
-                            : colors.border,
+                        borderColor: theme === t.id ? "#3B82F6" : colors.border,
                       }}
                     >
                       <div
                         className={`w-full h-24 rounded-lg mb-4 ${t.color} shadow-lg`}
                       ></div>
-                      <p className="font-bold text-lg" style={{ color: colors.text }}>
+                      <p
+                        className="font-bold text-lg"
+                        style={{ color: colors.text }}
+                      >
                         {t.name}
                       </p>
-                      <p className="text-xs mt-1" style={{ color: colors.textMuted }}>
+                      <p
+                        className="text-xs mt-1"
+                        style={{ color: colors.textMuted }}
+                      >
                         {t.description}
                       </p>
                       {theme === t.id && (

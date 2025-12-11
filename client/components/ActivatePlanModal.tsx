@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
-import { X, CheckCircle, Loader } from 'lucide-react';
-import { validateActivationKey, activatePremiumPlan } from '@/lib/use-auth';
-import confetti from 'canvas-confetti';
+import { useState, useEffect } from "react";
+import { X, CheckCircle, Loader } from "lucide-react";
+import { validateActivationKey, activatePremiumPlan } from "@/lib/use-auth";
+import confetti from "canvas-confetti";
 
 interface ActivatePlanModalProps {
   isOpen: boolean;
@@ -18,36 +18,36 @@ export default function ActivatePlanModal({
   onSuccess,
   theme,
 }: ActivatePlanModalProps) {
-  const [key, setKey] = useState('');
+  const [key, setKey] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setLoading(true);
 
     try {
       await validateActivationKey(userId, key.trim());
       await activatePremiumPlan(userId);
-      
+
       confetti({
         particleCount: 100,
         spread: 70,
         origin: { y: 0.6 },
       });
-      
+
       setSuccess(true);
-      setKey('');
-      
+      setKey("");
+
       setTimeout(() => {
         onSuccess();
         onClose();
         setSuccess(false);
       }, 2000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setLoading(false);
     }
@@ -57,29 +57,30 @@ export default function ActivatePlanModal({
 
   const themeColors = {
     dark: {
-      bg: '#111214',
-      border: '#1F2124',
-      text: '#FFFFFF',
-      textMuted: '#9CA3AF',
-      input: '#141518',
+      bg: "#111214",
+      border: "#1F2124",
+      text: "#FFFFFF",
+      textMuted: "#9CA3AF",
+      input: "#141518",
     },
     light: {
-      bg: '#FFFFFF',
-      border: '#E5E7EB',
-      text: '#111827',
-      textMuted: '#6B7280',
-      input: '#FFFFFF',
+      bg: "#FFFFFF",
+      border: "#E5E7EB",
+      text: "#111827",
+      textMuted: "#6B7280",
+      input: "#FFFFFF",
     },
     blue: {
-      bg: '#1E3A8A',
-      border: '#1E40AF',
-      text: '#FFFFFF',
-      textMuted: '#93C5FD',
-      input: '#1E3A8A',
+      bg: "#1E3A8A",
+      border: "#1E40AF",
+      text: "#FFFFFF",
+      textMuted: "#93C5FD",
+      input: "#1E3A8A",
     },
   };
 
-  const colors = themeColors[theme as keyof typeof themeColors] || themeColors.dark;
+  const colors =
+    themeColors[theme as keyof typeof themeColors] || themeColors.dark;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 perspective">
@@ -126,7 +127,11 @@ export default function ActivatePlanModal({
 
       <div
         className="rounded-lg p-8 max-w-md w-full mx-4 relative modal-3d modal-glow"
-        style={{ backgroundColor: colors.bg, borderColor: colors.border, border: '1px solid' }}
+        style={{
+          backgroundColor: colors.bg,
+          borderColor: colors.border,
+          border: "1px solid",
+        }}
       >
         <div className="modal-ornament"></div>
         <button
@@ -149,7 +154,10 @@ export default function ActivatePlanModal({
           </div>
         ) : (
           <>
-            <h2 className="text-2xl font-bold mb-2" style={{ color: colors.text }}>
+            <h2
+              className="text-2xl font-bold mb-2"
+              style={{ color: colors.text }}
+            >
               Activate Premium Plan
             </h2>
             <p className="mb-6" style={{ color: colors.textMuted }}>
@@ -161,9 +169,9 @@ export default function ActivatePlanModal({
                 <div
                   className="px-4 py-3 rounded text-sm border"
                   style={{
-                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                    borderColor: '#EF4444',
-                    color: '#EF4444',
+                    backgroundColor: "rgba(239, 68, 68, 0.1)",
+                    borderColor: "#EF4444",
+                    color: "#EF4444",
                   }}
                 >
                   {error}
@@ -196,8 +204,8 @@ export default function ActivatePlanModal({
               <div
                 className="p-4 rounded-lg border text-sm space-y-2"
                 style={{
-                  backgroundColor: 'rgba(96, 165, 250, 0.1)',
-                  borderColor: '#60A5FA',
+                  backgroundColor: "rgba(96, 165, 250, 0.1)",
+                  borderColor: "#60A5FA",
                 }}
               >
                 <p style={{ color: colors.text }} className="font-medium">
@@ -215,7 +223,8 @@ export default function ActivatePlanModal({
                 disabled={loading || !key.trim()}
                 className="w-full py-3 px-4 rounded-lg text-white font-semibold text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 style={{
-                  background: 'linear-gradient(135deg, #1A2647 0%, #0F0F10 100%)',
+                  background:
+                    "linear-gradient(135deg, #1A2647 0%, #0F0F10 100%)",
                 }}
               >
                 {loading ? (
@@ -224,7 +233,7 @@ export default function ActivatePlanModal({
                     Validating...
                   </>
                 ) : (
-                  'Activate Premium'
+                  "Activate Premium"
                 )}
               </button>
 
