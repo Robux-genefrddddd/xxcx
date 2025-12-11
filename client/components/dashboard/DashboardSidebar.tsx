@@ -128,6 +128,80 @@ export function DashboardSidebar({
             </p>
           </div>
         </div>
+
+        {/* Plan Badge */}
+        {userPlan && (
+          <div
+            className="px-3 py-2 rounded-lg text-xs font-semibold"
+            style={{
+              backgroundColor:
+                userPlan.type === "premium"
+                  ? "rgba(34, 197, 94, 0.1)"
+                  : "rgba(59, 130, 246, 0.1)",
+              color:
+                userPlan.type === "premium" ? "#22C55E" : colors.primary,
+            }}
+          >
+            {userPlan.type === "premium" ? "✓ Premium" : "Free Plan"}
+          </div>
+        )}
+
+        {/* Storage Progress */}
+        {userPlan && (
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <p
+                className="text-xs font-medium"
+                style={{
+                  color: colors.textSecondary,
+                }}
+              >
+                Storage
+              </p>
+              <p
+                className="text-xs font-semibold"
+                style={{
+                  color: colors.text,
+                }}
+              >
+                {storageUsedMB.toFixed(0)}MB / {storageLimitMB.toFixed(0)}MB
+              </p>
+            </div>
+            <div
+              className="w-full h-1.5 rounded-full overflow-hidden"
+              style={{
+                backgroundColor: colors.accentLight,
+              }}
+            >
+              <div
+                className="h-full transition-all duration-300 rounded-full"
+                style={{
+                  width: `${Math.min(storagePercentage, 100)}%`,
+                  backgroundColor:
+                    storagePercentage > 90
+                      ? "#EF4444"
+                      : storagePercentage > 70
+                        ? "#F59E0B"
+                        : colors.primary,
+                }}
+              ></div>
+            </div>
+          </div>
+        )}
+
+        {userPlan && userPlan.type === "free" && onUpgradeClick && (
+          <button
+            onClick={onUpgradeClick}
+            className="w-full px-3 py-2 rounded-lg text-xs font-semibold transition-opacity hover:opacity-80"
+            style={{
+              backgroundColor: colors.accentLight,
+              color: colors.primary,
+            }}
+          >
+            Upgrade
+          </button>
+        )}
+
         <button
           onClick={handleLogout}
           className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors border font-medium"
