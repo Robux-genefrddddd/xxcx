@@ -8,8 +8,10 @@ import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 import { UploadModal, MAX_FILE_SIZE } from "@/components/dashboard/UploadModal";
 import { PlanUpgradeModal } from "@/components/dashboard/PlanUpgradeModal";
 import { DashboardStats } from "@/components/dashboard/DashboardStats";
+import { AdminPanel } from "@/components/dashboard/AdminPanel";
 import { auth, db, storage } from "@/lib/firebase";
 import { getThemeColors, getThemeBackgroundImage } from "@/lib/theme-colors";
+import { getUserRole, UserRole } from "@/lib/auth-utils";
 import {
   collection,
   addDoc,
@@ -55,6 +57,7 @@ export default function Dashboard() {
   const [userName, setUserName] = useState("User");
   const [userEmail, setUserEmail] = useState("");
   const [userId, setUserId] = useState<string | null>(null);
+  const [userRole, setUserRole] = useState<UserRole>("user");
   const [files, setFiles] = useState<FileItem[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
@@ -81,6 +84,15 @@ export default function Dashboard() {
         setUserId(user.uid);
         setUserName(user.displayName || "User");
         setUserEmail(user.email || "");
+
+        // Load user role
+        try {
+          const role = await getUserRole(user.uid);
+          setUserRole(role);
+        } catch (error) {
+          console.error("Error loading user role:", error);
+          setUserRole("user");
+        }
 
         // Load user plan
         try {
@@ -147,12 +159,21 @@ export default function Dashboard() {
         }
       });
 
-      // Update user plan storage used
+      // Update user plan storage used and persist to Firestore
       if (userId) {
-        setUserPlan((prevPlan) => ({
-          ...prevPlan,
+        const updatedPlan = {
+          ...userPlan,
           storageUsed: totalSize,
-        }));
+        };
+        setUserPlan(updatedPlan);
+
+        // Persist storage to Firestore so it doesn't reset on reload
+        try {
+          const planRef = doc(db, "userPlans", userId);
+          await updateDoc(planRef, { storageUsed: totalSize });
+        } catch (error) {
+          console.error("Error updating storage in Firestore:", error);
+        }
       }
     } catch (error) {
       console.error("Error loading files:", error);
@@ -180,6 +201,19 @@ export default function Dashboard() {
       if (file.size > MAX_FILE_SIZE) {
         setUploadError(
           `File size exceeds 100MB limit. Your file is ${(file.size / (1024 * 1024)).toFixed(2)}MB`,
+        );
+        setUploadStage("error");
+        setUploading(false);
+        return;
+      }
+
+      // Check storage limit
+      const newStorageTotal = userPlan.storageUsed + file.size;
+      if (newStorageTotal > userPlan.storageLimit) {
+        const remainingStorage =
+          (userPlan.storageLimit - userPlan.storageUsed) / (1024 * 1024);
+        setUploadError(
+          `Storage limit exceeded. You have ${remainingStorage.toFixed(1)}MB remaining but this file is ${(file.size / (1024 * 1024)).toFixed(2)}MB`,
         );
         setUploadStage("error");
         setUploading(false);
@@ -226,6 +260,15 @@ export default function Dashboard() {
         storagePath: fileRef.fullPath,
       });
 
+      // Update storage used in Firestore
+      try {
+        const planRef = doc(db, "userPlans", auth.currentUser.uid);
+        const newStorageUsed = userPlan.storageUsed + file.size;
+        await updateDoc(planRef, { storageUsed: newStorageUsed });
+      } catch (error) {
+        console.error("Error updating storage after upload:", error);
+      }
+
       // Complete
       setUploadProgress(100);
       setUploadStage("complete");
@@ -265,6 +308,29 @@ export default function Dashboard() {
         const fileRef = ref(storage, file.storagePath);
         await deleteObject(fileRef);
       }
+
+      // Update storage used in Firestore
+      if (file && auth.currentUser) {
+        try {
+          let fileSizeBytes = 0;
+          const sizeStr = file.size;
+          if (sizeStr.includes("MB")) {
+            fileSizeBytes = parseFloat(sizeStr) * 1024 * 1024;
+          } else if (sizeStr.includes("KB")) {
+            fileSizeBytes = parseFloat(sizeStr) * 1024;
+          }
+
+          const planRef = doc(db, "userPlans", auth.currentUser.uid);
+          const newStorageUsed = Math.max(
+            0,
+            userPlan.storageUsed - fileSizeBytes,
+          );
+          await updateDoc(planRef, { storageUsed: newStorageUsed });
+        } catch (error) {
+          console.error("Error updating storage after deletion:", error);
+        }
+      }
+
       loadFiles();
     } catch (error) {
       console.error("Error deleting file:", error);
@@ -386,6 +452,7 @@ export default function Dashboard() {
         theme={theme}
         userPlan={userPlan}
         onUpgradeClick={() => setPlanUpgradeModalOpen(true)}
+        userRole={userRole}
       />
 
       {/* Main Content */}
@@ -413,6 +480,8 @@ export default function Dashboard() {
                   "Manage your team members and their roles"}
                 {activeTab === "theme" &&
                   "Personalize your dashboard appearance"}
+                {activeTab === "admin" &&
+                  "Manage system settings, users, and keys"}
               </p>
             </div>
           </div>
@@ -456,6 +525,15 @@ export default function Dashboard() {
           {/* Theme Tab */}
           {activeTab === "theme" && (
             <ThemeSelector theme={theme} onThemeChange={handleThemeChange} />
+          )}
+
+          {/* Admin Tab */}
+          {activeTab === "admin" && (
+            <AdminPanel
+              theme={theme}
+              userRole={userRole}
+              userId={userId || ""}
+            />
           )}
         </div>
       </main>
