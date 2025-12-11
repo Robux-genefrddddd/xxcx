@@ -85,6 +85,15 @@ export default function Dashboard() {
         setUserName(user.displayName || "User");
         setUserEmail(user.email || "");
 
+        // Load user role
+        try {
+          const role = await getUserRole(user.uid);
+          setUserRole(role);
+        } catch (error) {
+          console.error("Error loading user role:", error);
+          setUserRole("user");
+        }
+
         // Load user plan
         try {
           const planRef = doc(db, "userPlans", user.uid);
