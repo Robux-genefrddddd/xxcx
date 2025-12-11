@@ -1,19 +1,16 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Upload,
   Download,
   Share2,
   Trash2,
   Users,
-  Palette,
-  Search,
-  Bell,
   Settings,
   LogOut,
   Plus,
-  Eye,
   Copy,
+  Palette,
 } from "lucide-react";
 import { auth, db, storage } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
@@ -34,6 +31,9 @@ import {
   deleteObject,
   listAll,
 } from "firebase/storage";
+import { useTheme, getThemeColors } from "@/lib/theme-context";
+import { useAuth, activatePremiumPlan } from "@/lib/use-auth";
+import ActivatePlanModal from "@/components/ActivatePlanModal";
 
 interface FileItem {
   id: string;
@@ -51,7 +51,13 @@ interface User {
   role: "admin" | "user";
 }
 
+const LOGO_URL = "https://marketplace.canva.com/Dz63E/MAF4KJDz63E/1/tl/canva-user-icon-MAF4KJDz63E.png";
+
 export default function Dashboard() {
+  const { theme, setTheme } = useTheme();
+  const { user, userPlan, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
+  
   const [activeTab, setActiveTab] = useState("files");
   const [userName, setUserName] = useState("User");
   const [userEmail, setUserEmail] = useState("");
@@ -59,23 +65,38 @@ export default function Dashboard() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [theme, setTheme] = useState("dark");
   const [newUserName, setNewUserName] = useState("");
   const [newUserEmail, setNewUserEmail] = useState("");
   const [newUserRole, setNewUserRole] = useState<"admin" | "user">("user");
+  const [showPlanModal, setShowPlanModal] = useState(false);
+
+  const colors = getThemeColors(theme as "dark" | "light" | "blue");
 
   useEffect(() => {
-    if (auth.currentUser) {
-      setUserName(auth.currentUser.displayName || "User");
-      setUserEmail(auth.currentUser.email || "");
+    if (authLoading) return;
+    
+    if (!user) {
+      navigate("/login");
+      return;
     }
-    const savedTheme = localStorage.getItem("app-theme") || "dark";
-    setTheme(savedTheme);
+
+    setUserName(user.displayName || "User");
+    setUserEmail(user.email || "");
     loadFiles();
     loadUsers();
-  }, []);
+  }, [user, authLoading, navigate]);
 
-  // ============= FILES MANAGEMENT =============
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: colors.background }}>
+        <div className="text-center space-y-4">
+          <div className="w-12 h-12 border-4 border-gray-700 border-t-blue-500 rounded-full animate-spin mx-auto"></div>
+          <p style={{ color: colors.textMuted }}>Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   const loadFiles = async () => {
     setLoading(true);
     try {
@@ -163,7 +184,6 @@ export default function Dashboard() {
     }
   };
 
-  // ============= USERS MANAGEMENT =============
   const loadUsers = async () => {
     try {
       const docs = await getDocs(collection(db, "users"));
@@ -222,39 +242,35 @@ export default function Dashboard() {
     }
   };
 
-  // ============= THEME MANAGEMENT =============
-  const handleThemeChange = (newTheme: string) => {
-    setTheme(newTheme);
-    localStorage.setItem("app-theme", newTheme);
-  };
-
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      window.location.href = "/";
+      navigate("/login");
     } catch (error) {
       console.error("Logout error:", error);
     }
   };
 
+  const handlePlanModalSuccess = () => {
+    loadFiles();
+  };
+
+  const storagePercentage = userPlan
+    ? (userPlan.storageUsed / userPlan.storageLimit) * 100
+    : 0;
+
   return (
     <div
       className="min-h-screen flex"
-      style={{
-        backgroundColor: theme === "dark" ? "#0E0E0F" : "#FFFFFF",
-        backgroundImage:
-          theme === "dark"
-            ? "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23222223' fill-opacity='0.08'%3E%3Cpath d='M29 30l-1-1 1-1 1 1-1 1M30 29l-1-1 1-1 1 1-1 1M30 31l-1 1 1 1 1-1-1-1M31 30l 1-1-1-1-1 1 1 1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")"
-            : "none",
-      }}
+      style={{ backgroundColor: colors.background }}
     >
       {/* Sidebar */}
       <aside
         className="w-64 text-white p-6 flex flex-col fixed left-0 top-0 h-screen overflow-y-auto border-r"
         style={{
-          backgroundColor: theme === "dark" ? "#111214" : "#F3F4F6",
-          borderColor: theme === "dark" ? "#1F2124" : "#E5E7EB",
-          color: theme === "dark" ? "#FFFFFF" : "#111827",
+          backgroundColor: colors.sidebar,
+          borderColor: colors.border,
+          color: colors.text,
         }}
       >
         {/* Logo */}
@@ -273,24 +289,25 @@ export default function Dashboard() {
         {/* Navigation */}
         <nav className="space-y-2 flex-1">
           {[
-            { id: "files", label: "Files", icon: "📁" },
-            { id: "users", label: "Manage Users", icon: "👥" },
-            { id: "theme", label: "Theme", icon: "🎨" },
+            { id: "files", label: "Files" },
+            { id: "users", label: "Manage Users" },
+            { id: "theme", label: "Customize" },
           ].map((item) => (
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors ${
                 activeTab === item.id
-                  ? theme === "dark"
-                    ? "bg-blue-900 text-blue-400"
-                    : "bg-blue-100 text-blue-600"
-                  : theme === "dark"
-                    ? "text-gray-400 hover:bg-slate-800"
-                    : "text-gray-600 hover:bg-gray-100"
+                  ? "bg-blue-900 text-blue-400"
+                  : "hover:opacity-80"
               }`}
+              style={{
+                backgroundColor:
+                  activeTab === item.id ? "rgba(30, 58, 138, 0.5)" : "transparent",
+                color:
+                  activeTab === item.id ? colors.primary : colors.textMuted,
+              }}
             >
-              <span>{item.icon}</span>
               <span>{item.label}</span>
             </button>
           ))}
@@ -300,50 +317,77 @@ export default function Dashboard() {
         <div
           className="mt-6 p-4 rounded-lg border space-y-4"
           style={{
-            backgroundColor: theme === "dark" ? "#141518" : "#F9FAFB",
-            borderColor: theme === "dark" ? "#1F2124" : "#E5E7EB",
+            backgroundColor: "rgba(255, 255, 255, 0.05)",
+            borderColor: colors.border,
           }}
         >
           <div className="flex items-center gap-3">
-            <div
-              className="w-10 h-10 rounded-lg flex items-center justify-center text-sm font-semibold"
-              style={{
-                backgroundColor: theme === "dark" ? "#1A2647" : "#DBEAFE",
-                color: theme === "dark" ? "#FFFFFF" : "#1E40AF",
+            <img
+              src={LOGO_URL}
+              alt="User avatar"
+              className="w-10 h-10 rounded-lg"
+              onError={(e) => {
+                e.currentTarget.style.display = "none";
               }}
-            >
-              {userName.charAt(0).toUpperCase()}
-            </div>
+            />
             <div className="flex-1 min-w-0">
-              <p
-                className="text-sm font-semibold truncate"
-                style={{ color: theme === "dark" ? "#FFFFFF" : "#111827" }}
-              >
+              <p className="text-sm font-semibold truncate" style={{ color: colors.text }}>
                 {userName}
               </p>
-              <p
-                className="text-xs truncate"
-                style={{ color: theme === "dark" ? "#9CA3AF" : "#6B7280" }}
-              >
+              <p className="text-xs truncate" style={{ color: colors.textMuted }}>
                 {userEmail}
               </p>
             </div>
           </div>
+
+          {userPlan && (
+            <div className="space-y-2">
+              <div className="flex justify-between text-xs">
+                <span style={{ color: colors.text }}>
+                  {userPlan.type === "premium" ? "Premium Plan" : "Free Plan"}
+                </span>
+                <span style={{ color: colors.textMuted }}>
+                  {(storagePercentage).toFixed(0)}%
+                </span>
+              </div>
+              <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
+                <div
+                  className="h-full transition-all"
+                  style={{
+                    width: `${Math.min(storagePercentage, 100)}%`,
+                    backgroundColor: userPlan.type === "premium" ? "#10b981" : "#60a5fa",
+                  }}
+                />
+              </div>
+              {userPlan.type === "free" && (
+                <button
+                  onClick={() => setShowPlanModal(true)}
+                  className="w-full py-2 rounded-lg text-sm font-medium transition-colors border"
+                  style={{
+                    backgroundColor: colors.primary,
+                    color: colors.sidebar,
+                    borderColor: colors.primary,
+                  }}
+                >
+                  Upgrade to Premium
+                </button>
+              )}
+            </div>
+          )}
+
           <button
             onClick={handleLogout}
             className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors border"
             style={{
-              backgroundColor: theme === "dark" ? "#0F1113" : "#F3F4F6",
-              borderColor: theme === "dark" ? "#1F2124" : "#D1D5DB",
-              color: theme === "dark" ? "#9CA3AF" : "#6B7280",
+              backgroundColor: "transparent",
+              borderColor: colors.border,
+              color: colors.textMuted,
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.color =
-                theme === "dark" ? "#FFFFFF" : "#111827";
+              e.currentTarget.style.color = colors.text;
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.color =
-                theme === "dark" ? "#9CA3AF" : "#6B7280";
+              e.currentTarget.style.color = colors.textMuted;
             }}
           >
             <LogOut className="w-4 h-4" />
@@ -358,22 +402,19 @@ export default function Dashboard() {
         <header
           className="border-b px-8 py-6 sticky top-0 z-40"
           style={{
-            backgroundColor: theme === "dark" ? "#111214" : "#FFFFFF",
-            borderColor: theme === "dark" ? "#1F2124" : "#E5E7EB",
+            backgroundColor: colors.sidebar,
+            borderColor: colors.border,
           }}
         >
           <div className="flex items-center justify-between">
             <div>
-              <h1
-                className="text-3xl font-bold mb-1"
-                style={{ color: theme === "dark" ? "#FFFFFF" : "#111827" }}
-              >
-                Welcome {userName}! 👋
+              <h1 className="text-3xl font-bold mb-1" style={{ color: colors.text }}>
+                Welcome {userName}!
               </h1>
-              <p style={{ color: theme === "dark" ? "#9CA3AF" : "#6B7280" }}>
+              <p style={{ color: colors.textMuted }}>
                 {activeTab === "files" && "Manage and share your files"}
                 {activeTab === "users" && "Manage team members"}
-                {activeTab === "theme" && "Customize your theme"}
+                {activeTab === "theme" && "Customize your interface"}
               </p>
             </div>
           </div>
@@ -388,8 +429,8 @@ export default function Dashboard() {
               <div
                 className="rounded-lg border p-8 text-center"
                 style={{
-                  backgroundColor: theme === "dark" ? "#111214" : "#F9FAFB",
-                  borderColor: theme === "dark" ? "#1F2124" : "#E5E7EB",
+                  backgroundColor: colors.card,
+                  borderColor: colors.border,
                   borderStyle: "dashed",
                 }}
               >
@@ -398,23 +439,14 @@ export default function Dashboard() {
                     <Upload
                       className="w-10 h-10"
                       style={{
-                        color: theme === "dark" ? "#60A5FA" : "#3B82F6",
+                        color: colors.primary,
                       }}
                     />
                     <div>
-                      <p
-                        className="font-semibold"
-                        style={{
-                          color: theme === "dark" ? "#FFFFFF" : "#111827",
-                        }}
-                      >
+                      <p className="font-semibold" style={{ color: colors.text }}>
                         Click to upload or drag and drop
                       </p>
-                      <p
-                        style={{
-                          color: theme === "dark" ? "#9CA3AF" : "#6B7280",
-                        }}
-                      >
+                      <p style={{ color: colors.textMuted }}>
                         PNG, JPG, PDF or any file up to 100MB
                       </p>
                     </div>
@@ -432,46 +464,35 @@ export default function Dashboard() {
               <div
                 className="rounded-lg border overflow-hidden"
                 style={{
-                  backgroundColor: theme === "dark" ? "#111214" : "#FFFFFF",
-                  borderColor: theme === "dark" ? "#1F2124" : "#E5E7EB",
+                  backgroundColor: colors.card,
+                  borderColor: colors.border,
                 }}
               >
                 <div
                   className="px-6 py-4 border-b"
                   style={{
-                    borderColor: theme === "dark" ? "#1F2124" : "#E5E7EB",
+                    borderColor: colors.border,
                   }}
                 >
-                  <h2
-                    className="text-xl font-bold"
-                    style={{ color: theme === "dark" ? "#FFFFFF" : "#111827" }}
-                  >
+                  <h2 className="text-xl font-bold" style={{ color: colors.text }}>
                     My Files {files.length > 0 && `(${files.length})`}
                   </h2>
                 </div>
                 <div
                   className="divide-y"
                   style={{
-                    borderColor: theme === "dark" ? "#1F2124" : "#E5E7EB",
+                    borderColor: colors.border,
                   }}
                 >
                   {loading ? (
                     <div className="px-6 py-8 text-center">
-                      <p
-                        style={{
-                          color: theme === "dark" ? "#9CA3AF" : "#6B7280",
-                        }}
-                      >
+                      <p style={{ color: colors.textMuted }}>
                         Loading files...
                       </p>
                     </div>
                   ) : files.length === 0 ? (
                     <div className="px-6 py-8 text-center">
-                      <p
-                        style={{
-                          color: theme === "dark" ? "#9CA3AF" : "#6B7280",
-                        }}
-                      >
+                      <p style={{ color: colors.textMuted }}>
                         No files yet. Upload one to get started!
                       </p>
                     </div>
@@ -481,25 +502,14 @@ export default function Dashboard() {
                         key={file.id}
                         className="px-6 py-4 flex items-center justify-between hover:bg-opacity-50"
                         style={{
-                          backgroundColor:
-                            theme === "dark" ? "transparent" : "#F9FAFB",
+                          backgroundColor: "transparent",
                         }}
                       >
                         <div className="flex-1">
-                          <p
-                            className="font-medium"
-                            style={{
-                              color: theme === "dark" ? "#FFFFFF" : "#111827",
-                            }}
-                          >
+                          <p className="font-medium" style={{ color: colors.text }}>
                             {file.name}
                           </p>
-                          <p
-                            className="text-sm"
-                            style={{
-                              color: theme === "dark" ? "#9CA3AF" : "#6B7280",
-                            }}
-                          >
+                          <p className="text-sm" style={{ color: colors.textMuted }}>
                             {file.size} • {file.uploadedAt}
                           </p>
                         </div>
@@ -508,9 +518,8 @@ export default function Dashboard() {
                             <span
                               className="px-2 py-1 rounded text-xs font-medium"
                               style={{
-                                backgroundColor:
-                                  theme === "dark" ? "#1A2647" : "#DBEAFE",
-                                color: theme === "dark" ? "#60A5FA" : "#1E40AF",
+                                backgroundColor: "rgba(96, 165, 250, 0.1)",
+                                color: colors.primary,
                               }}
                             >
                               Shared
@@ -520,6 +529,7 @@ export default function Dashboard() {
                             onClick={() => handleShareFile(file.id)}
                             className="p-2 rounded hover:opacity-80"
                             title="Share"
+                            style={{ color: colors.textMuted }}
                           >
                             <Share2 className="w-4 h-4" />
                           </button>
@@ -546,14 +556,11 @@ export default function Dashboard() {
               <div
                 className="rounded-lg border p-6"
                 style={{
-                  backgroundColor: theme === "dark" ? "#111214" : "#F9FAFB",
-                  borderColor: theme === "dark" ? "#1F2124" : "#E5E7EB",
+                  backgroundColor: colors.card,
+                  borderColor: colors.border,
                 }}
               >
-                <h3
-                  className="text-lg font-bold mb-4"
-                  style={{ color: theme === "dark" ? "#FFFFFF" : "#111827" }}
-                >
+                <h3 className="text-lg font-bold mb-4" style={{ color: colors.text }}>
                   Add New User
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -564,9 +571,9 @@ export default function Dashboard() {
                     onChange={(e) => setNewUserName(e.target.value)}
                     className="px-4 py-2 rounded-lg border text-sm"
                     style={{
-                      backgroundColor: theme === "dark" ? "#141518" : "#FFFFFF",
-                      borderColor: theme === "dark" ? "#1F2124" : "#E5E7EB",
-                      color: theme === "dark" ? "#FFFFFF" : "#111827",
+                      backgroundColor: colors.sidebar,
+                      borderColor: colors.border,
+                      color: colors.text,
                     }}
                   />
                   <input
@@ -576,9 +583,9 @@ export default function Dashboard() {
                     onChange={(e) => setNewUserEmail(e.target.value)}
                     className="px-4 py-2 rounded-lg border text-sm"
                     style={{
-                      backgroundColor: theme === "dark" ? "#141518" : "#FFFFFF",
-                      borderColor: theme === "dark" ? "#1F2124" : "#E5E7EB",
-                      color: theme === "dark" ? "#FFFFFF" : "#111827",
+                      backgroundColor: colors.sidebar,
+                      borderColor: colors.border,
+                      color: colors.text,
                     }}
                   />
                   <select
@@ -588,9 +595,9 @@ export default function Dashboard() {
                     }
                     className="px-4 py-2 rounded-lg border text-sm"
                     style={{
-                      backgroundColor: theme === "dark" ? "#141518" : "#FFFFFF",
-                      borderColor: theme === "dark" ? "#1F2124" : "#E5E7EB",
-                      color: theme === "dark" ? "#FFFFFF" : "#111827",
+                      backgroundColor: colors.sidebar,
+                      borderColor: colors.border,
+                      color: colors.text,
                     }}
                   >
                     <option value="user">User</option>
@@ -600,8 +607,8 @@ export default function Dashboard() {
                     onClick={handleAddUser}
                     className="px-4 py-2 rounded-lg font-medium flex items-center gap-2 hover:opacity-80"
                     style={{
-                      backgroundColor: theme === "dark" ? "#1A2647" : "#DBEAFE",
-                      color: theme === "dark" ? "#60A5FA" : "#1E40AF",
+                      backgroundColor: colors.primary,
+                      color: colors.sidebar,
                     }}
                   >
                     <Plus className="w-4 h-4" />
@@ -614,36 +621,29 @@ export default function Dashboard() {
               <div
                 className="rounded-lg border overflow-hidden"
                 style={{
-                  backgroundColor: theme === "dark" ? "#111214" : "#FFFFFF",
-                  borderColor: theme === "dark" ? "#1F2124" : "#E5E7EB",
+                  backgroundColor: colors.card,
+                  borderColor: colors.border,
                 }}
               >
                 <div
                   className="px-6 py-4 border-b"
                   style={{
-                    borderColor: theme === "dark" ? "#1F2124" : "#E5E7EB",
+                    borderColor: colors.border,
                   }}
                 >
-                  <h2
-                    className="text-xl font-bold"
-                    style={{ color: theme === "dark" ? "#FFFFFF" : "#111827" }}
-                  >
+                  <h2 className="text-xl font-bold" style={{ color: colors.text }}>
                     Team Members
                   </h2>
                 </div>
                 <div
                   className="divide-y"
                   style={{
-                    borderColor: theme === "dark" ? "#1F2124" : "#E5E7EB",
+                    borderColor: colors.border,
                   }}
                 >
                   {users.length === 0 ? (
                     <div className="px-6 py-8 text-center">
-                      <p
-                        style={{
-                          color: theme === "dark" ? "#9CA3AF" : "#6B7280",
-                        }}
-                      >
+                      <p style={{ color: colors.textMuted }}>
                         No users yet
                       </p>
                     </div>
@@ -654,20 +654,10 @@ export default function Dashboard() {
                         className="px-6 py-4 flex items-center justify-between"
                       >
                         <div>
-                          <p
-                            className="font-medium"
-                            style={{
-                              color: theme === "dark" ? "#FFFFFF" : "#111827",
-                            }}
-                          >
+                          <p className="font-medium" style={{ color: colors.text }}>
                             {user.name}
                           </p>
-                          <p
-                            className="text-sm"
-                            style={{
-                              color: theme === "dark" ? "#9CA3AF" : "#6B7280",
-                            }}
-                          >
+                          <p className="text-sm" style={{ color: colors.textMuted }}>
                             {user.email}
                           </p>
                         </div>
@@ -682,11 +672,9 @@ export default function Dashboard() {
                             }
                             className="px-3 py-1 rounded text-sm border"
                             style={{
-                              backgroundColor:
-                                theme === "dark" ? "#141518" : "#FFFFFF",
-                              borderColor:
-                                theme === "dark" ? "#1F2124" : "#E5E7EB",
-                              color: theme === "dark" ? "#FFFFFF" : "#111827",
+                              backgroundColor: colors.sidebar,
+                              borderColor: colors.border,
+                              color: colors.text,
                             }}
                           >
                             <option value="user">User</option>
@@ -713,14 +701,11 @@ export default function Dashboard() {
               <div
                 className="rounded-lg border p-6"
                 style={{
-                  backgroundColor: theme === "dark" ? "#111214" : "#F9FAFB",
-                  borderColor: theme === "dark" ? "#1F2124" : "#E5E7EB",
+                  backgroundColor: colors.card,
+                  borderColor: colors.border,
                 }}
               >
-                <h3
-                  className="text-lg font-bold mb-4"
-                  style={{ color: theme === "dark" ? "#FFFFFF" : "#111827" }}
-                >
+                <h3 className="text-lg font-bold mb-4" style={{ color: colors.text }}>
                   Select Theme
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -743,40 +728,29 @@ export default function Dashboard() {
                   ].map((t) => (
                     <button
                       key={t.id}
-                      onClick={() => handleThemeChange(t.id)}
+                      onClick={() => setTheme(t.id as "dark" | "light" | "blue")}
                       className={`p-6 rounded-lg border-2 transition-all ${
                         theme === t.id
                           ? "border-blue-500"
                           : "border-transparent"
                       }`}
                       style={{
-                        backgroundColor:
-                          theme === "dark" ? "#141518" : "#FFFFFF",
+                        backgroundColor: colors.sidebar,
                         borderColor:
                           theme === t.id
                             ? "#3B82F6"
-                            : theme === "dark"
-                              ? "#1F2124"
-                              : "#E5E7EB",
+                            : colors.border,
                       }}
                     >
                       <div
                         className={`w-full h-20 rounded-lg mb-3 ${t.color}`}
                       ></div>
-                      <p
-                        className="font-medium"
-                        style={{
-                          color: theme === "dark" ? "#FFFFFF" : "#111827",
-                        }}
-                      >
+                      <p className="font-medium" style={{ color: colors.text }}>
                         {t.name}
                       </p>
                       {theme === t.id && (
-                        <p
-                          className="text-sm mt-2"
-                          style={{ color: "#3B82F6" }}
-                        >
-                          ✓ Active
+                        <p className="text-sm mt-2" style={{ color: "#3B82F6" }}>
+                          Active
                         </p>
                       )}
                     </button>
@@ -787,6 +761,14 @@ export default function Dashboard() {
           )}
         </div>
       </main>
+
+      <ActivatePlanModal
+        isOpen={showPlanModal}
+        onClose={() => setShowPlanModal(false)}
+        userId={user?.uid || ""}
+        onSuccess={handlePlanModalSuccess}
+        theme={theme}
+      />
     </div>
   );
 }
