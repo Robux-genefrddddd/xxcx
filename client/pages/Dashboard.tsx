@@ -2,15 +2,15 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Upload,
-  Download,
   Share2,
   Trash2,
   Users,
-  Settings,
   LogOut,
   Plus,
-  Copy,
   Palette,
+  FolderOpen,
+  Zap,
+  HardDrive,
 } from "lucide-react";
 import { auth, db, storage } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
@@ -27,13 +27,12 @@ import {
 import {
   ref,
   uploadBytes,
-  getBytes,
   deleteObject,
-  listAll,
 } from "firebase/storage";
 import { useTheme, getThemeColors } from "@/lib/theme-context";
-import { useAuth, activatePremiumPlan } from "@/lib/use-auth";
+import { useAuth } from "@/lib/use-auth";
 import ActivatePlanModal from "@/components/ActivatePlanModal";
+import DashboardStats from "@/components/DashboardStats";
 
 interface FileItem {
   id: string;
@@ -255,9 +254,17 @@ export default function Dashboard() {
     loadFiles();
   };
 
-  const storagePercentage = userPlan
-    ? (userPlan.storageUsed / userPlan.storageLimit) * 100
-    : 0;
+  const sharedFilesCount = files.filter((f) => f.shared).length;
+  const storagePercentage =
+    userPlan && userPlan.storageLimit
+      ? (userPlan.storageUsed / userPlan.storageLimit) * 100
+      : 0;
+
+  const navItems = [
+    { id: "files", label: "Files", icon: FolderOpen },
+    { id: "users", label: "Manage Users", icon: Users },
+    { id: "theme", label: "Customize", icon: Palette },
+  ];
 
   return (
     <div
@@ -276,7 +283,7 @@ export default function Dashboard() {
         {/* Logo */}
         <Link
           to="/"
-          className="flex items-center gap-2 mb-10 hover:opacity-80 transition"
+          className="flex items-center gap-2 mb-12 hover:opacity-80 transition"
         >
           <img
             src="https://cdn.builder.io/api/v1/image/assets%2F91e2732f1c03487e879c66ee97e72712%2Fee08390eccc04e8dbea3ce5415d97e92?format=webp&width=800"
@@ -287,30 +294,30 @@ export default function Dashboard() {
         </Link>
 
         {/* Navigation */}
-        <nav className="space-y-2 flex-1">
-          {[
-            { id: "files", label: "Files" },
-            { id: "users", label: "Manage Users" },
-            { id: "theme", label: "Customize" },
-          ].map((item) => (
-            <button
-              key={item.id}
-              onClick={() => setActiveTab(item.id)}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors ${
-                activeTab === item.id
-                  ? "bg-blue-900 text-blue-400"
-                  : "hover:opacity-80"
-              }`}
-              style={{
-                backgroundColor:
-                  activeTab === item.id ? "rgba(30, 58, 138, 0.5)" : "transparent",
-                color:
-                  activeTab === item.id ? colors.primary : colors.textMuted,
-              }}
-            >
-              <span>{item.label}</span>
-            </button>
-          ))}
+        <nav className="space-y-3 flex-1">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={item.id}
+                onClick={() => setActiveTab(item.id)}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all duration-200`}
+                style={{
+                  backgroundColor:
+                    activeTab === item.id
+                      ? "rgba(96, 165, 250, 0.2)"
+                      : "transparent",
+                  color:
+                    activeTab === item.id ? colors.primary : colors.textMuted,
+                  borderLeft: activeTab === item.id ? `3px solid ${colors.primary}` : "3px solid transparent",
+                  paddingLeft: "13px",
+                }}
+              >
+                <Icon className="w-5 h-5" />
+                <span>{item.label}</span>
+              </button>
+            );
+          })}
         </nav>
 
         {/* User Info */}
@@ -325,7 +332,7 @@ export default function Dashboard() {
             <img
               src={LOGO_URL}
               alt="User avatar"
-              className="w-10 h-10 rounded-lg"
+              className="w-10 h-10 rounded-lg object-cover"
               onError={(e) => {
                 e.currentTarget.style.display = "none";
               }}
@@ -341,43 +348,59 @@ export default function Dashboard() {
           </div>
 
           {userPlan && (
-            <div className="space-y-2">
-              <div className="flex justify-between text-xs">
-                <span style={{ color: colors.text }}>
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <Zap className="w-4 h-4" style={{ color: colors.primary }} />
+                <span className="text-xs font-medium" style={{ color: colors.text }}>
                   {userPlan.type === "premium" ? "Premium Plan" : "Free Plan"}
                 </span>
-                <span style={{ color: colors.textMuted }}>
-                  {(storagePercentage).toFixed(0)}%
-                </span>
               </div>
-              <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
-                <div
-                  className="h-full transition-all"
-                  style={{
-                    width: `${Math.min(storagePercentage, 100)}%`,
-                    backgroundColor: userPlan.type === "premium" ? "#10b981" : "#60a5fa",
-                  }}
-                />
-              </div>
+              
+              {userPlan.type === "free" && (
+                <>
+                  <div className="flex justify-between text-xs">
+                    <span style={{ color: colors.text }}>Storage</span>
+                    <span style={{ color: colors.textMuted }}>
+                      {(storagePercentage).toFixed(0)}%
+                    </span>
+                  </div>
+                  <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
+                    <div
+                      className="h-full transition-all"
+                      style={{
+                        width: `${Math.min(storagePercentage, 100)}%`,
+                        backgroundColor: "#60a5fa",
+                      }}
+                    />
+                  </div>
+                </>
+              )}
+              
               {userPlan.type === "free" && (
                 <button
                   onClick={() => setShowPlanModal(true)}
-                  className="w-full py-2 rounded-lg text-sm font-medium transition-colors border"
+                  className="w-full py-2 rounded-lg text-sm font-medium transition-all hover:opacity-90 border"
                   style={{
-                    backgroundColor: colors.primary,
-                    color: colors.sidebar,
+                    backgroundColor: "rgba(96, 165, 250, 0.1)",
+                    color: colors.primary,
                     borderColor: colors.primary,
                   }}
                 >
                   Upgrade to Premium
                 </button>
               )}
+
+              {userPlan.type === "premium" && (
+                <div className="p-2 rounded-lg bg-gradient-to-r from-emerald-500/20 to-teal-500/20 border border-emerald-500/30">
+                  <p className="text-xs text-emerald-400 font-medium">Unlimited Storage</p>
+                </div>
+              )}
             </div>
           )}
 
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors border"
+            className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all border hover:bg-opacity-50"
             style={{
               backgroundColor: "transparent",
               borderColor: colors.border,
@@ -400,7 +423,7 @@ export default function Dashboard() {
       <main className="flex-1 ml-64 overflow-auto">
         {/* Header */}
         <header
-          className="border-b px-8 py-6 sticky top-0 z-40"
+          className="border-b px-8 py-6 sticky top-0 z-40 backdrop-blur-sm"
           style={{
             backgroundColor: colors.sidebar,
             borderColor: colors.border,
@@ -409,12 +432,12 @@ export default function Dashboard() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold mb-1" style={{ color: colors.text }}>
-                Welcome {userName}!
+                Welcome back, {userName}! 
               </h1>
               <p style={{ color: colors.textMuted }}>
-                {activeTab === "files" && "Manage and share your files"}
-                {activeTab === "users" && "Manage team members"}
-                {activeTab === "theme" && "Customize your interface"}
+                {activeTab === "files" && "Manage and share your files securely"}
+                {activeTab === "users" && "Manage team members and permissions"}
+                {activeTab === "theme" && "Customize your interface appearance"}
               </p>
             </div>
           </div>
@@ -424,30 +447,46 @@ export default function Dashboard() {
         <div className="p-8">
           {/* FILES TAB */}
           {activeTab === "files" && (
-            <div className="space-y-6">
+            <div className="space-y-8">
+              {/* Stats */}
+              <DashboardStats
+                totalFiles={files.length}
+                sharedFiles={sharedFilesCount}
+                storageUsed={userPlan?.storageUsed || 0}
+                storageLimit={userPlan?.storageLimit || 0}
+                theme={theme}
+              />
+
               {/* Upload Section */}
               <div
-                className="rounded-lg border p-8 text-center"
+                className="rounded-xl border p-8 text-center transition-all hover:border-opacity-100"
                 style={{
-                  backgroundColor: colors.card,
+                  backgroundColor: `linear-gradient(135deg, rgba(96, 165, 250, 0.05) 0%, rgba(59, 130, 246, 0.02) 100%)`,
                   borderColor: colors.border,
                   borderStyle: "dashed",
                 }}
               >
-                <label className="cursor-pointer">
-                  <div className="flex flex-col items-center gap-3">
-                    <Upload
-                      className="w-10 h-10"
+                <label className="cursor-pointer block">
+                  <div className="flex flex-col items-center gap-4">
+                    <div
+                      className="p-4 rounded-lg"
                       style={{
-                        color: colors.primary,
+                        backgroundColor: `rgba(96, 165, 250, 0.1)`,
                       }}
-                    />
+                    >
+                      <Upload
+                        className="w-8 h-8"
+                        style={{
+                          color: colors.primary,
+                        }}
+                      />
+                    </div>
                     <div>
-                      <p className="font-semibold" style={{ color: colors.text }}>
+                      <p className="font-semibold text-lg" style={{ color: colors.text }}>
                         Click to upload or drag and drop
                       </p>
-                      <p style={{ color: colors.textMuted }}>
-                        PNG, JPG, PDF or any file up to 100MB
+                      <p style={{ color: colors.textMuted }} className="text-sm mt-1">
+                        PNG, JPG, PDF or any file up to 1GB
                       </p>
                     </div>
                   </div>
@@ -462,19 +501,20 @@ export default function Dashboard() {
 
               {/* Files List */}
               <div
-                className="rounded-lg border overflow-hidden"
+                className="rounded-xl border overflow-hidden"
                 style={{
                   backgroundColor: colors.card,
                   borderColor: colors.border,
                 }}
               >
                 <div
-                  className="px-6 py-4 border-b"
+                  className="px-6 py-4 border-b backdrop-blur-sm"
                   style={{
                     borderColor: colors.border,
                   }}
                 >
-                  <h2 className="text-xl font-bold" style={{ color: colors.text }}>
+                  <h2 className="text-xl font-bold flex items-center gap-2" style={{ color: colors.text }}>
+                    <FolderOpen className="w-5 h-5" />
                     My Files {files.length > 0 && `(${files.length})`}
                   </h2>
                 </div>
@@ -485,13 +525,15 @@ export default function Dashboard() {
                   }}
                 >
                   {loading ? (
-                    <div className="px-6 py-8 text-center">
+                    <div className="px-6 py-12 text-center">
+                      <div className="w-8 h-8 border-4 border-gray-700 border-t-blue-500 rounded-full animate-spin mx-auto mb-3"></div>
                       <p style={{ color: colors.textMuted }}>
                         Loading files...
                       </p>
                     </div>
                   ) : files.length === 0 ? (
-                    <div className="px-6 py-8 text-center">
+                    <div className="px-6 py-12 text-center">
+                      <FolderOpen className="w-12 h-12 mx-auto mb-3" style={{ color: colors.textMuted, opacity: 0.5 }} />
                       <p style={{ color: colors.textMuted }}>
                         No files yet. Upload one to get started!
                       </p>
@@ -500,34 +542,45 @@ export default function Dashboard() {
                     files.map((file) => (
                       <div
                         key={file.id}
-                        className="px-6 py-4 flex items-center justify-between hover:bg-opacity-50"
+                        className="px-6 py-4 flex items-center justify-between hover:bg-opacity-50 transition-colors"
                         style={{
                           backgroundColor: "transparent",
                         }}
                       >
-                        <div className="flex-1">
-                          <p className="font-medium" style={{ color: colors.text }}>
-                            {file.name}
-                          </p>
-                          <p className="text-sm" style={{ color: colors.textMuted }}>
-                            {file.size} • {file.uploadedAt}
-                          </p>
+                        <div className="flex-1 flex items-center gap-3">
+                          <div
+                            className="p-2 rounded-lg"
+                            style={{
+                              backgroundColor: `rgba(96, 165, 250, 0.1)`,
+                            }}
+                          >
+                            <FolderOpen className="w-4 h-4" style={{ color: colors.primary }} />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium truncate" style={{ color: colors.text }}>
+                              {file.name}
+                            </p>
+                            <p className="text-sm" style={{ color: colors.textMuted }}>
+                              {file.size} • {file.uploadedAt}
+                            </p>
+                          </div>
                         </div>
                         <div className="flex items-center gap-2">
                           {file.shared && (
                             <span
-                              className="px-2 py-1 rounded text-xs font-medium"
+                              className="px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1"
                               style={{
                                 backgroundColor: "rgba(96, 165, 250, 0.1)",
                                 color: colors.primary,
                               }}
                             >
+                              <Share2 className="w-3 h-3" />
                               Shared
                             </span>
                           )}
                           <button
                             onClick={() => handleShareFile(file.id)}
-                            className="p-2 rounded hover:opacity-80"
+                            className="p-2 rounded-lg hover:bg-opacity-50 transition-colors"
                             title="Share"
                             style={{ color: colors.textMuted }}
                           >
@@ -535,7 +588,7 @@ export default function Dashboard() {
                           </button>
                           <button
                             onClick={() => handleDeleteFile(file.id, file.name)}
-                            className="p-2 rounded hover:opacity-80"
+                            className="p-2 rounded-lg hover:bg-opacity-50 transition-colors"
                             title="Delete"
                           >
                             <Trash2 className="w-4 h-4 text-red-500" />
@@ -554,22 +607,23 @@ export default function Dashboard() {
             <div className="space-y-6">
               {/* Add User */}
               <div
-                className="rounded-lg border p-6"
+                className="rounded-xl border p-6"
                 style={{
                   backgroundColor: colors.card,
                   borderColor: colors.border,
                 }}
               >
-                <h3 className="text-lg font-bold mb-4" style={{ color: colors.text }}>
+                <h3 className="text-lg font-bold mb-4 flex items-center gap-2" style={{ color: colors.text }}>
+                  <Users className="w-5 h-5" />
                   Add New User
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   <input
                     type="text"
-                    placeholder="Name"
+                    placeholder="Full Name"
                     value={newUserName}
                     onChange={(e) => setNewUserName(e.target.value)}
-                    className="px-4 py-2 rounded-lg border text-sm"
+                    className="px-4 py-2 rounded-lg border text-sm focus:outline-none transition-colors"
                     style={{
                       backgroundColor: colors.sidebar,
                       borderColor: colors.border,
@@ -578,10 +632,10 @@ export default function Dashboard() {
                   />
                   <input
                     type="email"
-                    placeholder="Email"
+                    placeholder="Email Address"
                     value={newUserEmail}
                     onChange={(e) => setNewUserEmail(e.target.value)}
-                    className="px-4 py-2 rounded-lg border text-sm"
+                    className="px-4 py-2 rounded-lg border text-sm focus:outline-none transition-colors"
                     style={{
                       backgroundColor: colors.sidebar,
                       borderColor: colors.border,
@@ -593,7 +647,7 @@ export default function Dashboard() {
                     onChange={(e) =>
                       setNewUserRole(e.target.value as "admin" | "user")
                     }
-                    className="px-4 py-2 rounded-lg border text-sm"
+                    className="px-4 py-2 rounded-lg border text-sm focus:outline-none transition-colors"
                     style={{
                       backgroundColor: colors.sidebar,
                       borderColor: colors.border,
@@ -605,21 +659,21 @@ export default function Dashboard() {
                   </select>
                   <button
                     onClick={handleAddUser}
-                    className="px-4 py-2 rounded-lg font-medium flex items-center gap-2 hover:opacity-80"
+                    className="px-4 py-2 rounded-lg font-medium flex items-center justify-center gap-2 hover:opacity-90 transition-all"
                     style={{
                       backgroundColor: colors.primary,
                       color: colors.sidebar,
                     }}
                   >
                     <Plus className="w-4 h-4" />
-                    Add
+                    Add User
                   </button>
                 </div>
               </div>
 
               {/* Users List */}
               <div
-                className="rounded-lg border overflow-hidden"
+                className="rounded-xl border overflow-hidden"
                 style={{
                   backgroundColor: colors.card,
                   borderColor: colors.border,
@@ -631,7 +685,8 @@ export default function Dashboard() {
                     borderColor: colors.border,
                   }}
                 >
-                  <h2 className="text-xl font-bold" style={{ color: colors.text }}>
+                  <h2 className="text-xl font-bold flex items-center gap-2" style={{ color: colors.text }}>
+                    <Users className="w-5 h-5" />
                     Team Members
                   </h2>
                 </div>
@@ -651,15 +706,26 @@ export default function Dashboard() {
                     users.map((user) => (
                       <div
                         key={user.id}
-                        className="px-6 py-4 flex items-center justify-between"
+                        className="px-6 py-4 flex items-center justify-between hover:bg-opacity-30 transition-colors"
                       >
-                        <div>
-                          <p className="font-medium" style={{ color: colors.text }}>
-                            {user.name}
-                          </p>
-                          <p className="text-sm" style={{ color: colors.textMuted }}>
-                            {user.email}
-                          </p>
+                        <div className="flex items-center gap-3">
+                          <div
+                            className="w-10 h-10 rounded-lg flex items-center justify-center text-sm font-semibold"
+                            style={{
+                              backgroundColor: `rgba(96, 165, 250, 0.1)`,
+                              color: colors.primary,
+                            }}
+                          >
+                            {user.name.charAt(0).toUpperCase()}
+                          </div>
+                          <div>
+                            <p className="font-medium" style={{ color: colors.text }}>
+                              {user.name}
+                            </p>
+                            <p className="text-sm" style={{ color: colors.textMuted }}>
+                              {user.email}
+                            </p>
+                          </div>
                         </div>
                         <div className="flex items-center gap-2">
                           <select
@@ -682,7 +748,7 @@ export default function Dashboard() {
                           </select>
                           <button
                             onClick={() => handleDeleteUser(user.id)}
-                            className="p-2 rounded hover:opacity-80"
+                            className="p-2 rounded-lg hover:bg-opacity-50 transition-colors"
                           >
                             <Trash2 className="w-4 h-4 text-red-500" />
                           </button>
@@ -699,13 +765,14 @@ export default function Dashboard() {
           {activeTab === "theme" && (
             <div className="space-y-6">
               <div
-                className="rounded-lg border p-6"
+                className="rounded-xl border p-6"
                 style={{
                   backgroundColor: colors.card,
                   borderColor: colors.border,
                 }}
               >
-                <h3 className="text-lg font-bold mb-4" style={{ color: colors.text }}>
+                <h3 className="text-lg font-bold mb-6 flex items-center gap-2" style={{ color: colors.text }}>
+                  <Palette className="w-5 h-5" />
                   Select Theme
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -714,26 +781,25 @@ export default function Dashboard() {
                       id: "dark",
                       name: "Dark Mode",
                       color: "bg-slate-900",
+                      description: "Professional dark theme",
                     },
                     {
                       id: "light",
                       name: "Light Mode",
                       color: "bg-white",
+                      description: "Clean light theme",
                     },
                     {
                       id: "blue",
                       name: "Blue Theme",
                       color: "bg-blue-900",
+                      description: "Deep blue theme",
                     },
                   ].map((t) => (
                     <button
                       key={t.id}
                       onClick={() => setTheme(t.id as "dark" | "light" | "blue")}
-                      className={`p-6 rounded-lg border-2 transition-all ${
-                        theme === t.id
-                          ? "border-blue-500"
-                          : "border-transparent"
-                      }`}
+                      className={`p-6 rounded-xl border-2 transition-all hover:scale-105`}
                       style={{
                         backgroundColor: colors.sidebar,
                         borderColor:
@@ -743,15 +809,18 @@ export default function Dashboard() {
                       }}
                     >
                       <div
-                        className={`w-full h-20 rounded-lg mb-3 ${t.color}`}
+                        className={`w-full h-24 rounded-lg mb-4 ${t.color} shadow-lg`}
                       ></div>
-                      <p className="font-medium" style={{ color: colors.text }}>
+                      <p className="font-bold text-lg" style={{ color: colors.text }}>
                         {t.name}
                       </p>
+                      <p className="text-xs mt-1" style={{ color: colors.textMuted }}>
+                        {t.description}
+                      </p>
                       {theme === t.id && (
-                        <p className="text-sm mt-2" style={{ color: "#3B82F6" }}>
-                          Active
-                        </p>
+                        <div className="mt-4 px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 text-xs font-medium inline-block">
+                          ✓ Active
+                        </div>
                       )}
                     </button>
                   ))}
