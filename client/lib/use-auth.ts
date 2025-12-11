@@ -60,7 +60,7 @@ export async function activatePremiumPlan(userId: string) {
     const planDocRef = doc(db, 'userPlans', userId);
     const premiumPlan: UserPlan = {
       type: 'premium',
-      storageLimit: 5 * 1024 * 1024 * 1024,
+      storageLimit: null,
       storageUsed: 0,
       activatedAt: new Date().toISOString(),
     };
