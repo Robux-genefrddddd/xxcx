@@ -1,4 +1,4 @@
-import { Moon, Sun, Palette, Zap, Leaf, Sparkles } from "lucide-react";
+import { Moon, Sun, Palette } from "lucide-react";
 import { getThemeColors } from "@/lib/theme-colors";
 
 interface ThemeSelectorProps {
@@ -31,21 +31,21 @@ const themes = [
   {
     id: "purple",
     name: "Purple Dream",
-    icon: Sparkles,
+    icon: Palette,
     description: "Modern purple accent theme",
     colorPreview: "#0F0B1D",
   },
   {
     id: "green",
     name: "Forest Green",
-    icon: Leaf,
+    icon: Palette,
     description: "Nature-inspired green theme",
     colorPreview: "#051512",
   },
   {
     id: "amber",
     name: "Warm Amber",
-    icon: Zap,
+    icon: Palette,
     description: "Warm and energetic theme",
     colorPreview: "#1B1410",
   },
