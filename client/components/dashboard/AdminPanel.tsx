@@ -88,7 +88,7 @@ export function AdminPanel({
                   activeTab === tab.id ? colors.accent : "transparent",
                 color:
                   activeTab === tab.id
-                    ? colors.accentForeground
+                    ? "#FFFFFF"
                     : colors.textSecondary,
               }}
             >
