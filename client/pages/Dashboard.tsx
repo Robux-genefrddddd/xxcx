@@ -1,22 +1,12 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import {
-  Upload,
-  Download,
-  Share2,
-  Trash2,
-  Users,
-  Palette,
-  Search,
-  Bell,
-  Settings,
-  LogOut,
-  Plus,
-  Eye,
-  Copy,
-} from "lucide-react";
+import { FileUpload } from "@/components/dashboard/FileUpload";
+import { FilesList } from "@/components/dashboard/FilesList";
+import { UserManagement } from "@/components/dashboard/UserManagement";
+import { ThemeSelector } from "@/components/dashboard/ThemeSelector";
+import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
+import { UploadModal, MAX_FILE_SIZE } from "@/components/dashboard/UploadModal";
 import { auth, db, storage } from "@/lib/firebase";
-import { signOut } from "firebase/auth";
+import { getThemeColors, getThemeBackgroundImage } from "@/lib/theme-colors";
 import {
   collection,
   addDoc,
@@ -27,13 +17,7 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import {
-  ref,
-  uploadBytes,
-  getBytes,
-  deleteObject,
-  listAll,
-} from "firebase/storage";
+import { ref, uploadBytes, deleteObject } from "firebase/storage";
 
 interface FileItem {
   id: string;
@@ -42,6 +26,7 @@ interface FileItem {
   uploadedAt: string;
   shared: boolean;
   shareUrl?: string;
+  storagePath?: string;
 }
 
 interface User {
@@ -60,9 +45,13 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [theme, setTheme] = useState("dark");
-  const [newUserName, setNewUserName] = useState("");
-  const [newUserEmail, setNewUserEmail] = useState("");
-  const [newUserRole, setNewUserRole] = useState<"admin" | "user">("user");
+  const [uploadModalOpen, setUploadModalOpen] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadStage, setUploadStage] = useState<
+    "validating" | "uploading" | "processing" | "complete" | "error"
+  >("validating");
+  const [uploadFileName, setUploadFileName] = useState("");
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   useEffect(() => {
     if (auth.currentUser) {
@@ -92,6 +81,7 @@ export default function Dashboard() {
         uploadedAt: new Date(doc.data().uploadedAt).toLocaleDateString(),
         shared: doc.data().shared || false,
         shareUrl: doc.data().shareUrl,
+        storagePath: doc.data().storagePath,
       }));
       setFiles(fileList);
     } catch (error) {
@@ -101,22 +91,61 @@ export default function Dashboard() {
     }
   };
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleFileUpload = async (file: File) => {
     if (!file || !auth.currentUser) return;
 
+    // Reset upload state
+    setUploadFileName(file.name);
+    setUploadProgress(0);
+    setUploadStage("validating");
+    setUploadError(null);
+    setUploadModalOpen(true);
     setUploading(true);
+
     try {
+      // Stage 1: Validate file
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Check file size (100MB limit)
+      if (file.size > MAX_FILE_SIZE) {
+        setUploadError(
+          `File size exceeds 100MB limit. Your file is ${(file.size / (1024 * 1024)).toFixed(2)}MB`,
+        );
+        setUploadStage("error");
+        setUploading(false);
+        return;
+      }
+
+      setUploadProgress(20);
+
+      // Stage 2: Upload to storage
+      setUploadStage("uploading");
       const fileRef = ref(
         storage,
         `files/${auth.currentUser.uid}/${Date.now()}_${file.name}`,
       );
+
+      // Simulate upload progress
+      let lastProgress = 20;
+      const progressInterval = setInterval(() => {
+        if (lastProgress < 80) {
+          lastProgress += Math.random() * 30;
+          setUploadProgress(Math.min(lastProgress, 80));
+        }
+      }, 500);
+
       await uploadBytes(fileRef, file);
+      clearInterval(progressInterval);
+      setUploadProgress(85);
 
       const fileSize =
         file.size > 1024 * 1024
           ? `${(file.size / (1024 * 1024)).toFixed(2)}MB`
           : `${(file.size / 1024).toFixed(2)}KB`;
+
+      // Stage 3: Process file
+      setUploadStage("processing");
+      await new Promise((resolve) => setTimeout(resolve, 800));
 
       await addDoc(collection(db, "files"), {
         userId: auth.currentUser.uid,
@@ -127,10 +156,16 @@ export default function Dashboard() {
         storagePath: fileRef.fullPath,
       });
 
+      // Complete
+      setUploadProgress(100);
+      setUploadStage("complete");
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
       loadFiles();
     } catch (error) {
       console.error("Error uploading file:", error);
-      alert("Upload failed");
+      setUploadError("Upload failed. Please try again.");
+      setUploadStage("error");
     } finally {
       setUploading(false);
     }
@@ -145,18 +180,21 @@ export default function Dashboard() {
         shareUrl: shareUrl,
       });
       loadFiles();
-      alert("File shared! URL: " + shareUrl);
     } catch (error) {
       console.error("Error sharing file:", error);
     }
   };
 
-  const handleDeleteFile = async (fileId: string, storagePath: string) => {
-    if (!confirm("Delete this file?")) return;
+  const handleDeleteFile = async (fileId: string) => {
+    const file = files.find((f) => f.id === fileId);
+    if (!confirm("Delete this file? This action cannot be undone.")) return;
+
     try {
       await deleteDoc(doc(db, "files", fileId));
-      const fileRef = ref(storage, storagePath);
-      await deleteObject(fileRef);
+      if (file?.storagePath) {
+        const fileRef = ref(storage, file.storagePath);
+        await deleteObject(fileRef);
+      }
       loadFiles();
     } catch (error) {
       console.error("Error deleting file:", error);
@@ -179,21 +217,18 @@ export default function Dashboard() {
     }
   };
 
-  const handleAddUser = async () => {
-    if (!newUserName || !newUserEmail) {
-      alert("Please fill all fields");
-      return;
-    }
-
+  const handleAddUser = async (
+    name: string,
+    email: string,
+    role: "admin" | "user",
+  ) => {
     try {
       await addDoc(collection(db, "users"), {
-        name: newUserName,
-        email: newUserEmail,
-        role: newUserRole,
+        name,
+        email,
+        role,
         createdAt: new Date().toISOString(),
       });
-      setNewUserName("");
-      setNewUserEmail("");
       loadUsers();
     } catch (error) {
       console.error("Error adding user:", error);
@@ -201,7 +236,7 @@ export default function Dashboard() {
   };
 
   const handleDeleteUser = async (userId: string) => {
-    if (!confirm("Delete this user?")) return;
+    if (!confirm("Delete this user? This action cannot be undone.")) return;
     try {
       await deleteDoc(doc(db, "users", userId));
       loadUsers();
@@ -228,129 +263,38 @@ export default function Dashboard() {
     localStorage.setItem("app-theme", newTheme);
   };
 
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      window.location.href = "/";
-    } catch (error) {
-      console.error("Logout error:", error);
+  const handleCloseUploadModal = () => {
+    if (
+      uploadStage !== "uploading" &&
+      uploadStage !== "validating" &&
+      uploadStage !== "processing"
+    ) {
+      setUploadModalOpen(false);
+      setUploadProgress(0);
+      setUploadStage("validating");
+      setUploadFileName("");
+      setUploadError(null);
     }
   };
+
+  const themeColors = getThemeColors(theme);
 
   return (
     <div
       className="min-h-screen flex"
       style={{
-        backgroundColor: theme === "dark" ? "#0E0E0F" : "#FFFFFF",
-        backgroundImage:
-          theme === "dark"
-            ? "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23222223' fill-opacity='0.08'%3E%3Cpath d='M29 30l-1-1 1-1 1 1-1 1M30 29l-1-1 1-1 1 1-1 1M30 31l-1 1 1 1 1-1-1-1M31 30l 1-1-1-1-1 1 1 1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")"
-            : "none",
+        backgroundColor: themeColors.background,
+        backgroundImage: getThemeBackgroundImage(theme),
       }}
     >
       {/* Sidebar */}
-      <aside
-        className="w-64 text-white p-6 flex flex-col fixed left-0 top-0 h-screen overflow-y-auto border-r"
-        style={{
-          backgroundColor: theme === "dark" ? "#111214" : "#F3F4F6",
-          borderColor: theme === "dark" ? "#1F2124" : "#E5E7EB",
-          color: theme === "dark" ? "#FFFFFF" : "#111827",
-        }}
-      >
-        {/* Logo */}
-        <Link
-          to="/"
-          className="flex items-center gap-2 mb-10 hover:opacity-80 transition"
-        >
-          <img
-            src="https://cdn.builder.io/api/v1/image/assets%2F91e2732f1c03487e879c66ee97e72712%2Fee08390eccc04e8dbea3ce5415d97e92?format=webp&width=800"
-            alt="PinPinCloud"
-            className="w-7 h-7"
-          />
-          <span className="text-lg font-bold">PinPinCloud</span>
-        </Link>
-
-        {/* Navigation */}
-        <nav className="space-y-2 flex-1">
-          {[
-            { id: "files", label: "Files", icon: "📁" },
-            { id: "users", label: "Manage Users", icon: "👥" },
-            { id: "theme", label: "Theme", icon: "🎨" },
-          ].map((item) => (
-            <button
-              key={item.id}
-              onClick={() => setActiveTab(item.id)}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors ${
-                activeTab === item.id
-                  ? theme === "dark"
-                    ? "bg-blue-900 text-blue-400"
-                    : "bg-blue-100 text-blue-600"
-                  : theme === "dark"
-                    ? "text-gray-400 hover:bg-slate-800"
-                    : "text-gray-600 hover:bg-gray-100"
-              }`}
-            >
-              <span>{item.icon}</span>
-              <span>{item.label}</span>
-            </button>
-          ))}
-        </nav>
-
-        {/* User Info */}
-        <div
-          className="mt-6 p-4 rounded-lg border space-y-4"
-          style={{
-            backgroundColor: theme === "dark" ? "#141518" : "#F9FAFB",
-            borderColor: theme === "dark" ? "#1F2124" : "#E5E7EB",
-          }}
-        >
-          <div className="flex items-center gap-3">
-            <div
-              className="w-10 h-10 rounded-lg flex items-center justify-center text-sm font-semibold"
-              style={{
-                backgroundColor: theme === "dark" ? "#1A2647" : "#DBEAFE",
-                color: theme === "dark" ? "#FFFFFF" : "#1E40AF",
-              }}
-            >
-              {userName.charAt(0).toUpperCase()}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p
-                className="text-sm font-semibold truncate"
-                style={{ color: theme === "dark" ? "#FFFFFF" : "#111827" }}
-              >
-                {userName}
-              </p>
-              <p
-                className="text-xs truncate"
-                style={{ color: theme === "dark" ? "#9CA3AF" : "#6B7280" }}
-              >
-                {userEmail}
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors border"
-            style={{
-              backgroundColor: theme === "dark" ? "#0F1113" : "#F3F4F6",
-              borderColor: theme === "dark" ? "#1F2124" : "#D1D5DB",
-              color: theme === "dark" ? "#9CA3AF" : "#6B7280",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color =
-                theme === "dark" ? "#FFFFFF" : "#111827";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color =
-                theme === "dark" ? "#9CA3AF" : "#6B7280";
-            }}
-          >
-            <LogOut className="w-4 h-4" />
-            <span>Logout</span>
-          </button>
-        </div>
-      </aside>
+      <DashboardSidebar
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        userName={userName}
+        userEmail={userEmail}
+        theme={theme}
+      />
 
       {/* Main Content */}
       <main className="flex-1 ml-64 overflow-auto">
@@ -368,425 +312,71 @@ export default function Dashboard() {
                 className="text-3xl font-bold mb-1"
                 style={{ color: theme === "dark" ? "#FFFFFF" : "#111827" }}
               >
-                Welcome {userName}! 👋
+                Welcome {userName}!
               </h1>
               <p style={{ color: theme === "dark" ? "#9CA3AF" : "#6B7280" }}>
-                {activeTab === "files" && "Manage and share your files"}
-                {activeTab === "users" && "Manage team members"}
-                {activeTab === "theme" && "Customize your theme"}
+                {activeTab === "files" &&
+                  "Upload, organize and share your files securely"}
+                {activeTab === "users" &&
+                  "Manage your team members and their roles"}
+                {activeTab === "theme" &&
+                  "Personalize your dashboard appearance"}
               </p>
             </div>
           </div>
         </header>
 
-        {/* Content */}
+        {/* Content Area */}
         <div className="p-8">
-          {/* FILES TAB */}
+          {/* Files Tab */}
           {activeTab === "files" && (
             <div className="space-y-6">
-              {/* Upload Section */}
-              <div
-                className="rounded-lg border p-8 text-center"
-                style={{
-                  backgroundColor: theme === "dark" ? "#111214" : "#F9FAFB",
-                  borderColor: theme === "dark" ? "#1F2124" : "#E5E7EB",
-                  borderStyle: "dashed",
+              <FileUpload
+                onFileSelected={handleFileUpload}
+                uploading={uploading}
+                theme={theme}
+              />
+              <FilesList
+                files={files}
+                loading={loading}
+                theme={theme}
+                onShare={handleShareFile}
+                onDelete={handleDeleteFile}
+                onCopyShareLink={(url) => {
+                  alert("Share link copied to clipboard!");
                 }}
-              >
-                <label className="cursor-pointer">
-                  <div className="flex flex-col items-center gap-3">
-                    <Upload
-                      className="w-10 h-10"
-                      style={{
-                        color: theme === "dark" ? "#60A5FA" : "#3B82F6",
-                      }}
-                    />
-                    <div>
-                      <p
-                        className="font-semibold"
-                        style={{
-                          color: theme === "dark" ? "#FFFFFF" : "#111827",
-                        }}
-                      >
-                        Click to upload or drag and drop
-                      </p>
-                      <p
-                        style={{
-                          color: theme === "dark" ? "#9CA3AF" : "#6B7280",
-                        }}
-                      >
-                        PNG, JPG, PDF or any file up to 100MB
-                      </p>
-                    </div>
-                  </div>
-                  <input
-                    type="file"
-                    onChange={handleFileUpload}
-                    disabled={uploading}
-                    className="hidden"
-                  />
-                </label>
-              </div>
-
-              {/* Files List */}
-              <div
-                className="rounded-lg border overflow-hidden"
-                style={{
-                  backgroundColor: theme === "dark" ? "#111214" : "#FFFFFF",
-                  borderColor: theme === "dark" ? "#1F2124" : "#E5E7EB",
-                }}
-              >
-                <div
-                  className="px-6 py-4 border-b"
-                  style={{
-                    borderColor: theme === "dark" ? "#1F2124" : "#E5E7EB",
-                  }}
-                >
-                  <h2
-                    className="text-xl font-bold"
-                    style={{ color: theme === "dark" ? "#FFFFFF" : "#111827" }}
-                  >
-                    My Files {files.length > 0 && `(${files.length})`}
-                  </h2>
-                </div>
-                <div
-                  className="divide-y"
-                  style={{
-                    borderColor: theme === "dark" ? "#1F2124" : "#E5E7EB",
-                  }}
-                >
-                  {loading ? (
-                    <div className="px-6 py-8 text-center">
-                      <p
-                        style={{
-                          color: theme === "dark" ? "#9CA3AF" : "#6B7280",
-                        }}
-                      >
-                        Loading files...
-                      </p>
-                    </div>
-                  ) : files.length === 0 ? (
-                    <div className="px-6 py-8 text-center">
-                      <p
-                        style={{
-                          color: theme === "dark" ? "#9CA3AF" : "#6B7280",
-                        }}
-                      >
-                        No files yet. Upload one to get started!
-                      </p>
-                    </div>
-                  ) : (
-                    files.map((file) => (
-                      <div
-                        key={file.id}
-                        className="px-6 py-4 flex items-center justify-between hover:bg-opacity-50"
-                        style={{
-                          backgroundColor:
-                            theme === "dark" ? "transparent" : "#F9FAFB",
-                        }}
-                      >
-                        <div className="flex-1">
-                          <p
-                            className="font-medium"
-                            style={{
-                              color: theme === "dark" ? "#FFFFFF" : "#111827",
-                            }}
-                          >
-                            {file.name}
-                          </p>
-                          <p
-                            className="text-sm"
-                            style={{
-                              color: theme === "dark" ? "#9CA3AF" : "#6B7280",
-                            }}
-                          >
-                            {file.size} • {file.uploadedAt}
-                          </p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          {file.shared && (
-                            <span
-                              className="px-2 py-1 rounded text-xs font-medium"
-                              style={{
-                                backgroundColor:
-                                  theme === "dark" ? "#1A2647" : "#DBEAFE",
-                                color: theme === "dark" ? "#60A5FA" : "#1E40AF",
-                              }}
-                            >
-                              Shared
-                            </span>
-                          )}
-                          <button
-                            onClick={() => handleShareFile(file.id)}
-                            className="p-2 rounded hover:opacity-80"
-                            title="Share"
-                          >
-                            <Share2 className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => handleDeleteFile(file.id, file.name)}
-                            className="p-2 rounded hover:opacity-80"
-                            title="Delete"
-                          >
-                            <Trash2 className="w-4 h-4 text-red-500" />
-                          </button>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
+              />
             </div>
           )}
 
-          {/* USERS TAB */}
+          {/* Users Tab */}
           {activeTab === "users" && (
-            <div className="space-y-6">
-              {/* Add User */}
-              <div
-                className="rounded-lg border p-6"
-                style={{
-                  backgroundColor: theme === "dark" ? "#111214" : "#F9FAFB",
-                  borderColor: theme === "dark" ? "#1F2124" : "#E5E7EB",
-                }}
-              >
-                <h3
-                  className="text-lg font-bold mb-4"
-                  style={{ color: theme === "dark" ? "#FFFFFF" : "#111827" }}
-                >
-                  Add New User
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <input
-                    type="text"
-                    placeholder="Name"
-                    value={newUserName}
-                    onChange={(e) => setNewUserName(e.target.value)}
-                    className="px-4 py-2 rounded-lg border text-sm"
-                    style={{
-                      backgroundColor: theme === "dark" ? "#141518" : "#FFFFFF",
-                      borderColor: theme === "dark" ? "#1F2124" : "#E5E7EB",
-                      color: theme === "dark" ? "#FFFFFF" : "#111827",
-                    }}
-                  />
-                  <input
-                    type="email"
-                    placeholder="Email"
-                    value={newUserEmail}
-                    onChange={(e) => setNewUserEmail(e.target.value)}
-                    className="px-4 py-2 rounded-lg border text-sm"
-                    style={{
-                      backgroundColor: theme === "dark" ? "#141518" : "#FFFFFF",
-                      borderColor: theme === "dark" ? "#1F2124" : "#E5E7EB",
-                      color: theme === "dark" ? "#FFFFFF" : "#111827",
-                    }}
-                  />
-                  <select
-                    value={newUserRole}
-                    onChange={(e) =>
-                      setNewUserRole(e.target.value as "admin" | "user")
-                    }
-                    className="px-4 py-2 rounded-lg border text-sm"
-                    style={{
-                      backgroundColor: theme === "dark" ? "#141518" : "#FFFFFF",
-                      borderColor: theme === "dark" ? "#1F2124" : "#E5E7EB",
-                      color: theme === "dark" ? "#FFFFFF" : "#111827",
-                    }}
-                  >
-                    <option value="user">User</option>
-                    <option value="admin">Admin</option>
-                  </select>
-                  <button
-                    onClick={handleAddUser}
-                    className="px-4 py-2 rounded-lg font-medium flex items-center gap-2 hover:opacity-80"
-                    style={{
-                      backgroundColor: theme === "dark" ? "#1A2647" : "#DBEAFE",
-                      color: theme === "dark" ? "#60A5FA" : "#1E40AF",
-                    }}
-                  >
-                    <Plus className="w-4 h-4" />
-                    Add
-                  </button>
-                </div>
-              </div>
-
-              {/* Users List */}
-              <div
-                className="rounded-lg border overflow-hidden"
-                style={{
-                  backgroundColor: theme === "dark" ? "#111214" : "#FFFFFF",
-                  borderColor: theme === "dark" ? "#1F2124" : "#E5E7EB",
-                }}
-              >
-                <div
-                  className="px-6 py-4 border-b"
-                  style={{
-                    borderColor: theme === "dark" ? "#1F2124" : "#E5E7EB",
-                  }}
-                >
-                  <h2
-                    className="text-xl font-bold"
-                    style={{ color: theme === "dark" ? "#FFFFFF" : "#111827" }}
-                  >
-                    Team Members
-                  </h2>
-                </div>
-                <div
-                  className="divide-y"
-                  style={{
-                    borderColor: theme === "dark" ? "#1F2124" : "#E5E7EB",
-                  }}
-                >
-                  {users.length === 0 ? (
-                    <div className="px-6 py-8 text-center">
-                      <p
-                        style={{
-                          color: theme === "dark" ? "#9CA3AF" : "#6B7280",
-                        }}
-                      >
-                        No users yet
-                      </p>
-                    </div>
-                  ) : (
-                    users.map((user) => (
-                      <div
-                        key={user.id}
-                        className="px-6 py-4 flex items-center justify-between"
-                      >
-                        <div>
-                          <p
-                            className="font-medium"
-                            style={{
-                              color: theme === "dark" ? "#FFFFFF" : "#111827",
-                            }}
-                          >
-                            {user.name}
-                          </p>
-                          <p
-                            className="text-sm"
-                            style={{
-                              color: theme === "dark" ? "#9CA3AF" : "#6B7280",
-                            }}
-                          >
-                            {user.email}
-                          </p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <select
-                            value={user.role}
-                            onChange={(e) =>
-                              handleUpdateUserRole(
-                                user.id,
-                                e.target.value as "admin" | "user",
-                              )
-                            }
-                            className="px-3 py-1 rounded text-sm border"
-                            style={{
-                              backgroundColor:
-                                theme === "dark" ? "#141518" : "#FFFFFF",
-                              borderColor:
-                                theme === "dark" ? "#1F2124" : "#E5E7EB",
-                              color: theme === "dark" ? "#FFFFFF" : "#111827",
-                            }}
-                          >
-                            <option value="user">User</option>
-                            <option value="admin">Admin</option>
-                          </select>
-                          <button
-                            onClick={() => handleDeleteUser(user.id)}
-                            className="p-2 rounded hover:opacity-80"
-                          >
-                            <Trash2 className="w-4 h-4 text-red-500" />
-                          </button>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
-            </div>
+            <UserManagement
+              users={users}
+              theme={theme}
+              onAddUser={handleAddUser}
+              onDeleteUser={handleDeleteUser}
+              onUpdateUserRole={handleUpdateUserRole}
+            />
           )}
 
-          {/* THEME TAB */}
+          {/* Theme Tab */}
           {activeTab === "theme" && (
-            <div className="space-y-6">
-              <div
-                className="rounded-lg border p-6"
-                style={{
-                  backgroundColor: theme === "dark" ? "#111214" : "#F9FAFB",
-                  borderColor: theme === "dark" ? "#1F2124" : "#E5E7EB",
-                }}
-              >
-                <h3
-                  className="text-lg font-bold mb-4"
-                  style={{ color: theme === "dark" ? "#FFFFFF" : "#111827" }}
-                >
-                  Select Theme
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {[
-                    {
-                      id: "dark",
-                      name: "Dark Mode",
-                      color: "bg-slate-900",
-                    },
-                    {
-                      id: "light",
-                      name: "Light Mode",
-                      color: "bg-white",
-                    },
-                    {
-                      id: "blue",
-                      name: "Blue Theme",
-                      color: "bg-blue-900",
-                    },
-                  ].map((t) => (
-                    <button
-                      key={t.id}
-                      onClick={() => handleThemeChange(t.id)}
-                      className={`p-6 rounded-lg border-2 transition-all ${
-                        theme === t.id
-                          ? "border-blue-500"
-                          : "border-transparent"
-                      }`}
-                      style={{
-                        backgroundColor:
-                          theme === "dark" ? "#141518" : "#FFFFFF",
-                        borderColor:
-                          theme === t.id
-                            ? "#3B82F6"
-                            : theme === "dark"
-                              ? "#1F2124"
-                              : "#E5E7EB",
-                      }}
-                    >
-                      <div
-                        className={`w-full h-20 rounded-lg mb-3 ${t.color}`}
-                      ></div>
-                      <p
-                        className="font-medium"
-                        style={{
-                          color: theme === "dark" ? "#FFFFFF" : "#111827",
-                        }}
-                      >
-                        {t.name}
-                      </p>
-                      {theme === t.id && (
-                        <p
-                          className="text-sm mt-2"
-                          style={{ color: "#3B82F6" }}
-                        >
-                          ✓ Active
-                        </p>
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
+            <ThemeSelector theme={theme} onThemeChange={handleThemeChange} />
           )}
         </div>
       </main>
+
+      {/* Upload Modal */}
+      <UploadModal
+        isOpen={uploadModalOpen}
+        fileName={uploadFileName}
+        progress={uploadProgress}
+        stage={uploadStage}
+        error={uploadError || undefined}
+        onClose={handleCloseUploadModal}
+        theme={theme}
+      />
     </div>
   );
 }
