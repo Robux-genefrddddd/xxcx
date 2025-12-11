@@ -30,6 +30,7 @@ import {
   ref,
   uploadBytes,
   deleteObject,
+  getDownloadURL,
 } from "firebase/storage";
 import { useTheme, getThemeColors } from "@/lib/theme-context";
 import { useAuth } from "@/lib/use-auth";
