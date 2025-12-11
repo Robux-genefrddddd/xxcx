@@ -52,26 +52,21 @@ export default function DashboardStats({
     return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
   };
 
-  const storagePercentage =
-    storageLimit && storageLimit > 0
-      ? (storageUsed / storageLimit) * 100
-      : 0;
-
   const stats = [
     {
-      title: 'Total Files',
+      title: 'Files',
       value: totalFiles,
       icon: FileText,
       gradient: 'from-blue-500 to-blue-600',
     },
     {
-      title: 'Shared Files',
+      title: 'Shared',
       value: sharedFiles,
       icon: Share2,
       gradient: 'from-purple-500 to-purple-600',
     },
     {
-      title: 'Storage Used',
+      title: 'Storage',
       value: formatBytes(storageUsed),
       icon: HardDrive,
       gradient: 'from-green-500 to-green-600',
@@ -79,31 +74,31 @@ export default function DashboardStats({
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
       {stats.map((stat) => {
         const Icon = stat.icon;
         return (
           <div
             key={stat.title}
-            className={`rounded-lg p-6 border bg-gradient-to-br ${stat.gradient} overflow-hidden relative`}
+            className={`rounded-lg p-4 border bg-gradient-to-br overflow-hidden relative transition-all hover:scale-105`}
             style={{
               borderColor: colors.border,
-              background: `linear-gradient(135deg, rgba(30, 58, 138, 0.3) 0%, rgba(96, 165, 250, 0.1) 100%)`,
+              background: `linear-gradient(135deg, rgba(30, 58, 138, 0.2) 0%, rgba(96, 165, 250, 0.08) 100%)`,
             }}
           >
             <div className="flex items-start justify-between relative z-10">
               <div>
-                <p style={{ color: colors.textMuted }} className="text-sm font-medium mb-2">
+                <p style={{ color: colors.textMuted }} className="text-xs font-medium mb-1">
                   {stat.title}
                 </p>
-                <p className="text-3xl font-bold" style={{ color: colors.text }}>
+                <p className="text-2xl font-bold" style={{ color: colors.text }}>
                   {typeof stat.value === 'number' ? stat.value.toLocaleString() : stat.value}
                 </p>
               </div>
               <div
-                className={`p-3 rounded-lg bg-gradient-to-br ${stat.gradient}`}
+                className={`p-2 rounded-lg bg-gradient-to-br ${stat.gradient}`}
               >
-                <Icon className="w-6 h-6 text-white" />
+                <Icon className="w-4 h-4 text-white" />
               </div>
             </div>
           </div>
