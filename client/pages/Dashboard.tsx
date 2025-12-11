@@ -186,6 +186,25 @@ export default function Dashboard() {
     }
   };
 
+  const handleDownloadFile = async (fileId: string, fileName: string) => {
+    try {
+      const fileRef = ref(storage, `files/${auth.currentUser?.uid}/${fileName}`);
+      const url = await getBytes(fileRef);
+      const blob = new Blob([url]);
+      const downloadUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = downloadUrl;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(downloadUrl);
+    } catch (error) {
+      console.error("Error downloading file:", error);
+      alert("Download failed");
+    }
+  };
+
   const loadUsers = async () => {
     try {
       const docs = await getDocs(collection(db, "users"));
