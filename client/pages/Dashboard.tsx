@@ -327,19 +327,19 @@ export default function Dashboard() {
                       <th className="text-left py-3 px-2 text-xs font-semibold text-white/60">
                         Invoice ID
                       </th>
-                      <th className="text-left py-3 px-2 text-xs font-semibold text-gray-500">
+                      <th className="text-left py-3 px-2 text-xs font-semibold text-white/60">
                         Service provider
                       </th>
-                      <th className="text-left py-3 px-2 text-xs font-semibold text-gray-500">
+                      <th className="text-left py-3 px-2 text-xs font-semibold text-white/60">
                         Usage
                       </th>
-                      <th className="text-left py-3 px-2 text-xs font-semibold text-gray-500">
+                      <th className="text-left py-3 px-2 text-xs font-semibold text-white/60">
                         Interval
                       </th>
-                      <th className="text-left py-3 px-2 text-xs font-semibold text-gray-500">
+                      <th className="text-left py-3 px-2 text-xs font-semibold text-white/60">
                         Amount
                       </th>
-                      <th className="text-left py-3 px-2 text-xs font-semibold text-gray-500">
+                      <th className="text-left py-3 px-2 text-xs font-semibold text-white/60">
                         Projected cost
                       </th>
                     </tr>
