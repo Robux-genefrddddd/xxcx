@@ -472,6 +472,15 @@ export default function Dashboard() {
           {activeTab === "theme" && (
             <ThemeSelector theme={theme} onThemeChange={handleThemeChange} />
           )}
+
+          {/* Admin Tab */}
+          {activeTab === "admin" && (
+            <AdminPanel
+              theme={theme}
+              userRole={userRole}
+              userId={userId || ""}
+            />
+          )}
         </div>
       </main>
 
