@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
-import { db } from "@/lib/firebase";
-import { collection, setDoc, doc } from "firebase/firestore";
+import { db } from "../../client/lib/firebase";
+import { setDoc, doc } from "firebase/firestore";
 
 function generateRandomString(length: number): string {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
