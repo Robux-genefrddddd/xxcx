@@ -1,5 +1,6 @@
 import { X, CheckCircle, AlertCircle } from "lucide-react";
 import { useEffect, useState } from "react";
+import { getThemeColors } from "@/lib/theme-colors";
 
 interface UploadModalProps {
   isOpen: boolean;
@@ -53,6 +54,7 @@ export function UploadModal({
 
   if (!isOpen) return null;
 
+  const colors = getThemeColors(theme);
   const isError = stage === "error";
   const isSuccess = stage === "complete";
   const isActive = stage === "uploading" || stage === "validating" || stage === "processing";
@@ -68,20 +70,20 @@ export function UploadModal({
       <div
         className="w-full max-w-md rounded-xl border shadow-2xl"
         style={{
-          backgroundColor: theme === "dark" ? "#111214" : "#FFFFFF",
-          borderColor: theme === "dark" ? "#1F2124" : "#E5E7EB",
+          backgroundColor: colors.card,
+          borderColor: colors.border,
         }}
       >
         {/* Header */}
         <div
           className="flex items-center justify-between p-6 border-b"
           style={{
-            borderColor: theme === "dark" ? "#1F2124" : "#E5E7EB",
+            borderColor: colors.border,
           }}
         >
           <h2
             className="text-lg font-bold"
-            style={{ color: theme === "dark" ? "#FFFFFF" : "#111827" }}
+            style={{ color: colors.text }}
           >
             File Upload
           </h2>
@@ -90,7 +92,7 @@ export function UploadModal({
               onClick={onClose}
               className="p-1 rounded hover:opacity-60 transition-opacity"
               style={{
-                color: theme === "dark" ? "#9CA3AF" : "#6B7280",
+                color: colors.textSecondary,
               }}
             >
               <X className="w-5 h-5" />
@@ -105,14 +107,14 @@ export function UploadModal({
             <p
               className="text-sm font-medium mb-2"
               style={{
-                color: theme === "dark" ? "#9CA3AF" : "#6B7280",
+                color: colors.textSecondary,
               }}
             >
               FILE NAME
             </p>
             <p
               className="font-medium truncate"
-              style={{ color: theme === "dark" ? "#FFFFFF" : "#111827" }}
+              style={{ color: colors.text }}
               title={fileName}
             >
               {fileName}
@@ -190,7 +192,7 @@ export function UploadModal({
                 <p
                   className="text-xs font-medium"
                   style={{
-                    color: theme === "dark" ? "#9CA3AF" : "#6B7280",
+                    color: colors.textSecondary,
                   }}
                 >
                   PROGRESS
@@ -198,7 +200,7 @@ export function UploadModal({
                 <p
                   className="text-xs font-semibold"
                   style={{
-                    color: theme === "dark" ? "#60A5FA" : "#3B82F6",
+                    color: colors.primary,
                   }}
                 >
                   {displayProgress}%
@@ -207,10 +209,7 @@ export function UploadModal({
               <div
                 className="w-full h-2 rounded-full overflow-hidden"
                 style={{
-                  backgroundColor:
-                    theme === "dark"
-                      ? "rgba(59, 130, 246, 0.1)"
-                      : "#F3F4F6",
+                  backgroundColor: colors.accentLight,
                 }}
               >
                 <div
@@ -220,9 +219,9 @@ export function UploadModal({
                     backgroundColor:
                       isSuccess
                         ? "#22C55E"
-                        : isError
-                          ? "#EF4444"
-                          : "#3B82F6",
+                      : isError
+                        ? "#EF4444"
+                        : colors.primary,
                   }}
                 ></div>
               </div>
@@ -248,7 +247,7 @@ export function UploadModal({
               <p
                 className="text-xs font-medium"
                 style={{
-                  color: theme === "dark" ? "#9CA3AF" : "#6B7280",
+                  color: colors.textSecondary,
                 }}
               >
                 STAGES
@@ -261,21 +260,19 @@ export function UploadModal({
                         className={`w-4 h-4 rounded-full border flex items-center justify-center text-xs`}
                         style={{
                           borderColor:
-                            stage === s
-                              ? "#3B82F6"
-                              : ["validating", "uploading", "processing"].indexOf(
-                                    s as string,
-                                  ) <
-                                  ["validating", "uploading", "processing"].indexOf(
-                                    stage as string,
-                                  )
-                                ? "#22C55E"
-                                : theme === "dark"
-                                  ? "#2A2E33"
-                                  : "#E5E7EB",
+                          stage === s
+                            ? colors.primary
+                            : ["validating", "uploading", "processing"].indexOf(
+                                  s as string,
+                                ) <
+                                ["validating", "uploading", "processing"].indexOf(
+                                  stage as string,
+                                )
+                              ? "#22C55E"
+                              : colors.border,
                           backgroundColor:
                             stage === s
-                              ? "#3B82F6"
+                              ? colors.primary
                               : ["validating", "uploading", "processing"].indexOf(
                                     s as string,
                                   ) <
@@ -302,12 +299,8 @@ export function UploadModal({
                         style={{
                           color:
                             stage === s
-                              ? theme === "dark"
-                                ? "#FFFFFF"
-                                : "#111827"
-                              : theme === "dark"
-                                ? "#9CA3AF"
-                                : "#6B7280",
+                              ? colors.text
+                              : colors.textSecondary,
                         }}
                       >
                         {stageLabels[s as keyof typeof stageLabels]}
@@ -325,15 +318,15 @@ export function UploadModal({
           <div
             className="px-6 py-4 border-t"
             style={{
-              borderColor: theme === "dark" ? "#1F2124" : "#E5E7EB",
+              borderColor: colors.border,
             }}
           >
             <button
               onClick={onClose}
               className="w-full py-2 px-4 rounded-lg font-medium transition-opacity hover:opacity-80"
               style={{
-                backgroundColor: theme === "dark" ? "#1A2647" : "#DBEAFE",
-                color: theme === "dark" ? "#60A5FA" : "#1E40AF",
+                backgroundColor: colors.accentLight,
+                color: colors.primary,
               }}
             >
               Done
@@ -345,15 +338,15 @@ export function UploadModal({
           <div
             className="px-6 py-4 border-t"
             style={{
-              borderColor: theme === "dark" ? "#1F2124" : "#E5E7EB",
+              borderColor: colors.border,
             }}
           >
             <button
               onClick={onClose}
               className="w-full py-2 px-4 rounded-lg font-medium transition-opacity hover:opacity-80"
               style={{
-                backgroundColor: theme === "dark" ? "#1A2647" : "#DBEAFE",
-                color: theme === "dark" ? "#60A5FA" : "#1E40AF",
+                backgroundColor: colors.accentLight,
+                color: colors.primary,
               }}
             >
               Close
