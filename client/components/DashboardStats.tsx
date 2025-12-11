@@ -1,4 +1,5 @@
 import { FileText, Share2, HardDrive } from 'lucide-react';
+import Sparkline from './Sparkline';
 
 interface DashboardStatsProps {
   totalFiles: number;
@@ -52,24 +53,34 @@ export default function DashboardStats({
     return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
   };
 
+  const filesData = [2, 5, 3, 8, 6, 9, totalFiles];
+  const sharedData = [0, 1, 2, 1, 3, 2, sharedFiles];
+  const storageData = [100, 250, 200, 450, 400, 600, storageUsed / (1024 * 1024)];
+
   const stats = [
     {
       title: 'Files',
       value: totalFiles,
       icon: FileText,
       gradient: 'from-blue-500 to-blue-600',
+      sparklineColor: '#3B82F6',
+      sparklineData: filesData,
     },
     {
       title: 'Shared',
       value: sharedFiles,
       icon: Share2,
       gradient: 'from-purple-500 to-purple-600',
+      sparklineColor: '#A855F7',
+      sparklineData: sharedData,
     },
     {
       title: 'Storage',
       value: formatBytes(storageUsed),
       icon: HardDrive,
       gradient: 'from-green-500 to-green-600',
+      sparklineColor: '#10B981',
+      sparklineData: storageData,
     },
   ];
 
@@ -80,12 +91,16 @@ export default function DashboardStats({
         return (
           <div
             key={stat.title}
-            className={`rounded-lg p-4 border bg-gradient-to-br overflow-hidden relative transition-all hover:scale-105`}
+            className={`rounded-lg p-4 border overflow-hidden relative transition-all hover:scale-105`}
             style={{
               borderColor: colors.border,
               background: `linear-gradient(135deg, rgba(30, 58, 138, 0.2) 0%, rgba(96, 165, 250, 0.08) 100%)`,
             }}
           >
+            <div className="mb-3">
+              <Sparkline data={stat.sparklineData} color={stat.sparklineColor} height={30} />
+            </div>
+
             <div className="flex items-start justify-between relative z-10">
               <div>
                 <p style={{ color: colors.textMuted }} className="text-xs font-medium mb-1">
