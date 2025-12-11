@@ -148,19 +148,101 @@ export function AdminKeyManagement({
         </h3>
         {canCreateKeys(userRole) && (
           <button
-            onClick={generateKey}
-            disabled={generatingKey}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-opacity hover:opacity-80 disabled:opacity-50"
+            onClick={() => setShowGenerateForm(!showGenerateForm)}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-opacity hover:opacity-80"
             style={{
               backgroundColor: colors.accent,
               color: "#FFFFFF",
             }}
           >
             <Plus className="w-4 h-4" />
-            Generate Key
+            {showGenerateForm ? "Cancel" : "Generate Key"}
           </button>
         )}
       </div>
+
+      {/* Generate Key Form */}
+      {showGenerateForm && canCreateKeys(userRole) && (
+        <div
+          className="p-6 rounded-lg border space-y-4"
+          style={{
+            backgroundColor: colors.card,
+            borderColor: colors.border,
+          }}
+        >
+          <h4 className="font-semibold" style={{ color: colors.text }}>
+            Generate New Key
+          </h4>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label
+                className="block text-sm font-medium mb-2"
+                style={{ color: colors.text }}
+              >
+                Key Type
+              </label>
+              <select
+                value={formData.type}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    type: e.target.value as KeyForm["type"],
+                  })
+                }
+                className="w-full px-3 py-2 rounded-lg border text-sm focus:outline-none"
+                style={{
+                  backgroundColor: colors.sidebar,
+                  borderColor: colors.border,
+                  color: colors.text,
+                }}
+              >
+                <option value="monthly">Monthly</option>
+                <option value="yearly">Yearly</option>
+                <option value="lifetime">Lifetime</option>
+              </select>
+            </div>
+
+            <div>
+              <label
+                className="block text-sm font-medium mb-2"
+                style={{ color: colors.text }}
+              >
+                Max Emojis
+              </label>
+              <input
+                type="number"
+                value={formData.maxEmojis}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    maxEmojis: parseInt(e.target.value) || 0,
+                  })
+                }
+                min="1"
+                className="w-full px-3 py-2 rounded-lg border text-sm focus:outline-none"
+                style={{
+                  backgroundColor: colors.sidebar,
+                  borderColor: colors.border,
+                  color: colors.text,
+                }}
+              />
+            </div>
+          </div>
+
+          <button
+            onClick={generateKey}
+            disabled={generatingKey}
+            className="w-full px-4 py-2 rounded-lg font-medium transition-opacity hover:opacity-80 disabled:opacity-50"
+            style={{
+              backgroundColor: colors.accent,
+              color: "#FFFFFF",
+            }}
+          >
+            {generatingKey ? "Generating..." : "Create Key"}
+          </button>
+        </div>
+      )}
 
       {/* Keys Table */}
       <div
