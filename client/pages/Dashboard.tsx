@@ -601,6 +601,14 @@ export default function Dashboard() {
                             </span>
                           )}
                           <button
+                            onClick={() => handleDownloadFile(file.id, file.name)}
+                            className="p-2 rounded-lg hover:bg-opacity-50 transition-colors"
+                            title="Download"
+                            style={{ color: colors.textMuted }}
+                          >
+                            <Download className="w-4 h-4" />
+                          </button>
+                          <button
                             onClick={() => handleShareFile(file.id)}
                             className="p-2 rounded-lg hover:bg-opacity-50 transition-colors"
                             title="Share"
