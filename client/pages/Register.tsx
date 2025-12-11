@@ -1,6 +1,14 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Mail, Lock, User, ArrowRight, Check } from "lucide-react";
+import {
+  createUserWithEmailAndPassword,
+  updateProfile,
+  signInWithPopup,
+  GoogleAuthProvider,
+  GithubAuthProvider,
+} from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -12,6 +20,7 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const navigate = useNavigate();
 
   const passwordStrength = {
     length: formData.password.length >= 8,
@@ -45,14 +54,61 @@ export default function Register() {
     setLoading(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setSuccess(true);
-      console.log("Register:", {
-        name: formData.name,
-        email: formData.email,
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        formData.email,
+        formData.password
+      );
+
+      await updateProfile(userCredential.user, {
+        displayName: formData.name,
       });
-    } catch (err) {
-      setError("Registration failed. Please try again.");
+
+      setSuccess(true);
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 2000);
+    } catch (err: unknown) {
+      const error = err as { code?: string; message?: string };
+      if (error.code === "auth/email-already-in-use") {
+        setError("Email already in use");
+      } else if (error.code === "auth/invalid-email") {
+        setError("Invalid email address");
+      } else if (error.code === "auth/weak-password") {
+        setError("Password is too weak");
+      } else {
+        setError(error.message || "Registration failed");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSignUp = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+      navigate("/dashboard");
+    } catch (err: unknown) {
+      const error = err as { message?: string };
+      setError(error.message || "Google sign-up failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGithubSignUp = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const provider = new GithubAuthProvider();
+      await signInWithPopup(auth, provider);
+      navigate("/dashboard");
+    } catch (err: unknown) {
+      const error = err as { message?: string };
+      setError(error.message || "GitHub sign-up failed");
     } finally {
       setLoading(false);
     }
@@ -71,14 +127,8 @@ export default function Register() {
           </div>
           <h1 className="text-4xl font-bold text-white">Account created!</h1>
           <p className="text-white/80">
-            Welcome to Studio. Check your email to verify your account and get started.
+            Welcome to Studio. Your account is ready to use. Redirecting...
           </p>
-          <Link
-            to="/login"
-            className="inline-block bg-cyan-400 text-blue-900 px-8 py-3 rounded-lg hover:bg-cyan-300 font-bold transition"
-          >
-            Go to Sign In
-          </Link>
         </div>
       </div>
     );
@@ -255,33 +305,37 @@ export default function Register() {
                 </>
               )}
             </button>
+
+            {/* Divider */}
+            <div className="relative py-4 my-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-200" />
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white text-gray-500">Or sign up with</span>
+              </div>
+            </div>
+
+            {/* OAuth Buttons */}
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={handleGoogleSignUp}
+                disabled={loading}
+                className="bg-gray-50 border border-gray-200 py-3 rounded-lg hover:bg-gray-100 font-medium transition text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Google
+              </button>
+              <button
+                type="button"
+                onClick={handleGithubSignUp}
+                disabled={loading}
+                className="bg-gray-50 border border-gray-200 py-3 rounded-lg hover:bg-gray-100 font-medium transition text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                GitHub
+              </button>
+            </div>
           </form>
-
-          {/* Divider */}
-          <div className="relative py-4 my-6">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-200" />
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">Or sign up with</span>
-            </div>
-          </div>
-
-          {/* OAuth Buttons */}
-          <div className="grid grid-cols-2 gap-3">
-            <button
-              type="button"
-              className="bg-gray-50 border border-gray-200 py-3 rounded-lg hover:bg-gray-100 font-medium transition text-gray-900"
-            >
-              Google
-            </button>
-            <button
-              type="button"
-              className="bg-gray-50 border border-gray-200 py-3 rounded-lg hover:bg-gray-100 font-medium transition text-gray-900"
-            >
-              GitHub
-            </button>
-          </div>
 
           {/* Footer */}
           <div className="mt-8 text-center">
