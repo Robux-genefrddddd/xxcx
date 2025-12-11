@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Files, Users, Palette, LogOut } from "lucide-react";
 import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import { getThemeColors } from "@/lib/theme-colors";
 
 interface DashboardSidebarProps {
   activeTab: string;
@@ -24,6 +25,8 @@ export function DashboardSidebar({
   userEmail,
   theme,
 }: DashboardSidebarProps) {
+  const colors = getThemeColors(theme);
+
   const handleLogout = async () => {
     try {
       await signOut(auth);
@@ -37,9 +40,9 @@ export function DashboardSidebar({
     <aside
       className="w-64 text-white p-6 flex flex-col fixed left-0 top-0 h-screen overflow-y-auto border-r"
       style={{
-        backgroundColor: theme === "dark" ? "#111214" : "#F3F4F6",
-        borderColor: theme === "dark" ? "#1F2124" : "#E5E7EB",
-        color: theme === "dark" ? "#FFFFFF" : "#111827",
+        backgroundColor: colors.sidebar,
+        borderColor: colors.border,
+        color: colors.sidebarForeground,
       }}
     >
       {/* Logo */}
@@ -47,12 +50,18 @@ export function DashboardSidebar({
         to="/"
         className="flex items-center gap-3 mb-10 hover:opacity-80 transition-opacity"
       >
-        <img
-          src="https://cdn.builder.io/api/v1/image/assets%2F91e2732f1c03487e879c66ee97e72712%2Fee08390eccc04e8dbea3ce5415d97e92?format=webp&width=800"
-          alt="PinPinCloud"
-          className="w-8 h-8"
-        />
-        <span className="text-lg font-bold">PinPinCloud</span>
+        <div
+          className="w-8 h-8 rounded flex items-center justify-center font-bold text-sm"
+          style={{
+            backgroundColor: colors.primary,
+            color: colors.primaryForeground,
+          }}
+        >
+          PC
+        </div>
+        <span className="text-lg font-bold" style={{ color: colors.sidebarForeground }}>
+          PinPinCloud
+        </span>
       </Link>
 
       {/* Navigation */}
@@ -67,18 +76,8 @@ export function DashboardSidebar({
               onClick={() => onTabChange(item.id)}
               className="w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors text-left"
               style={{
-                backgroundColor: isActive
-                  ? theme === "dark"
-                    ? "rgba(59, 130, 246, 0.15)"
-                    : "#DBEAFE"
-                  : "transparent",
-                color: isActive
-                  ? theme === "dark"
-                    ? "#60A5FA"
-                    : "#1E40AF"
-                  : theme === "dark"
-                    ? "#9CA3AF"
-                    : "#6B7280",
+                backgroundColor: isActive ? colors.accentLight : "transparent",
+                color: isActive ? colors.accent : colors.textSecondary,
               }}
             >
               <Icon className="w-5 h-5" />
@@ -92,16 +91,16 @@ export function DashboardSidebar({
       <div
         className="mt-6 p-4 rounded-lg border space-y-4"
         style={{
-          backgroundColor: theme === "dark" ? "#141518" : "#F9FAFB",
-          borderColor: theme === "dark" ? "#1F2124" : "#E5E7EB",
+          backgroundColor: colors.card,
+          borderColor: colors.border,
         }}
       >
         <div className="flex items-center gap-3">
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center text-sm font-semibold"
             style={{
-              backgroundColor: theme === "dark" ? "#1A2647" : "#DBEAFE",
-              color: theme === "dark" ? "#60A5FA" : "#1E40AF",
+              backgroundColor: colors.primary,
+              color: colors.primaryForeground,
             }}
           >
             {userName.charAt(0).toUpperCase()}
@@ -109,13 +108,13 @@ export function DashboardSidebar({
           <div className="flex-1 min-w-0">
             <p
               className="text-sm font-semibold truncate"
-              style={{ color: theme === "dark" ? "#FFFFFF" : "#111827" }}
+              style={{ color: colors.sidebarForeground }}
             >
               {userName}
             </p>
             <p
               className="text-xs truncate"
-              style={{ color: theme === "dark" ? "#9CA3AF" : "#6B7280" }}
+              style={{ color: colors.textSecondary }}
             >
               {userEmail}
             </p>
@@ -125,9 +124,9 @@ export function DashboardSidebar({
           onClick={handleLogout}
           className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors border font-medium"
           style={{
-            backgroundColor: theme === "dark" ? "#0F1113" : "#F3F4F6",
-            borderColor: theme === "dark" ? "#1F2124" : "#D1D5DB",
-            color: theme === "dark" ? "#9CA3AF" : "#6B7280",
+            backgroundColor: colors.card,
+            borderColor: colors.border,
+            color: colors.textSecondary,
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.color =
