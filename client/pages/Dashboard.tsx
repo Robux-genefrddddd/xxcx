@@ -35,6 +35,7 @@ import { useTheme, getThemeColors } from "@/lib/theme-context";
 import { useAuth } from "@/lib/use-auth";
 import ActivatePlanModal from "@/components/ActivatePlanModal";
 import DashboardStats from "@/components/DashboardStats";
+import StorageChart from "@/components/StorageChart";
 
 interface FileItem {
   id: string;
