@@ -307,6 +307,26 @@ export default function Dashboard() {
         const fileRef = ref(storage, file.storagePath);
         await deleteObject(fileRef);
       }
+
+      // Update storage used in Firestore
+      if (file && auth.currentUser) {
+        try {
+          let fileSizeBytes = 0;
+          const sizeStr = file.size;
+          if (sizeStr.includes("MB")) {
+            fileSizeBytes = parseFloat(sizeStr) * 1024 * 1024;
+          } else if (sizeStr.includes("KB")) {
+            fileSizeBytes = parseFloat(sizeStr) * 1024;
+          }
+
+          const planRef = doc(db, "userPlans", auth.currentUser.uid);
+          const newStorageUsed = Math.max(0, userPlan.storageUsed - fileSizeBytes);
+          await updateDoc(planRef, { storageUsed: newStorageUsed });
+        } catch (error) {
+          console.error("Error updating storage after deletion:", error);
+        }
+      }
+
       loadFiles();
     } catch (error) {
       console.error("Error deleting file:", error);
