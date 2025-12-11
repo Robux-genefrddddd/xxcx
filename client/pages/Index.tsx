@@ -1,250 +1,199 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Menu, X } from "lucide-react";
+import { ArrowRight, Mail, Lock, User } from "lucide-react";
 import { useState } from "react";
 
 export default function Index() {
+  const [isLogin, setIsLogin] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 relative overflow-hidden">
-      {/* Animated gradient sphere background */}
-      <div className="absolute top-1/2 right-0 w-96 h-96 bg-gradient-to-br from-cyan-400 via-blue-300 to-orange-200 rounded-full blur-3xl opacity-30 animate-pulse -mr-48"></div>
-      <div
-        className="absolute bottom-0 left-1/4 w-72 h-72 bg-gradient-to-t from-cyan-400 to-transparent rounded-full blur-3xl opacity-20 animate-pulse"
-        style={{ animationDelay: "1s" }}
-      ></div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-purple-950 relative overflow-hidden">
+      {/* Animated gradient orbs */}
+      <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-gradient-to-br from-blue-500 via-purple-500 to-transparent rounded-full blur-3xl opacity-20 animate-pulse"></div>
+      <div className="absolute bottom-1/3 left-1/3 w-80 h-80 bg-gradient-to-tr from-cyan-500 via-blue-400 to-transparent rounded-full blur-3xl opacity-15 animate-pulse" style={{ animationDelay: "2s" }}></div>
 
       {/* Navigation */}
-      <nav className="fixed top-0 w-full z-50 px-6 py-4">
+      <nav className="fixed top-0 w-full z-50 px-6 py-4 backdrop-blur-md border-b border-white/10">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2">
+          <Link to="/" className="flex items-center gap-2 group">
             <img
               src="https://cdn.builder.io/api/v1/image/assets%2F91e2732f1c03487e879c66ee97e72712%2Fee08390eccc04e8dbea3ce5415d97e92?format=webp&width=800"
               alt="PinPinCloud"
-              className="w-8 h-8 object-contain"
+              className="w-8 h-8 object-contain group-hover:scale-110 transition"
             />
-            <span className="text-xl font-bold text-white">PinPinCloud</span>
+            <span className="text-lg font-semibold text-white">PinPinCloud</span>
           </Link>
-
-          {/* Mobile menu button */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden text-white"
-          >
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
 
           {/* Desktop menu */}
           <div className="hidden md:flex items-center gap-8">
-            <a href="#" className="text-white/80 hover:text-white transition">
+            <a href="#" className="text-white/60 hover:text-white transition text-sm">
               Fonctionnalités
             </a>
-            <a href="#" className="text-white/80 hover:text-white transition">
+            <a href="#" className="text-white/60 hover:text-white transition text-sm">
               Tarification
             </a>
-            <Link
-              to="/dashboard"
-              className="text-white/80 hover:text-white transition"
-            >
+            <a href="#" className="text-white/60 hover:text-white transition text-sm">
               Documentation
-            </Link>
+            </a>
           </div>
 
-          <div className="hidden md:flex items-center gap-4">
-            <Link
-              to="/login"
-              className="text-white/80 hover:text-white font-medium transition"
-            >
-              Se connecter
-            </Link>
-            <Link
-              to="/register"
-              className="bg-cyan-400 text-blue-900 px-6 py-2 rounded-lg hover:bg-cyan-300 font-medium transition"
-            >
-              Commencer
-            </Link>
+          <div className="hidden md:flex items-center gap-3">
+            <a href="#" className="text-white/60 hover:text-white font-medium transition text-sm">
+              Aide
+            </a>
           </div>
         </div>
-
-        {/* Mobile menu */}
-        {mobileMenuOpen && (
-          <div className="md:hidden absolute top-16 left-0 right-0 bg-blue-900/95 backdrop-blur p-6 space-y-4">
-            <a
-              href="#"
-              className="block text-white/80 hover:text-white transition"
-            >
-              Fonctionnalités
-            </a>
-            <a
-              href="#"
-              className="block text-white/80 hover:text-white transition"
-            >
-              Tarification
-            </a>
-            <Link
-              to="/dashboard"
-              className="block text-white/80 hover:text-white transition"
-            >
-              Documentation
-            </Link>
-            <div className="pt-4 space-y-3 border-t border-white/20">
-              <Link
-                to="/login"
-                className="block text-white/80 hover:text-white font-medium transition"
-              >
-                Se connecter
-              </Link>
-              <Link
-                to="/register"
-                className="block bg-cyan-400 text-blue-900 px-6 py-2 rounded-lg hover:bg-cyan-300 font-medium transition text-center"
-              >
-                Commencer
-              </Link>
-            </div>
-          </div>
-        )}
       </nav>
 
       {/* Main Content */}
-      <div className="min-h-screen flex items-center justify-center px-6 pt-20">
-        <div className="grid lg:grid-cols-2 gap-12 items-center max-w-6xl w-full">
-          {/* Left side - Card */}
-          <div className="relative z-10">
-            <div className="bg-slate-900 rounded-3xl p-8 md:p-12 shadow-2xl max-w-md mx-auto lg:mx-0 border border-slate-800">
+      <div className="min-h-screen flex items-center justify-center px-6 pt-24">
+        <div className="w-full max-w-md">
+          {/* Hero Section */}
+          <div className="text-center mb-12">
+            <h1 className="text-5xl md:text-6xl font-bold text-white mb-4 bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+              Bienvenue
+            </h1>
+            <p className="text-white/60 text-lg max-w-sm mx-auto">
+              Accédez à votre espace personnel et gérez vos projets en temps réel
+            </p>
+          </div>
+
+          {/* Login Card */}
+          <div className="relative group mb-8">
+            {/* Glow background */}
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-1000"></div>
+
+            {/* Card */}
+            <div className="relative bg-slate-900/50 backdrop-blur-xl rounded-2xl p-8 border border-white/10 shadow-2xl">
               {/* Logo */}
-              <div className="flex items-center gap-3 mb-8">
+              <div className="flex items-center justify-center gap-3 mb-8">
                 <img
                   src="https://cdn.builder.io/api/v1/image/assets%2F91e2732f1c03487e879c66ee97e72712%2Fee08390eccc04e8dbea3ce5415d97e92?format=webp&width=800"
                   alt="PinPinCloud"
-                  className="w-10 h-10 object-contain"
+                  className="w-8 h-8 object-contain"
                 />
-                <span className="font-bold text-white">PinPinCloud</span>
               </div>
 
-              {/* Welcome text */}
-              <h2 className="text-3xl font-bold text-white mb-2">Bienvenue</h2>
-              <p className="text-gray-400 mb-8 text-sm">
-                Connectez-vous à votre compte
-              </p>
+              {/* Tabs */}
+              <div className="flex gap-4 mb-8 p-1 bg-slate-800/50 rounded-lg border border-white/10">
+                <button
+                  onClick={() => setIsLogin(true)}
+                  className={`flex-1 py-2 px-4 rounded-md font-medium transition-all text-sm ${
+                    isLogin
+                      ? "bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-lg shadow-cyan-500/20"
+                      : "text-white/60 hover:text-white"
+                  }`}
+                >
+                  Connexion
+                </button>
+                <button
+                  onClick={() => setIsLogin(false)}
+                  className={`flex-1 py-2 px-4 rounded-md font-medium transition-all text-sm ${
+                    !isLogin
+                      ? "bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-lg shadow-cyan-500/20"
+                      : "text-white/60 hover:text-white"
+                  }`}
+                >
+                  Inscription
+                </button>
+              </div>
 
-              {/* Form fields */}
+              {/* Form */}
               <div className="space-y-4 mb-8">
-                <div>
+                {!isLogin && (
+                  <div className="relative group/input">
+                    <input
+                      type="text"
+                      placeholder="Nom complet"
+                      className="w-full px-4 py-3 pl-10 bg-slate-800/50 border border-white/10 group-hover/input:border-cyan-500/50 focus:border-cyan-500 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 transition-colors text-sm"
+                    />
+                    <User className="absolute left-3 top-3.5 w-4 h-4 text-gray-500 group-focus-within/input:text-cyan-400 transition" />
+                  </div>
+                )}
+
+                <div className="relative group/input">
                   <input
-                    type="text"
-                    placeholder="NOM D'UTILISATEUR"
-                    className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-lg text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                    type="email"
+                    placeholder="Email"
+                    className="w-full px-4 py-3 pl-10 bg-slate-800/50 border border-white/10 group-hover/input:border-cyan-500/50 focus:border-cyan-500 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 transition-colors text-sm"
                   />
+                  <Mail className="absolute left-3 top-3.5 w-4 h-4 text-gray-500 group-focus-within/input:text-cyan-400 transition" />
                 </div>
-                <div>
+
+                <div className="relative group/input">
                   <input
                     type="password"
-                    placeholder="MOT DE PASSE"
-                    className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-lg text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                    placeholder="Mot de passe"
+                    className="w-full px-4 py-3 pl-10 bg-slate-800/50 border border-white/10 group-hover/input:border-cyan-500/50 focus:border-cyan-500 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 transition-colors text-sm"
                   />
+                  <Lock className="absolute left-3 top-3.5 w-4 h-4 text-gray-500 group-focus-within/input:text-cyan-400 transition" />
                 </div>
+
+                {isLogin && (
+                  <div className="flex items-center justify-between text-sm pt-2">
+                    <label className="flex items-center gap-2 cursor-pointer group">
+                      <input
+                        type="checkbox"
+                        className="w-4 h-4 rounded bg-slate-800 border border-white/20 accent-cyan-500"
+                      />
+                      <span className="text-white/60 group-hover:text-white transition">
+                        Se souvenir de moi
+                      </span>
+                    </label>
+                    <a href="#" className="text-cyan-400 hover:text-cyan-300 transition font-medium">
+                      Oublié?
+                    </a>
+                  </div>
+                )}
               </div>
 
-              {/* Login button */}
-              <Link
-                to="/dashboard"
-                className="w-full bg-cyan-500 text-slate-900 py-3 rounded-lg font-bold hover:bg-cyan-400 transition flex items-center justify-center gap-2 mb-6 group"
-              >
-                CONNEXION
+              {/* Submit Button */}
+              <button className="w-full py-3 px-4 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 text-white rounded-lg font-semibold hover:shadow-xl hover:shadow-cyan-500/25 transition-all duration-200 group flex items-center justify-center gap-2 mb-6 hover:scale-[1.02]">
+                {isLogin ? "Se Connecter" : "Créer un Compte"}
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
-              </Link>
+              </button>
 
-              {/* Footer links */}
-              <div className="flex items-center justify-between text-xs text-gray-500">
-                <Link to="/register" className="hover:text-gray-300">
-                  S'inscrire
-                </Link>
-                <a href="#" className="hover:text-gray-300">
-                  Mot de passe oublié?
-                </a>
+              {/* Footer */}
+              <p className="text-center text-sm text-white/50">
+                {isLogin ? "Pas encore inscrit?" : "Déjà inscrit?"}{" "}
+                <button
+                  onClick={() => setIsLogin(!isLogin)}
+                  className="text-cyan-400 hover:text-cyan-300 font-medium transition"
+                >
+                  {isLogin ? "S'inscrire" : "Se Connecter"}
+                </button>
+              </p>
+
+              {/* Divider */}
+              <div className="my-6 flex items-center gap-4">
+                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+                <span className="text-white/40 text-xs">OU</span>
+                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
               </div>
 
-              {/* Dots indicator */}
-              <div className="flex justify-center gap-2 mt-8 pt-8 border-t border-slate-800">
-                <div className="w-2 h-2 bg-cyan-500 rounded-full"></div>
-                <div className="w-2 h-2 bg-slate-700 rounded-full"></div>
-                <div className="w-2 h-2 bg-slate-700 rounded-full"></div>
-              </div>
+              {/* Social Login */}
+              <button className="w-full py-2.5 px-4 border border-white/20 hover:border-white/40 bg-slate-800/30 hover:bg-slate-800/60 rounded-lg text-white text-sm font-medium transition-all flex items-center justify-center gap-2">
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12.48 10.92h8.85c.2 1.1.01 2.84-.88 4.3-.5 1.02-2.02 2.53-4.57 2.53-2.44 0-4.44-1.6-5.12-3.74H7.84c.48 2.45 2.25 4.97 5.23 4.97 2.5 0 4.9-.87 6.52-2.55 1.25-1.27 1.96-2.74 2.2-4.53h.05c.37-.05.74-.1 1.1-.1 1.1 0 1.82.35 2.02.97h3.26c-.5-1.6-2.15-3.83-4.1-4.39v-.05c-1.3-.4-2.64-.4-3.84-.05-1.2.35-2.4 1.05-3.2 2.05zm.05 3.5c.5 1.25 1.97 2.5 4 2.5 2.05 0 3.48-1.25 3.98-2.5H12.53z" />
+                </svg>
+                Continuer avec Google
+              </button>
             </div>
           </div>
 
-          {/* Right side - Welcome text and gradient */}
-          <div className="relative z-10 text-center lg:text-left">
-            {/* Large gradient sphere effect */}
-            <div className="relative h-96 flex items-center justify-center mb-8">
-              <div className="absolute inset-0 bg-gradient-to-br from-cyan-400 via-blue-300 to-orange-200 rounded-full blur-2xl opacity-50"></div>
-              <div className="relative text-white">
-                <h1 className="text-5xl md:text-6xl font-bold mb-4">
-                  Bienvenue.
-                </h1>
-              </div>
-            </div>
-
-            <p className="text-white/80 text-lg max-w-md mx-auto lg:mx-0 leading-relaxed">
-              Une plateforme moderne conçue pour aider les équipes à collaborer, créer et livrer plus rapidement. Intuitive, puissante et construite pour tout le monde.
-            </p>
-
-            <div className="mt-8">
-              <Link
-                to="/register"
-                className="inline-block bg-cyan-400 text-slate-900 px-8 py-3 rounded-lg hover:bg-cyan-300 font-bold transition"
-              >
-                Commencer Maintenant
-              </Link>
-            </div>
-          </div>
+          {/* Bottom text */}
+          <p className="text-center text-xs text-white/40">
+            En continuant, vous acceptez nos{" "}
+            <a href="#" className="hover:text-white/60 underline transition">
+              conditions d'utilisation
+            </a>
+          </p>
         </div>
       </div>
 
-      {/* Bottom section - Features */}
-      <div className="relative z-10 px-6 py-20 bg-gradient-to-t from-blue-900/50 to-transparent">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-white text-center mb-12">
-            Tout ce qu'il vous faut
-          </h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              {
-                title: "Ultra Rapide",
-                description:
-                  "Profitez d'une performance ultra-rapide grâce à notre infrastructure optimisée.",
-              },
-              {
-                title: "Sécurisé et Fiable",
-                description:
-                  "Sécurité de classe entreprise pour protéger vos données et votre confidentialité.",
-              },
-              {
-                title: "Conception Intuitive",
-                description:
-                  "Interface belle et conviviale que tout le monde adore utiliser.",
-              },
-            ].map((feature, i) => (
-              <div
-                key={i}
-                className="bg-white/10 backdrop-blur border border-white/20 rounded-2xl p-6 hover:bg-white/15 transition"
-              >
-                <h3 className="text-xl font-bold text-white mb-2">
-                  {feature.title}
-                </h3>
-                <p className="text-white/70">{feature.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Footer */}
-      <footer className="relative z-10 border-t border-white/10 py-8 px-6">
-        <div className="max-w-6xl mx-auto text-center text-white/60 text-sm">
-          <p>&copy; 2024 PinPinCloud | FREE. Tous droits réservés.</p>
-        </div>
-      </footer>
+      {/* Floating elements */}
+      <div className="absolute top-1/4 right-10 w-32 h-32 border border-cyan-500/20 rounded-full mix-blend-screen pointer-events-none"></div>
+      <div className="absolute bottom-1/4 left-10 w-24 h-24 border border-purple-500/20 rounded-full mix-blend-screen pointer-events-none"></div>
     </div>
   );
 }
