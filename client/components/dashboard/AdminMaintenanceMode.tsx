@@ -241,6 +241,41 @@ export function AdminMaintenanceMode({
         )}
       </div>
 
+      {/* Admin Bypass Info */}
+      {config.enabled && (
+        <div
+          className="p-4 rounded-lg border flex items-start gap-3"
+          style={{
+            backgroundColor: "rgba(59, 130, 246, 0.1)",
+            borderColor: "rgba(59, 130, 246, 0.3)",
+          }}
+        >
+          <AlertCircle
+            className="w-5 h-5 mt-0.5"
+            style={{ color: colors.primary }}
+          />
+          <div>
+            <p className="font-semibold" style={{ color: colors.text }}>
+              Admin Bypass
+            </p>
+            <p style={{ color: colors.textSecondary }} className="text-sm mt-1">
+              When maintenance is active, press{" "}
+              <kbd
+                style={{
+                  backgroundColor: colors.sidebar,
+                  padding: "2px 6px",
+                  borderRadius: "4px",
+                  fontFamily: "monospace",
+                }}
+              >
+                F12
+              </kbd>{" "}
+              to access the admin panel without seeing the maintenance screen.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Preview */}
       {config.enabled && (
         <div
