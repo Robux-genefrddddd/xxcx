@@ -398,6 +398,7 @@ export default function Dashboard() {
         theme={theme}
         userPlan={userPlan}
         onUpgradeClick={() => setPlanUpgradeModalOpen(true)}
+        userRole={userRole}
       />
 
       {/* Main Content */}
@@ -425,6 +426,8 @@ export default function Dashboard() {
                   "Manage your team members and their roles"}
                 {activeTab === "theme" &&
                   "Personalize your dashboard appearance"}
+                {activeTab === "admin" &&
+                  "Manage system settings, users, and keys"}
               </p>
             </div>
           </div>
