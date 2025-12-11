@@ -101,7 +101,11 @@ export function AdminPanel({ theme, userRole, userId }: AdminPanelProps) {
       {/* Tab Content */}
       <div className="mt-6">
         {activeTab === "keys" && canManageKeys(userRole) && (
-          <AdminKeyManagement theme={theme} userRole={userRole} userId={userId} />
+          <AdminKeyManagement
+            theme={theme}
+            userRole={userRole}
+            userId={userId}
+          />
         )}
 
         {activeTab === "users" && canManageUsers(userRole) && (

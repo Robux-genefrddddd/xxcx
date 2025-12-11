@@ -10,7 +10,8 @@ import { MaintenanceBanner } from "@/components/maintenance/MaintenanceBanner";
 const ADMIN_BYPASS_KEY = "F12";
 
 export function MaintenanceScreen() {
-  const { isMaintenanceEnabled, maintenanceMessage, maintenanceMode } = useMaintenanceMode();
+  const { isMaintenanceEnabled, maintenanceMessage, maintenanceMode } =
+    useMaintenanceMode();
   const [showAdminPanel, setShowAdminPanel] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isVisible, setIsVisible] = useState(false);

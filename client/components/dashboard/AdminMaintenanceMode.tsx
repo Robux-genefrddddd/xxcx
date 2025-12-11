@@ -259,12 +259,18 @@ export function AdminMaintenanceMode({
               Admin Bypass
             </p>
             <p style={{ color: colors.textSecondary }} className="text-sm mt-1">
-              When maintenance is active, press <kbd style={{
-                backgroundColor: colors.sidebar,
-                padding: "2px 6px",
-                borderRadius: "4px",
-                fontFamily: "monospace"
-              }}>F12</kbd> to access the admin panel without seeing the maintenance screen.
+              When maintenance is active, press{" "}
+              <kbd
+                style={{
+                  backgroundColor: colors.sidebar,
+                  padding: "2px 6px",
+                  borderRadius: "4px",
+                  fontFamily: "monospace",
+                }}
+              >
+                F12
+              </kbd>{" "}
+              to access the admin panel without seeing the maintenance screen.
             </p>
           </div>
         </div>

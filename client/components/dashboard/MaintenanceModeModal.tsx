@@ -34,10 +34,7 @@ export function MaintenanceModeModal({
               backgroundColor: "rgba(239, 68, 68, 0.1)",
             }}
           >
-            <AlertTriangle
-              className="w-8 h-8"
-              style={{ color: "#EF4444" }}
-            />
+            <AlertTriangle className="w-8 h-8" style={{ color: "#EF4444" }} />
           </div>
         </div>
 
@@ -48,10 +45,7 @@ export function MaintenanceModeModal({
           Maintenance Mode
         </h2>
 
-        <p
-          className="text-center mb-6"
-          style={{ color: colors.text }}
-        >
+        <p className="text-center mb-6" style={{ color: colors.text }}>
           {message}
         </p>
 

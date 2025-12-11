@@ -24,10 +24,7 @@ export function MaintenanceModal({
           animation: "slideUp 0.4s ease-out",
         }}
       >
-        <h2
-          className="text-2xl font-bold mb-4"
-          style={{ color: "#EF4444" }}
-        >
+        <h2 className="text-2xl font-bold mb-4" style={{ color: "#EF4444" }}>
           Maintenance
         </h2>
 

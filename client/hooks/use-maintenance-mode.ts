@@ -11,9 +11,8 @@ const DEFAULT_CONFIG: MaintenanceConfig = {
 };
 
 export function useMaintenanceMode() {
-  const [maintenanceConfig, setMaintenanceConfig] = useState<MaintenanceConfig>(
-    DEFAULT_CONFIG
-  );
+  const [maintenanceConfig, setMaintenanceConfig] =
+    useState<MaintenanceConfig>(DEFAULT_CONFIG);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -36,7 +35,7 @@ export function useMaintenanceMode() {
         console.error("Error loading maintenance config:", error);
         setMaintenanceConfig(DEFAULT_CONFIG);
         setLoading(false);
-      }
+      },
     );
 
     return () => unsubscribe();

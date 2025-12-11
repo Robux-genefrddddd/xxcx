@@ -75,7 +75,7 @@ export function AdminKeyManagement({
       (error) => {
         console.error("Error loading keys:", error);
         setLoading(false);
-      }
+      },
     );
 
     return () => unsubscribe();
@@ -389,7 +389,9 @@ export function AdminKeyManagement({
                                 ? "rgba(34, 197, 94, 0.1)"
                                 : "rgba(59, 130, 246, 0.1)",
                             color:
-                              key.status === "used" ? "#22C55E" : colors.primary,
+                              key.status === "used"
+                                ? "#22C55E"
+                                : colors.primary,
                           }}
                         >
                           {key.status === "used" ? "✓ Used" : "○ Unused"}
@@ -523,8 +525,7 @@ export function AdminKeyManagement({
           <p className="text-2xl font-bold mt-2" style={{ color: "#F59E0B" }}>
             {
               keys.filter(
-                (k) =>
-                  k.expiresAt && new Date(k.expiresAt) < new Date()
+                (k) => k.expiresAt && new Date(k.expiresAt) < new Date(),
               ).length
             }
           </p>
