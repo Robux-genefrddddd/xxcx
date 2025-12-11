@@ -40,6 +40,18 @@ export function UserManagement({
     setNewUserRole("user");
   };
 
+  const inputStyle = {
+    backgroundColor: colors.card,
+    borderColor: colors.border,
+    color: colors.text,
+  };
+
+  const selectStyle = {
+    backgroundColor: colors.card,
+    borderColor: colors.border,
+    color: colors.text,
+  };
+
   return (
     <div className="space-y-6">
       {/* Add User Form */}
@@ -63,18 +75,12 @@ export function UserManagement({
             value={newUserName}
             onChange={(e) => setNewUserName(e.target.value)}
             className="px-4 py-2 rounded-lg border text-sm focus:outline-none"
-            style={{
-              backgroundColor: theme === "dark" ? "#141518" : "#FFFFFF",
-              borderColor: theme === "dark" ? "#1F2124" : "#E5E7EB",
-              color: theme === "dark" ? "#FFFFFF" : "#111827",
-            }}
+            style={inputStyle}
             onFocus={(e) => {
-              e.currentTarget.style.borderColor =
-                theme === "dark" ? "#2A2E33" : "#D1D5DB";
+              e.currentTarget.style.borderColor = colors.primary;
             }}
             onBlur={(e) => {
-              e.currentTarget.style.borderColor =
-                theme === "dark" ? "#1F2124" : "#E5E7EB";
+              e.currentTarget.style.borderColor = colors.border;
             }}
           />
           <input
@@ -83,29 +89,19 @@ export function UserManagement({
             value={newUserEmail}
             onChange={(e) => setNewUserEmail(e.target.value)}
             className="px-4 py-2 rounded-lg border text-sm focus:outline-none"
-            style={{
-              backgroundColor: theme === "dark" ? "#141518" : "#FFFFFF",
-              borderColor: theme === "dark" ? "#1F2124" : "#E5E7EB",
-              color: theme === "dark" ? "#FFFFFF" : "#111827",
-            }}
+            style={inputStyle}
             onFocus={(e) => {
-              e.currentTarget.style.borderColor =
-                theme === "dark" ? "#2A2E33" : "#D1D5DB";
+              e.currentTarget.style.borderColor = colors.primary;
             }}
             onBlur={(e) => {
-              e.currentTarget.style.borderColor =
-                theme === "dark" ? "#1F2124" : "#E5E7EB";
+              e.currentTarget.style.borderColor = colors.border;
             }}
           />
           <select
             value={newUserRole}
             onChange={(e) => setNewUserRole(e.target.value as "admin" | "user")}
             className="px-4 py-2 rounded-lg border text-sm focus:outline-none"
-            style={{
-              backgroundColor: theme === "dark" ? "#141518" : "#FFFFFF",
-              borderColor: theme === "dark" ? "#1F2124" : "#E5E7EB",
-              color: theme === "dark" ? "#FFFFFF" : "#111827",
-            }}
+            style={selectStyle}
           >
             <option value="user">User</option>
             <option value="admin">Admin</option>
@@ -166,25 +162,25 @@ export function UserManagement({
             users.map((user) => (
               <div
                 key={user.id}
-              className="px-6 py-4 flex items-center justify-between hover:opacity-75 transition-opacity"
-              style={{
-                backgroundColor: colors.card,
-              }}
-            >
-              <div className="flex-1">
-                <p
-                  className="font-medium"
-                  style={{
-                    color: colors.text,
-                  }}
-                >
-                  {user.name}
-                </p>
-                <p
-                  className="text-sm"
-                  style={{
-                    color: colors.textSecondary,
-                  }}
+                className="px-6 py-4 flex items-center justify-between hover:opacity-75 transition-opacity"
+                style={{
+                  backgroundColor: colors.card,
+                }}
+              >
+                <div className="flex-1">
+                  <p
+                    className="font-medium"
+                    style={{
+                      color: colors.text,
+                    }}
+                  >
+                    {user.name}
+                  </p>
+                  <p
+                    className="text-sm"
+                    style={{
+                      color: colors.textSecondary,
+                    }}
                   >
                     {user.email}
                   </p>
@@ -197,11 +193,7 @@ export function UserManagement({
                       onUpdateUserRole(user.id, e.target.value as "admin" | "user")
                     }
                     className="px-3 py-1 rounded text-sm border focus:outline-none"
-                    style={{
-                      backgroundColor: theme === "dark" ? "#141518" : "#FFFFFF",
-                      borderColor: theme === "dark" ? "#1F2124" : "#E5E7EB",
-                      color: theme === "dark" ? "#FFFFFF" : "#111827",
-                    }}
+                    style={selectStyle}
                   >
                     <option value="user">User</option>
                     <option value="admin">Admin</option>
