@@ -62,10 +62,7 @@ export function UserManagement({
           borderColor: colors.border,
         }}
       >
-        <h3
-          className="text-lg font-bold mb-4"
-          style={{ color: colors.text }}
-        >
+        <h3 className="text-lg font-bold mb-4" style={{ color: colors.text }}>
           Add New User
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -134,10 +131,7 @@ export function UserManagement({
             borderColor: colors.border,
           }}
         >
-          <h2
-            className="text-xl font-bold"
-            style={{ color: colors.text }}
-          >
+          <h2 className="text-xl font-bold" style={{ color: colors.text }}>
             Team Members {users.length > 0 && `(${users.length})`}
           </h2>
         </div>
@@ -190,7 +184,10 @@ export function UserManagement({
                   <select
                     value={user.role}
                     onChange={(e) =>
-                      onUpdateUserRole(user.id, e.target.value as "admin" | "user")
+                      onUpdateUserRole(
+                        user.id,
+                        e.target.value as "admin" | "user",
+                      )
                     }
                     className="px-3 py-1 rounded text-sm border focus:outline-none"
                     style={selectStyle}

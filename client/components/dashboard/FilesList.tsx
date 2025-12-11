@@ -82,10 +82,7 @@ export function FilesList({
           borderColor: colors.border,
         }}
       >
-        <h2
-          className="text-xl font-bold"
-          style={{ color: colors.text }}
-        >
+        <h2 className="text-xl font-bold" style={{ color: colors.text }}>
           My Files {files.length > 0 && `(${files.length})`}
         </h2>
       </div>
@@ -170,11 +167,12 @@ export function FilesList({
                   }}
                 >
                   {downloadingId === file.id ? (
-                    <div className="w-4 h-4 border-2 border-transparent rounded-full animate-spin"
+                    <div
+                      className="w-4 h-4 border-2 border-transparent rounded-full animate-spin"
                       style={{
-                    borderTopColor: colors.primary,
-                    borderRightColor: colors.primary,
-                  }}
+                        borderTopColor: colors.primary,
+                        borderRightColor: colors.primary,
+                      }}
                     ></div>
                   ) : (
                     <Download className="w-4 h-4" />
@@ -200,7 +198,11 @@ export function FilesList({
                       color: colors.primary,
                     }}
                   >
-                    {copiedId === file.id ? "✓" : <Share2 className="w-4 h-4" />}
+                    {copiedId === file.id ? (
+                      "✓"
+                    ) : (
+                      <Share2 className="w-4 h-4" />
+                    )}
                   </button>
                 )}
                 <button

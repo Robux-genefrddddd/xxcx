@@ -63,10 +63,7 @@ export function ThemeSelector({ theme, onThemeChange }: ThemeSelectorProps) {
           borderColor: colors.border,
         }}
       >
-        <h3
-          className="text-lg font-bold mb-6"
-          style={{ color: colors.text }}
-        >
+        <h3 className="text-lg font-bold mb-6" style={{ color: colors.text }}>
           Customize Your Theme
         </h3>
 
@@ -83,18 +80,14 @@ export function ThemeSelector({ theme, onThemeChange }: ThemeSelectorProps) {
                 className="p-6 rounded-lg border-2 transition-all text-left hover:opacity-80"
                 style={{
                   backgroundColor: colors.card,
-                  borderColor: isActive
-                    ? colors.primary
-                    : colors.border,
+                  borderColor: isActive ? colors.primary : colors.border,
                 }}
               >
                 <div className="flex items-start justify-between mb-3">
                   <Icon
                     className="w-6 h-6"
                     style={{
-                      color: isActive
-                        ? colors.primary
-                        : colors.textSecondary,
+                      color: isActive ? colors.primary : colors.textSecondary,
                     }}
                   />
                   {isActive && (
@@ -111,17 +104,15 @@ export function ThemeSelector({ theme, onThemeChange }: ThemeSelectorProps) {
                 </div>
 
                 {/* Color Preview */}
-                <div className="w-full h-12 rounded-md mb-3 border"
+                <div
+                  className="w-full h-12 rounded-md mb-3 border"
                   style={{
                     backgroundColor: t.colorPreview,
                     borderColor: colors.border,
                   }}
                 ></div>
 
-                <p
-                  className="font-medium"
-                  style={{ color: colors.text }}
-                >
+                <p className="font-medium" style={{ color: colors.text }}>
                   {t.name}
                 </p>
                 <p

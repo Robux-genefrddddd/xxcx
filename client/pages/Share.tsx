@@ -140,7 +140,9 @@ export default function Share() {
             <div className="flex items-start gap-3">
               <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
               <div>
-                <h3 className="font-semibold text-red-500 mb-1">Access Denied</h3>
+                <h3 className="font-semibold text-red-500 mb-1">
+                  Access Denied
+                </h3>
                 <p className="text-red-400 text-sm mb-4">{error}</p>
                 <Link
                   to="/"
@@ -214,7 +216,8 @@ export default function Share() {
 
             {/* Info Message */}
             <p className="text-xs text-slate-500 text-center">
-              This file was securely shared with you. Download link expires after a period of inactivity.
+              This file was securely shared with you. Download link expires
+              after a period of inactivity.
             </p>
           </div>
         ) : null}

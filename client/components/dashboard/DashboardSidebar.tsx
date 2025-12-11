@@ -59,7 +59,10 @@ export function DashboardSidebar({
         >
           PC
         </div>
-        <span className="text-lg font-bold" style={{ color: colors.sidebarForeground }}>
+        <span
+          className="text-lg font-bold"
+          style={{ color: colors.sidebarForeground }}
+        >
           PinPinCloud
         </span>
       </Link>

@@ -57,7 +57,8 @@ export function UploadModal({
   const colors = getThemeColors(theme);
   const isError = stage === "error";
   const isSuccess = stage === "complete";
-  const isActive = stage === "uploading" || stage === "validating" || stage === "processing";
+  const isActive =
+    stage === "uploading" || stage === "validating" || stage === "processing";
 
   return (
     <div
@@ -81,10 +82,7 @@ export function UploadModal({
             borderColor: colors.border,
           }}
         >
-          <h2
-            className="text-lg font-bold"
-            style={{ color: colors.text }}
-          >
+          <h2 className="text-lg font-bold" style={{ color: colors.text }}>
             File Upload
           </h2>
           {!isActive && (
@@ -216,9 +214,8 @@ export function UploadModal({
                   className="h-full transition-all duration-300 rounded-full"
                   style={{
                     width: `${displayProgress}%`,
-                    backgroundColor:
-                      isSuccess
-                        ? "#22C55E"
+                    backgroundColor: isSuccess
+                      ? "#22C55E"
                       : isError
                         ? "#EF4444"
                         : colors.primary,
@@ -260,25 +257,33 @@ export function UploadModal({
                         className={`w-4 h-4 rounded-full border flex items-center justify-center text-xs`}
                         style={{
                           borderColor:
-                          stage === s
-                            ? colors.primary
-                            : ["validating", "uploading", "processing"].indexOf(
-                                  s as string,
-                                ) <
-                                ["validating", "uploading", "processing"].indexOf(
-                                  stage as string,
-                                )
-                              ? "#22C55E"
-                              : colors.border,
+                            stage === s
+                              ? colors.primary
+                              : [
+                                    "validating",
+                                    "uploading",
+                                    "processing",
+                                  ].indexOf(s as string) <
+                                  [
+                                    "validating",
+                                    "uploading",
+                                    "processing",
+                                  ].indexOf(stage as string)
+                                ? "#22C55E"
+                                : colors.border,
                           backgroundColor:
                             stage === s
                               ? colors.primary
-                              : ["validating", "uploading", "processing"].indexOf(
-                                    s as string,
-                                  ) <
-                                  ["validating", "uploading", "processing"].indexOf(
-                                    stage as string,
-                                  )
+                              : [
+                                    "validating",
+                                    "uploading",
+                                    "processing",
+                                  ].indexOf(s as string) <
+                                  [
+                                    "validating",
+                                    "uploading",
+                                    "processing",
+                                  ].indexOf(stage as string)
                                 ? "#22C55E"
                                 : "transparent",
                         }}
@@ -298,9 +303,7 @@ export function UploadModal({
                         className="text-sm"
                         style={{
                           color:
-                            stage === s
-                              ? colors.text
-                              : colors.textSecondary,
+                            stage === s ? colors.text : colors.textSecondary,
                         }}
                       >
                         {stageLabels[s as keyof typeof stageLabels]}

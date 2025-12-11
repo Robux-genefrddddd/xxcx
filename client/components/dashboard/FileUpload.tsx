@@ -8,7 +8,11 @@ interface FileUploadProps {
   theme: string;
 }
 
-export function FileUpload({ onFileSelected, uploading, theme }: FileUploadProps) {
+export function FileUpload({
+  onFileSelected,
+  uploading,
+  theme,
+}: FileUploadProps) {
   const colors = getThemeColors(theme);
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragActive, setDragActive] = useState(false);
@@ -45,12 +49,8 @@ export function FileUpload({ onFileSelected, uploading, theme }: FileUploadProps
     <div
       className="rounded-xl border-2 p-10 text-center transition-all"
       style={{
-        backgroundColor: dragActive
-          ? colors.accentLight
-          : colors.card,
-        borderColor: dragActive
-          ? colors.primary
-          : colors.border,
+        backgroundColor: dragActive ? colors.accentLight : colors.card,
+        borderColor: dragActive ? colors.primary : colors.border,
         borderStyle: "dashed",
       }}
       onDragEnter={handleDrag}
@@ -89,7 +89,9 @@ export function FileUpload({ onFileSelected, uploading, theme }: FileUploadProps
               color: colors.text,
             }}
           >
-            {dragActive ? "Drop your file here" : "Click to upload or drag and drop"}
+            {dragActive
+              ? "Drop your file here"
+              : "Click to upload or drag and drop"}
           </p>
           <p
             className="text-sm mt-1"

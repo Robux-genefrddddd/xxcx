@@ -17,11 +17,7 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import {
-  ref,
-  uploadBytes,
-  deleteObject,
-} from "firebase/storage";
+import { ref, uploadBytes, deleteObject } from "firebase/storage";
 
 interface FileItem {
   id: string;
@@ -51,7 +47,9 @@ export default function Dashboard() {
   const [theme, setTheme] = useState("dark");
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [uploadStage, setUploadStage] = useState<"validating" | "uploading" | "processing" | "complete" | "error">("validating");
+  const [uploadStage, setUploadStage] = useState<
+    "validating" | "uploading" | "processing" | "complete" | "error"
+  >("validating");
   const [uploadFileName, setUploadFileName] = useState("");
   const [uploadError, setUploadError] = useState<string | null>(null);
 
@@ -110,7 +108,9 @@ export default function Dashboard() {
 
       // Check file size (100MB limit)
       if (file.size > MAX_FILE_SIZE) {
-        setUploadError(`File size exceeds 100MB limit. Your file is ${(file.size / (1024 * 1024)).toFixed(2)}MB`);
+        setUploadError(
+          `File size exceeds 100MB limit. Your file is ${(file.size / (1024 * 1024)).toFixed(2)}MB`,
+        );
         setUploadStage("error");
         setUploading(false);
         return;
@@ -217,7 +217,11 @@ export default function Dashboard() {
     }
   };
 
-  const handleAddUser = async (name: string, email: string, role: "admin" | "user") => {
+  const handleAddUser = async (
+    name: string,
+    email: string,
+    role: "admin" | "user",
+  ) => {
     try {
       await addDoc(collection(db, "users"), {
         name,
@@ -241,7 +245,10 @@ export default function Dashboard() {
     }
   };
 
-  const handleUpdateUserRole = async (userId: string, newRole: "admin" | "user") => {
+  const handleUpdateUserRole = async (
+    userId: string,
+    newRole: "admin" | "user",
+  ) => {
     try {
       await updateDoc(doc(db, "users", userId), { role: newRole });
       loadUsers();
@@ -257,7 +264,11 @@ export default function Dashboard() {
   };
 
   const handleCloseUploadModal = () => {
-    if (uploadStage !== "uploading" && uploadStage !== "validating" && uploadStage !== "processing") {
+    if (
+      uploadStage !== "uploading" &&
+      uploadStage !== "validating" &&
+      uploadStage !== "processing"
+    ) {
       setUploadModalOpen(false);
       setUploadProgress(0);
       setUploadStage("validating");
@@ -304,9 +315,12 @@ export default function Dashboard() {
                 Welcome {userName}!
               </h1>
               <p style={{ color: theme === "dark" ? "#9CA3AF" : "#6B7280" }}>
-                {activeTab === "files" && "Upload, organize and share your files securely"}
-                {activeTab === "users" && "Manage your team members and their roles"}
-                {activeTab === "theme" && "Personalize your dashboard appearance"}
+                {activeTab === "files" &&
+                  "Upload, organize and share your files securely"}
+                {activeTab === "users" &&
+                  "Manage your team members and their roles"}
+                {activeTab === "theme" &&
+                  "Personalize your dashboard appearance"}
               </p>
             </div>
           </div>
