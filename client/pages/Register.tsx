@@ -116,21 +116,24 @@ export default function Register() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 relative overflow-hidden flex items-center justify-center px-6">
-        {/* Animated gradient sphere background */}
-        <div className="absolute top-1/2 right-0 w-96 h-96 bg-gradient-to-br from-cyan-400 via-blue-300 to-orange-200 rounded-full blur-3xl opacity-30 animate-pulse -mr-48"></div>
-        <div
-          className="absolute bottom-0 left-1/4 w-72 h-72 bg-gradient-to-t from-cyan-400 to-transparent rounded-full blur-3xl opacity-20 animate-pulse"
-          style={{ animationDelay: "1s" }}
-        ></div>
-
+      <div
+        className="min-h-screen flex items-center justify-center px-6 relative overflow-hidden"
+        style={{
+          backgroundColor: "#0E0E0F",
+          backgroundImage:
+            "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23222223' fill-opacity='0.08'%3E%3Cpath d='M29 30l-1-1 1-1 1 1-1 1M30 29l-1-1 1-1 1 1-1 1M30 31l-1 1 1 1 1-1-1-1M31 30l 1-1-1-1-1 1 1 1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
+        }}
+      >
         <div className="relative z-10 text-center space-y-6 max-w-md">
-          <div className="w-16 h-16 bg-cyan-400 rounded-full flex items-center justify-center mx-auto">
-            <Check className="w-8 h-8 text-blue-900" />
+          <div
+            className="w-16 h-16 rounded-full flex items-center justify-center mx-auto"
+            style={{ backgroundColor: "#1A2647" }}
+          >
+            <Check className="w-8 h-8 text-slate-200" />
           </div>
           <h1 className="text-4xl font-bold text-white">Account created!</h1>
-          <p className="text-white/80">
-            Welcome to Studio. Your account is ready to use. Redirecting...
+          <p className="text-slate-400">
+            Your account is ready to use. Redirecting...
           </p>
         </div>
       </div>
@@ -138,62 +141,86 @@ export default function Register() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 relative overflow-hidden flex items-center justify-center px-6 py-12">
-      {/* Animated gradient sphere background */}
-      <div className="absolute top-1/2 right-0 w-96 h-96 bg-gradient-to-br from-cyan-400 via-blue-300 to-orange-200 rounded-full blur-3xl opacity-30 animate-pulse -mr-48"></div>
-      <div
-        className="absolute bottom-0 left-1/4 w-72 h-72 bg-gradient-to-t from-cyan-400 to-transparent rounded-full blur-3xl opacity-20 animate-pulse"
-        style={{ animationDelay: "1s" }}
-      ></div>
-
+    <div
+      className="min-h-screen flex items-center justify-center px-6 py-12 relative overflow-hidden"
+      style={{
+        backgroundColor: "#0E0E0F",
+        backgroundImage:
+          "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23222223' fill-opacity='0.08'%3E%3Cpath d='M29 30l-1-1 1-1 1 1-1 1M30 29l-1-1 1-1 1 1-1 1M30 31l-1 1 1 1 1-1-1-1M31 30l 1-1-1-1-1 1 1 1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
+      }}
+    >
       <div className="relative z-10 w-full max-w-md">
-        {/* Card */}
-        <div className="bg-white rounded-3xl p-8 md:p-12 shadow-2xl">
-          {/* Logo */}
-          <Link
-            to="/"
-            className="flex items-center gap-3 mb-8 hover:opacity-80 transition"
-          >
-            <div className="w-10 h-10 bg-blue-900 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold">S</span>
-            </div>
-            <span className="font-bold text-gray-900">Studio</span>
-          </Link>
+        {/* Logo */}
+        <Link
+          to="/"
+          className="flex items-center gap-2 mb-12 text-slate-400 hover:text-white transition"
+        >
+          <img
+            src="https://cdn.builder.io/api/v1/image/assets%2F91e2732f1c03487e879c66ee97e72712%2Fee08390eccc04e8dbea3ce5415d97e92?format=webp&width=800"
+            alt="PinPinCloud"
+            className="w-6 h-6"
+          />
+          <span className="text-sm font-medium">PinPinCloud</span>
+        </Link>
 
-          {/* Heading */}
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        {/* Header */}
+        <div className="mb-12 text-center">
+          <h1 className="text-4xl font-bold text-white mb-3 tracking-tight">
             Create account
           </h1>
-          <p className="text-gray-600 mb-8">
-            Join thousands of teams building amazing things
+          <p className="text-slate-400 text-base">
+            Join and start managing your projects
           </p>
+        </div>
+
+        {/* Card */}
+        <div
+          className="rounded-lg p-8 space-y-6 border"
+          style={{
+            backgroundColor: "#111214",
+            borderColor: "#1F2124",
+          }}
+        >
+          {/* Error Message */}
+          {error && (
+            <div
+              className="px-4 py-3 rounded text-sm border"
+              style={{
+                backgroundColor: "#1F1315",
+                borderColor: "#4A2428",
+                color: "#FF6B6B",
+              }}
+            >
+              {error}
+            </div>
+          )}
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
-                {error}
-              </div>
-            )}
-
+          <form onSubmit={handleSubmit} className="space-y-5">
             {/* Name Field */}
             <div>
-              <label
-                htmlFor="name"
-                className="block text-sm font-medium text-gray-900 mb-2"
-              >
-                Full name
+              <label className="block text-xs font-semibold text-slate-300 mb-2 uppercase tracking-wide">
+                Full Name
               </label>
               <div className="relative">
-                <User className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <User className="absolute left-3.5 top-3.5 w-4 h-4 text-slate-500" />
                 <input
-                  id="name"
                   type="text"
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="John Doe"
-                  className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-500 focus:bg-white focus:border-blue-900 focus:ring-0 transition"
+                  className="w-full px-4 py-3 pl-11 text-white placeholder-slate-600 text-sm rounded-lg border transition-colors focus:outline-none"
+                  style={{
+                    backgroundColor: "#141518",
+                    borderColor: "#1F2124",
+                  }}
+                  onFocus={(e) => {
+                    e.currentTarget.style.borderColor = "#2A2E33";
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.borderColor = "#1F2124";
+                  }}
                   required
                 />
               </div>
@@ -201,22 +228,28 @@ export default function Register() {
 
             {/* Email Field */}
             <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-900 mb-2"
-              >
-                Email address
+              <label className="block text-xs font-semibold text-slate-300 mb-2 uppercase tracking-wide">
+                Email
               </label>
               <div className="relative">
-                <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Mail className="absolute left-3.5 top-3.5 w-4 h-4 text-slate-500" />
                 <input
-                  id="email"
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="you@example.com"
-                  className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-500 focus:bg-white focus:border-blue-900 focus:ring-0 transition"
+                  className="w-full px-4 py-3 pl-11 text-white placeholder-slate-600 text-sm rounded-lg border transition-colors focus:outline-none"
+                  style={{
+                    backgroundColor: "#141518",
+                    borderColor: "#1F2124",
+                  }}
+                  onFocus={(e) => {
+                    e.currentTarget.style.borderColor = "#2A2E33";
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.borderColor = "#1F2124";
+                  }}
                   required
                 />
               </div>
@@ -224,42 +257,48 @@ export default function Register() {
 
             {/* Password Field */}
             <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-900 mb-2"
-              >
+              <label className="block text-xs font-semibold text-slate-300 mb-2 uppercase tracking-wide">
                 Password
               </label>
               <div className="relative">
-                <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Lock className="absolute left-3.5 top-3.5 w-4 h-4 text-slate-500" />
                 <input
-                  id="password"
                   type="password"
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="••••••••"
-                  className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-500 focus:bg-white focus:border-blue-900 focus:ring-0 transition"
+                  className="w-full px-4 py-3 pl-11 text-white placeholder-slate-600 text-sm rounded-lg border transition-colors focus:outline-none"
+                  style={{
+                    backgroundColor: "#141518",
+                    borderColor: "#1F2124",
+                  }}
+                  onFocus={(e) => {
+                    e.currentTarget.style.borderColor = "#2A2E33";
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.borderColor = "#1F2124";
+                  }}
                   required
                 />
               </div>
 
-              {/* Password Strength Indicator */}
+              {/* Password Strength */}
               {formData.password && (
-                <div className="space-y-2 pt-2">
+                <div className="space-y-2 pt-3">
                   <div className="grid grid-cols-4 gap-2">
                     {Object.entries(passwordStrength).map(([key, value]) => (
                       <div
                         key={key}
                         className={`h-1 rounded-full transition ${
-                          value ? "bg-cyan-400" : "bg-gray-200"
+                          value ? "bg-blue-500" : "bg-slate-700"
                         }`}
                       />
                     ))}
                   </div>
                   <p
                     className={`text-xs font-medium ${
-                      isPasswordStrong ? "text-cyan-600" : "text-gray-600"
+                      isPasswordStrong ? "text-blue-400" : "text-slate-500"
                     }`}
                   >
                     {isPasswordStrong
@@ -272,46 +311,55 @@ export default function Register() {
 
             {/* Confirm Password Field */}
             <div>
-              <label
-                htmlFor="confirmPassword"
-                className="block text-sm font-medium text-gray-900 mb-2"
-              >
-                Confirm password
+              <label className="block text-xs font-semibold text-slate-300 mb-2 uppercase tracking-wide">
+                Confirm Password
               </label>
               <div className="relative">
-                <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Lock className="absolute left-3.5 top-3.5 w-4 h-4 text-slate-500" />
                 <input
-                  id="confirmPassword"
                   type="password"
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   placeholder="••••••••"
-                  className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-500 focus:bg-white focus:border-blue-900 focus:ring-0 transition"
+                  className="w-full px-4 py-3 pl-11 text-white placeholder-slate-600 text-sm rounded-lg border transition-colors focus:outline-none"
+                  style={{
+                    backgroundColor: "#141518",
+                    borderColor: "#1F2124",
+                  }}
+                  onFocus={(e) => {
+                    e.currentTarget.style.borderColor = "#2A2E33";
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.borderColor = "#1F2124";
+                  }}
                   required
                 />
               </div>
             </div>
 
             {/* Terms */}
-            <label className="flex items-start gap-2 cursor-pointer">
+            <label className="flex items-start gap-2 cursor-pointer pt-1">
               <input
                 type="checkbox"
-                className="w-4 h-4 rounded border-gray-300 text-blue-900 focus:ring-0 cursor-pointer mt-1"
+                className="w-4 h-4 rounded bg-slate-800 border mt-1 cursor-pointer accent-blue-500"
+                style={{
+                  borderColor: "#2A2E33",
+                }}
                 required
               />
-              <span className="text-sm text-gray-600">
+              <span className="text-sm text-slate-400">
                 I agree to the{" "}
                 <a
                   href="#"
-                  className="text-blue-900 hover:text-blue-800 transition font-medium"
+                  className="text-slate-300 hover:text-white transition font-medium"
                 >
                   Terms of Service
                 </a>{" "}
                 and{" "}
                 <a
                   href="#"
-                  className="text-blue-900 hover:text-blue-800 transition font-medium"
+                  className="text-slate-300 hover:text-white transition font-medium"
                 >
                   Privacy Policy
                 </a>
@@ -322,7 +370,11 @@ export default function Register() {
             <button
               type="submit"
               disabled={loading || !isPasswordStrong}
-              className="w-full bg-blue-900 text-white py-3 rounded-lg hover:bg-blue-800 font-bold transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 group mt-6"
+              className="w-full py-3 px-4 rounded-lg text-white font-semibold text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 group mt-8"
+              style={{
+                background: `linear-gradient(135deg, #1A2647 0%, #0F0F10 100%)`,
+                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.4)",
+              }}
             >
               {loading ? (
                 <>
@@ -338,15 +390,18 @@ export default function Register() {
             </button>
 
             {/* Divider */}
-            <div className="relative py-4 my-6">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-200" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">
-                  Or sign up with
-                </span>
-              </div>
+            <div className="flex items-center gap-3 py-3">
+              <div
+                className="flex-1 h-px"
+                style={{ backgroundColor: "#1F2124" }}
+              ></div>
+              <span className="text-xs text-slate-600 uppercase tracking-wide">
+                Or
+              </span>
+              <div
+                className="flex-1 h-px"
+                style={{ backgroundColor: "#1F2124" }}
+              ></div>
             </div>
 
             {/* OAuth Buttons */}
@@ -355,7 +410,11 @@ export default function Register() {
                 type="button"
                 onClick={handleGoogleSignUp}
                 disabled={loading}
-                className="bg-gray-50 border border-gray-200 py-3 rounded-lg hover:bg-gray-100 font-medium transition text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="py-2.5 px-4 rounded-lg text-slate-300 text-sm font-medium transition-colors hover:text-white disabled:opacity-50 disabled:cursor-not-allowed border"
+                style={{
+                  backgroundColor: "#0F1113",
+                  borderColor: "#1F2124",
+                }}
               >
                 Google
               </button>
@@ -363,7 +422,11 @@ export default function Register() {
                 type="button"
                 onClick={handleGithubSignUp}
                 disabled={loading}
-                className="bg-gray-50 border border-gray-200 py-3 rounded-lg hover:bg-gray-100 font-medium transition text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="py-2.5 px-4 rounded-lg text-slate-300 text-sm font-medium transition-colors hover:text-white disabled:opacity-50 disabled:cursor-not-allowed border"
+                style={{
+                  backgroundColor: "#0F1113",
+                  borderColor: "#1F2124",
+                }}
               >
                 GitHub
               </button>
@@ -371,12 +434,12 @@ export default function Register() {
           </form>
 
           {/* Footer */}
-          <div className="mt-8 text-center">
-            <p className="text-gray-600 text-sm">
+          <div className="text-center pt-6 border-t" style={{ borderColor: "#1F2124" }}>
+            <p className="text-slate-400 text-sm">
               Already have an account?{" "}
               <Link
                 to="/login"
-                className="text-blue-900 hover:text-blue-800 font-bold transition"
+                className="text-slate-200 hover:text-white font-semibold transition"
               >
                 Sign in
               </Link>
@@ -386,7 +449,7 @@ export default function Register() {
           {/* Back Link */}
           <Link
             to="/"
-            className="block mt-6 text-center text-sm text-gray-600 hover:text-gray-900 transition"
+            className="block text-center text-xs text-slate-500 hover:text-slate-400 transition mt-2"
           >
             ← Back to home
           </Link>
