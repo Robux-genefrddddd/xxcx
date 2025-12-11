@@ -1,0 +1,74 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function getUserRole() {
+      return get(/databases/$(database)/documents/userRoles/$(request.auth.uid)).data.role;
+    }
+
+    function isAdmin() {
+      let role = getUserRole();
+      return role == 'admin' || role == 'founder';
+    }
+
+    function isFounder() {
+      return getUserRole() == 'founder';
+    }
+
+    function isCurrentUser(userId) {
+      return request.auth.uid == userId;
+    }
+
+    // User Roles collection - everyone can read their own role
+    match /userRoles/{userId} {
+      allow read: if isAuthenticated() && (isCurrentUser(userId) || isAdmin());
+      allow write: if isFounder();
+      allow delete: if isFounder();
+    }
+
+    // User Plans collection
+    match /userPlans/{userId} {
+      allow read: if isAuthenticated() && (isCurrentUser(userId) || isAdmin());
+      allow write: if isCurrentUser(userId) || isFounder();
+      allow delete: if isFounder();
+    }
+
+    // Files collection
+    match /files/{fileId} {
+      allow read: if isAuthenticated() && (resource.data.userId == request.auth.uid || resource.data.shared == true);
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+
+    // Users collection (for legacy user management)
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && (isCurrentUser(userId) || isAdmin());
+      allow delete: if isFounder();
+    }
+
+    // Premium Keys collection
+    match /premiumKeys/{keyId} {
+      allow read: if isAuthenticated() && (isAdmin() || isFounder());
+      allow create: if isFounder();
+      allow update: if isAuthenticated() && (isFounder() || isCurrentUser(resource.data.assignedTo));
+      allow delete: if isFounder();
+    }
+
+    // App Configuration (maintenance mode, etc.)
+    match /appConfig/{document=**} {
+      allow read: if isAuthenticated();
+      allow write: if isFounder();
+    }
+
+    // Catch-all deny rule for unlisted collections
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
