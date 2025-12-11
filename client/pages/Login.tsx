@@ -74,13 +74,19 @@ export default function Login() {
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 relative overflow-hidden flex items-center justify-center px-6">
       {/* Animated gradient sphere background */}
       <div className="absolute top-1/2 right-0 w-96 h-96 bg-gradient-to-br from-cyan-400 via-blue-300 to-orange-200 rounded-full blur-3xl opacity-30 animate-pulse -mr-48"></div>
-      <div className="absolute bottom-0 left-1/4 w-72 h-72 bg-gradient-to-t from-cyan-400 to-transparent rounded-full blur-3xl opacity-20 animate-pulse" style={{ animationDelay: "1s" }}></div>
+      <div
+        className="absolute bottom-0 left-1/4 w-72 h-72 bg-gradient-to-t from-cyan-400 to-transparent rounded-full blur-3xl opacity-20 animate-pulse"
+        style={{ animationDelay: "1s" }}
+      ></div>
 
       <div className="relative z-10 w-full max-w-md">
         {/* Card */}
         <div className="bg-white rounded-3xl p-8 md:p-12 shadow-2xl">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-3 mb-8 hover:opacity-80 transition">
+          <Link
+            to="/"
+            className="flex items-center gap-3 mb-8 hover:opacity-80 transition"
+          >
             <div className="w-10 h-10 bg-blue-900 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold">S</span>
             </div>
@@ -88,7 +94,9 @@ export default function Login() {
           </Link>
 
           {/* Heading */}
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome back</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Welcome back
+          </h1>
           <p className="text-gray-600 mb-8">Sign in to your account</p>
 
           {/* Form */}
@@ -101,7 +109,10 @@ export default function Login() {
 
             {/* Email Field */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-900 mb-2">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-900 mb-2"
+              >
                 Email address
               </label>
               <div className="relative">
@@ -121,10 +132,16 @@ export default function Login() {
             {/* Password Field */}
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label htmlFor="password" className="block text-sm font-medium text-gray-900">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-900"
+                >
                   Password
                 </label>
-                <a href="#" className="text-sm text-blue-900 hover:text-blue-800 transition font-medium">
+                <a
+                  href="#"
+                  className="text-sm text-blue-900 hover:text-blue-800 transition font-medium"
+                >
                   Forgot?
                 </a>
               </div>
@@ -177,7 +194,9 @@ export default function Login() {
                 <div className="w-full border-t border-gray-200" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Or continue with</span>
+                <span className="px-2 bg-white text-gray-500">
+                  Or continue with
+                </span>
               </div>
             </div>
 

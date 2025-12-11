@@ -173,7 +173,10 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 flex">
       {/* Sidebar */}
       <aside className="w-64 bg-blue-950 text-white p-6 flex flex-col fixed left-0 top-0 h-screen overflow-y-auto border-r border-white/10">
-        <Link to="/" className="flex items-center gap-3 mb-10 hover:opacity-80 transition">
+        <Link
+          to="/"
+          className="flex items-center gap-3 mb-10 hover:opacity-80 transition"
+        >
           <div className="flex items-center gap-2">
             <Cloud className="w-7 h-7 text-blue-400" />
             <span className="text-xl font-bold">Finops</span>
@@ -236,7 +239,9 @@ export default function Dashboard() {
         <header className="bg-blue-900/50 backdrop-blur border-b border-white/10 px-8 py-4 sticky top-0 z-40">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-white">Welcome Paul! 👋</h1>
+              <h1 className="text-2xl font-bold text-white">
+                Welcome Paul! 👋
+              </h1>
               <p className="text-sm text-white/60">
                 View your cloud spending with just a glance.
               </p>
@@ -284,7 +289,9 @@ export default function Dashboard() {
                     </span>
                   </div>
                   <div className="mb-2">
-                    <p className="text-3xl font-bold text-white">{stat.value}</p>
+                    <p className="text-3xl font-bold text-white">
+                      {stat.value}
+                    </p>
                   </div>
                   <p className="text-sm text-white/60">{stat.label}</p>
                   <div className="mt-4 h-12">
@@ -312,9 +319,7 @@ export default function Dashboard() {
             {/* Recent Charges Table */}
             <div className="lg:col-span-2 bg-white/10 backdrop-blur rounded-2xl p-6 border border-white/20 shadow-sm">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-bold text-white">
-                  Recent charges
-                </h2>
+                <h2 className="text-lg font-bold text-white">Recent charges</h2>
                 <button className="text-sm text-cyan-400 font-semibold hover:text-cyan-300 transition">
                   Last 30 days →
                 </button>
@@ -442,9 +447,7 @@ export default function Dashboard() {
                     </svg>
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
                       <Cloud className="w-8 h-8 text-white/40 mb-1" />
-                      <p className="text-xl font-bold text-white">
-                        $1,390,021
-                      </p>
+                      <p className="text-xl font-bold text-white">$1,390,021</p>
                       <p className="text-xs text-cyan-400 font-semibold">
                         ▲ 18%
                       </p>
@@ -471,9 +474,7 @@ export default function Dashboard() {
               {/* Used Storage */}
               <div className="bg-white/10 backdrop-blur rounded-2xl p-6 border border-white/20 shadow-sm">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-bold text-white">
-                    Used storage
-                  </h3>
+                  <h3 className="text-sm font-bold text-white">Used storage</h3>
                   <span className="text-xs text-cyan-400 font-semibold">
                     -15% storage left
                   </span>

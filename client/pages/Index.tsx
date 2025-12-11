@@ -9,7 +9,10 @@ export default function Index() {
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 relative overflow-hidden">
       {/* Animated gradient sphere background */}
       <div className="absolute top-1/2 right-0 w-96 h-96 bg-gradient-to-br from-cyan-400 via-blue-300 to-orange-200 rounded-full blur-3xl opacity-30 animate-pulse -mr-48"></div>
-      <div className="absolute bottom-0 left-1/4 w-72 h-72 bg-gradient-to-t from-cyan-400 to-transparent rounded-full blur-3xl opacity-20 animate-pulse" style={{ animationDelay: "1s" }}></div>
+      <div
+        className="absolute bottom-0 left-1/4 w-72 h-72 bg-gradient-to-t from-cyan-400 to-transparent rounded-full blur-3xl opacity-20 animate-pulse"
+        style={{ animationDelay: "1s" }}
+      ></div>
 
       {/* Navigation */}
       <nav className="fixed top-0 w-full z-50 px-6 py-4">
@@ -28,16 +31,10 @@ export default function Index() {
 
           {/* Desktop menu */}
           <div className="hidden md:flex items-center gap-8">
-            <a
-              href="#"
-              className="text-white/80 hover:text-white transition"
-            >
+            <a href="#" className="text-white/80 hover:text-white transition">
               Features
             </a>
-            <a
-              href="#"
-              className="text-white/80 hover:text-white transition"
-            >
+            <a href="#" className="text-white/80 hover:text-white transition">
               Pricing
             </a>
             <Link
@@ -229,7 +226,10 @@ export default function Index() {
                   "Beautiful, user-friendly interface that everyone loves to use.",
               },
             ].map((feature, i) => (
-              <div key={i} className="bg-white/10 backdrop-blur border border-white/20 rounded-2xl p-6 hover:bg-white/15 transition">
+              <div
+                key={i}
+                className="bg-white/10 backdrop-blur border border-white/20 rounded-2xl p-6 hover:bg-white/15 transition"
+              >
                 <h3 className="text-xl font-bold text-white mb-2">
                   {feature.title}
                 </h3>
