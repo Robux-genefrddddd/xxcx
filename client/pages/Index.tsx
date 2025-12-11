@@ -159,10 +159,10 @@ export default function Index() {
       <style>{`
         @keyframes sheenDiagonal {
           0% {
-            transform: translateX(-100%) translateY(-100%) skewX(-45deg);
+            left: -100%;
           }
           100% {
-            transform: translateX(200%) translateY(200%) skewX(-45deg);
+            left: 100%;
           }
         }
 
@@ -175,22 +175,20 @@ export default function Index() {
           content: '';
           position: absolute;
           top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: linear-gradient(
-            135deg,
-            transparent 0%,
-            rgba(255, 255, 255, 0.6) 50%,
-            transparent 100%
-          );
-          width: 50px;
+          left: -100%;
+          width: 100%;
           height: 100%;
-          animation: sheenDiagonal 3s infinite;
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.5),
+            transparent
+          );
+          animation: sheenDiagonal 2.5s infinite;
         }
 
         .sheen-button:hover::after {
-          animation: sheenDiagonal 0.8s infinite;
+          animation: sheenDiagonal 0.6s infinite;
         }
 
         .sheen-button > * {
