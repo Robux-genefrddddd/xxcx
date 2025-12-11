@@ -117,6 +117,7 @@ export default function Dashboard() {
         uploadedAt: new Date(doc.data().uploadedAt).toLocaleDateString(),
         shared: doc.data().shared || false,
         shareUrl: doc.data().shareUrl,
+        storagePath: doc.data().storagePath,
       }));
       setFiles(fileList);
     } catch (error) {
