@@ -274,6 +274,33 @@ export function SharedFilesList({
           </div>
         )}
       </div>
+
+      {/* Unshare Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={unshareConfirmOpen}
+        onClose={() => {
+          setUnshareConfirmOpen(false);
+          setUnshareFileId(null);
+          setUnshareFileName("");
+        }}
+        onConfirm={async () => {
+          if (unshareFileId) {
+            setUnsharingId(unshareFileId);
+            await onUnshare(unshareFileId);
+            setUnshareConfirmOpen(false);
+            setUnshareFileId(null);
+            setUnshareFileName("");
+            setUnsharingId(null);
+          }
+        }}
+        title="Remove Sharing?"
+        description={`Are you sure you want to stop sharing "${unshareFileName}"?`}
+        confirmText="Remove Sharing"
+        cancelText="Cancel"
+        isDangerous={true}
+        theme={theme}
+        loading={unsharingId === unshareFileId}
+      />
     </div>
   );
 }
