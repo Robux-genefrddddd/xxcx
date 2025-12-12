@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FileUpload } from "@/components/dashboard/FileUpload";
 import { FilesList } from "@/components/dashboard/FilesList";
+import { SharedFilesList } from "@/components/dashboard/SharedFilesList";
 import { UserManagement } from "@/components/dashboard/UserManagement";
 import { ThemeSelector } from "@/components/dashboard/ThemeSelector";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
@@ -297,6 +298,21 @@ export default function Dashboard() {
     }
   };
 
+  const handleUnshareFile = async (fileId: string) => {
+    if (!confirm("Remove sharing for this file?")) return;
+
+    try {
+      await updateDoc(doc(db, "files", fileId), {
+        shared: false,
+        shareUrl: null,
+      });
+      loadFiles();
+    } catch (error) {
+      console.error("Error unsharing file:", error);
+      alert("Failed to remove sharing. Please try again.");
+    }
+  };
+
   const handleDeleteFile = async (fileId: string) => {
     const file = files.find((f) => f.id === fileId);
     if (!confirm("Delete this file? This action cannot be undone.")) return;
@@ -470,6 +486,7 @@ export default function Dashboard() {
               style={{ color: themeColors.text }}
             >
               {activeTab === "files" && "Files"}
+              {activeTab === "shared" && "Shared Files"}
               {activeTab === "users" && "User Management"}
               {activeTab === "theme" && "Appearance"}
               {activeTab === "admin" && "Admin Panel"}
@@ -477,6 +494,8 @@ export default function Dashboard() {
             <p style={{ color: themeColors.textSecondary }} className="text-sm">
               {activeTab === "files" &&
                 "Manage, share, and organize your cloud storage"}
+              {activeTab === "shared" &&
+                "View and manage all your shared files"}
               {activeTab === "users" &&
                 "Control team members and access permissions"}
               {activeTab === "theme" &&
@@ -508,6 +527,21 @@ export default function Dashboard() {
                   theme={theme}
                   onShare={handleShareFile}
                   onDelete={handleDeleteFile}
+                  onCopyShareLink={(url) => {
+                    alert("Share link copied to clipboard!");
+                  }}
+                />
+              </div>
+            )}
+
+            {/* Shared Tab */}
+            {activeTab === "shared" && (
+              <div className="space-y-6">
+                <SharedFilesList
+                  files={files}
+                  loading={loading}
+                  theme={theme}
+                  onUnshare={handleUnshareFile}
                   onCopyShareLink={(url) => {
                     alert("Share link copied to clipboard!");
                   }}

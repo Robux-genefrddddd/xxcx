@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Files, Users, Palette, LogOut, Shield } from "lucide-react";
+import { Files, Users, Palette, LogOut, Shield, Share2 } from "lucide-react";
 import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { getThemeColors } from "@/lib/theme-colors";
@@ -25,6 +25,7 @@ interface DashboardSidebarProps {
 const getNavItems = (userRole?: UserRole) => {
   const items = [
     { id: "files", label: "Files", icon: Files },
+    { id: "shared", label: "Shared", icon: Share2 },
     { id: "users", label: "Manage Users", icon: Users },
     { id: "theme", label: "Theme", icon: Palette },
   ];
@@ -126,15 +127,11 @@ export function DashboardSidebar({
       >
         {/* User Card */}
         <div className="flex items-start gap-3">
-          <div
-            className="w-10 h-10 rounded-lg text-sm flex items-center justify-center font-bold flex-shrink-0"
-            style={{
-              backgroundColor: colors.primary,
-              color: colors.sidebar,
-            }}
-          >
-            {userName.charAt(0).toUpperCase()}
-          </div>
+          <img
+            src="https://cdn.builder.io/api/v1/image/assets%2F91e2732f1c03487e879c66ee97e72712%2Fee08390eccc04e8dbea3ce5415d97e92?format=webp&width=800"
+            alt="User Avatar"
+            className="w-10 h-10 rounded-full flex-shrink-0"
+          />
           <div className="flex-1 min-w-0">
             <p
               className="text-xs font-semibold truncate"
@@ -153,7 +150,7 @@ export function DashboardSidebar({
 
         {/* Storage Info */}
         {userPlan && (
-          <div className="space-y-2 bg-black bg-opacity-20 rounded-lg p-3">
+          <div className="space-y-2 bg-black bg-opacity-20 rounded-2xl p-3">
             <div className="flex items-center justify-between">
               <p
                 className="text-xs uppercase font-medium tracking-wide"

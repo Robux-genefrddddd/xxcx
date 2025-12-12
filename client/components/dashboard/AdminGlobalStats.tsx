@@ -147,7 +147,7 @@ export function AdminGlobalStats({ theme, userRole }: AdminGlobalStatsProps) {
   if (!canViewStats(userRole)) {
     return (
       <div
-        className="p-6 rounded-lg border"
+        className="p-6 rounded-2xl border"
         style={{
           backgroundColor: colors.card,
           borderColor: colors.border,
@@ -189,7 +189,7 @@ export function AdminGlobalStats({ theme, userRole }: AdminGlobalStatsProps) {
           {/* Key Metrics */}
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
             <div
-              className="p-4 rounded-lg border"
+              className="p-4 rounded-xl border"
               style={{
                 backgroundColor: colors.card,
                 borderColor: colors.border,
@@ -206,7 +206,7 @@ export function AdminGlobalStats({ theme, userRole }: AdminGlobalStatsProps) {
               </p>
             </div>
             <div
-              className="p-4 rounded-lg border"
+              className="p-4 rounded-xl border"
               style={{
                 backgroundColor: colors.card,
                 borderColor: colors.border,
@@ -223,7 +223,7 @@ export function AdminGlobalStats({ theme, userRole }: AdminGlobalStatsProps) {
               </p>
             </div>
             <div
-              className="p-4 rounded-lg border"
+              className="p-4 rounded-xl border"
               style={{
                 backgroundColor: colors.card,
                 borderColor: colors.border,
@@ -240,7 +240,7 @@ export function AdminGlobalStats({ theme, userRole }: AdminGlobalStatsProps) {
               </p>
             </div>
             <div
-              className="p-4 rounded-lg border"
+              className="p-4 rounded-xl border"
               style={{
                 backgroundColor: colors.card,
                 borderColor: colors.border,
@@ -265,7 +265,7 @@ export function AdminGlobalStats({ theme, userRole }: AdminGlobalStatsProps) {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Plan Distribution Pie Chart */}
             <div
-              className="p-4 rounded-lg border"
+              className="p-4 rounded-xl border"
               style={{
                 backgroundColor: colors.card,
                 borderColor: colors.border,
@@ -306,7 +306,7 @@ export function AdminGlobalStats({ theme, userRole }: AdminGlobalStatsProps) {
 
             {/* Role Distribution Pie Chart */}
             <div
-              className="p-4 rounded-lg border"
+              className="p-4 rounded-xl border"
               style={{
                 backgroundColor: colors.card,
                 borderColor: colors.border,

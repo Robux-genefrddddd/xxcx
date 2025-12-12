@@ -88,7 +88,7 @@ export function ShareFileModal({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-md rounded-lg border overflow-hidden shadow-2xl"
+        className="w-full max-w-md rounded-2xl border overflow-hidden shadow-2xl"
         style={{
           backgroundColor: colors.card,
           borderColor: colors.border,
@@ -103,7 +103,7 @@ export function ShareFileModal({
         >
           <div className="flex items-center gap-3">
             <div
-              className="w-10 h-10 rounded-lg flex items-center justify-center"
+              className="w-10 h-10 rounded-xl flex items-center justify-center"
               style={{ backgroundColor: colors.accentLight }}
             >
               <Link2 className="w-5 h-5" style={{ color: colors.primary }} />
@@ -162,7 +162,7 @@ export function ShareFileModal({
                       onClick={() =>
                         setShareType(option.type as "link" | "password")
                       }
-                      className="w-full p-3 rounded-lg border-2 transition-all text-left hover:opacity-80"
+                      className="w-full p-3 rounded-xl border-2 transition-all text-left hover:opacity-80"
                       style={{
                         backgroundColor:
                           shareType === option.type
@@ -211,7 +211,7 @@ export function ShareFileModal({
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Enter a strong password"
-                      className="w-full px-4 py-3 rounded-lg border text-sm transition-all pr-10"
+                      className="w-full px-4 py-3 rounded-xl border text-sm transition-all pr-10"
                       style={{
                         backgroundColor: colors.sidebar,
                         borderColor: colors.border,
@@ -242,7 +242,7 @@ export function ShareFileModal({
 
               {/* Info Box */}
               <div
-                className="p-3 rounded-lg border space-y-2"
+                className="p-3 rounded-xl border space-y-2"
                 style={{
                   backgroundColor: colors.sidebar,
                   borderColor: colors.border,
@@ -259,7 +259,7 @@ export function ShareFileModal({
           ) : (
             <div className="text-center space-y-4">
               <div
-                className="w-16 h-16 rounded-full flex items-center justify-center mx-auto"
+                className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto"
                 style={{
                   backgroundColor: "rgba(34, 197, 94, 0.1)",
                 }}
@@ -280,7 +280,7 @@ export function ShareFileModal({
               </div>
 
               <div
-                className="p-3 rounded-lg border-2 overflow-hidden"
+                className="p-3 rounded-xl border-2 overflow-hidden"
                 style={{
                   backgroundColor: colors.sidebar,
                   borderColor: colors.primary,
@@ -296,7 +296,7 @@ export function ShareFileModal({
 
               {shareType === "password" && (
                 <div
-                  className="p-3 rounded-lg border-l-4"
+                  className="p-3 rounded-xl border-l-4"
                   style={{
                     backgroundColor: "rgba(59, 130, 246, 0.1)",
                     borderLeftColor: colors.primary,
@@ -328,7 +328,7 @@ export function ShareFileModal({
                 disabled={
                   loading || (shareType === "password" && password.length < 6)
                 }
-                className="w-full py-2 px-4 rounded-lg font-medium transition-all disabled:opacity-50 hover:opacity-90"
+                className="w-full py-2 px-4 rounded-xl font-medium transition-all disabled:opacity-50 hover:opacity-90"
                 style={{
                   backgroundColor: colors.accentLight,
                   color: colors.primary,
@@ -338,7 +338,7 @@ export function ShareFileModal({
               </button>
               <button
                 onClick={onClose}
-                className="w-full py-2 px-4 rounded-lg font-medium transition-all border hover:opacity-80"
+                className="w-full py-2 px-4 rounded-xl font-medium transition-all border hover:opacity-80"
                 style={{
                   backgroundColor: "transparent",
                   borderColor: colors.border,
@@ -352,7 +352,7 @@ export function ShareFileModal({
             <>
               <button
                 onClick={handleCopyLink}
-                className="w-full py-2 px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-2 hover:opacity-90"
+                className="w-full py-2 px-4 rounded-xl font-medium transition-all flex items-center justify-center gap-2 hover:opacity-90"
                 style={{
                   backgroundColor: colors.accentLight,
                   color: colors.primary,
@@ -372,7 +372,7 @@ export function ShareFileModal({
               </button>
               <button
                 onClick={handleReset}
-                className="w-full py-2 px-4 rounded-lg font-medium transition-all border hover:opacity-80"
+                className="w-full py-2 px-4 rounded-xl font-medium transition-all border hover:opacity-80"
                 style={{
                   backgroundColor: "transparent",
                   borderColor: colors.border,
@@ -383,7 +383,7 @@ export function ShareFileModal({
               </button>
               <button
                 onClick={onClose}
-                className="w-full py-2 px-4 rounded-lg font-medium transition-all border hover:opacity-80"
+                className="w-full py-2 px-4 rounded-xl font-medium transition-all border hover:opacity-80"
                 style={{
                   backgroundColor: "transparent",
                   borderColor: colors.border,

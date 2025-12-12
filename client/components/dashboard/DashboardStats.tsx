@@ -266,7 +266,7 @@ export function DashboardStats({ files, theme, plan }: DashboardStatsProps) {
                     </span>
                   </div>
                   <div
-                    className="h-2.5 rounded-sm overflow-hidden"
+                    className="h-2.5 rounded-md overflow-hidden"
                     style={{
                       backgroundColor: colors.border,
                     }}

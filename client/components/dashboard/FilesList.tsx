@@ -13,6 +13,7 @@ import { useState } from "react";
 import { storage } from "@/lib/firebase";
 import { ref, getBytes } from "firebase/storage";
 import { getThemeColors } from "@/lib/theme-colors";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 interface FileItem {
   id: string;
@@ -59,6 +60,9 @@ export function FilesList({
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleteFileId, setDeleteFileId] = useState<string | null>(null);
+  const [deleteFileName, setDeleteFileName] = useState("");
 
   const handleDownload = async (file: FileItem) => {
     if (!file.storagePath) {
@@ -173,7 +177,7 @@ export function FilesList({
 
   return (
     <div
-      className="rounded-lg border overflow-hidden"
+      className="rounded-2xl border overflow-hidden"
       style={{
         backgroundColor: colors.card,
         borderColor: colors.border,
@@ -233,7 +237,7 @@ export function FilesList({
         ) : files.length === 0 ? (
           <div className="px-6 py-16 text-center">
             <div
-              className="w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-4"
+              className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-4"
               style={{
                 backgroundColor: colors.border,
               }}
@@ -282,7 +286,7 @@ export function FilesList({
                   {/* File Icon & Name */}
                   <div className="flex-1 min-w-0 flex items-center gap-3">
                     <div
-                      className="w-8 h-8 rounded flex items-center justify-center flex-shrink-0"
+                      className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
                       style={{
                         backgroundColor: `${color}15`,
                       }}
@@ -330,7 +334,7 @@ export function FilesList({
                     <button
                       onClick={() => handleDownload(file)}
                       disabled={downloadingId === file.id}
-                      className="p-1.5 rounded transition-colors"
+                      className="p-1.5 rounded-lg transition-colors"
                       style={{
                         backgroundColor:
                           downloadingId === file.id
@@ -346,7 +350,7 @@ export function FilesList({
                     {!file.shared ? (
                       <button
                         onClick={() => onShare(file.id)}
-                        className="p-1.5 rounded transition-colors"
+                        className="p-1.5 rounded-lg transition-colors"
                         style={{
                           color: colors.textSecondary,
                         }}
@@ -366,7 +370,7 @@ export function FilesList({
                     ) : (
                       <button
                         onClick={() => handleCopyShare(file.id, file.shareUrl)}
-                        className="p-1.5 rounded transition-colors"
+                        className="p-1.5 rounded-lg transition-colors"
                         style={{
                           backgroundColor:
                             copiedId === file.id
@@ -387,11 +391,12 @@ export function FilesList({
 
                     <button
                       onClick={() => {
-                        setDeletingId(file.id);
-                        onDelete(file.id);
+                        setDeleteFileId(file.id);
+                        setDeleteFileName(file.name);
+                        setDeleteConfirmOpen(true);
                       }}
                       disabled={deletingId === file.id}
-                      className="p-1.5 rounded transition-colors"
+                      className="p-1.5 rounded-lg transition-colors"
                       style={{
                         color: "#EF4444",
                       }}
@@ -413,6 +418,33 @@ export function FilesList({
           </div>
         )}
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={deleteConfirmOpen}
+        onClose={() => {
+          setDeleteConfirmOpen(false);
+          setDeleteFileId(null);
+          setDeleteFileName("");
+        }}
+        onConfirm={async () => {
+          if (deleteFileId) {
+            setDeletingId(deleteFileId);
+            await onDelete(deleteFileId);
+            setDeleteConfirmOpen(false);
+            setDeleteFileId(null);
+            setDeleteFileName("");
+            setDeletingId(null);
+          }
+        }}
+        title="Delete File?"
+        description={`Are you sure you want to delete "${deleteFileName}"? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        isDangerous={true}
+        theme={theme}
+        loading={deletingId === deleteFileId}
+      />
     </div>
   );
 }

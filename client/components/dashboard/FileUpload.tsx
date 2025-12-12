@@ -47,7 +47,7 @@ export function FileUpload({
 
   return (
     <div
-      className="border rounded-lg p-12 text-center transition-all duration-200"
+      className="border rounded-2xl p-12 text-center transition-all duration-200"
       style={{
         backgroundColor: dragActive ? colors.accentLight : colors.card,
         borderColor: dragActive ? colors.primary : colors.border,
@@ -69,7 +69,7 @@ export function FileUpload({
 
       <div className="flex flex-col items-center gap-5">
         <div
-          className="w-12 h-12 rounded-lg flex items-center justify-center"
+          className="w-12 h-12 rounded-xl flex items-center justify-center"
           style={{
             backgroundColor: dragActive ? colors.primary : colors.sidebar,
           }}

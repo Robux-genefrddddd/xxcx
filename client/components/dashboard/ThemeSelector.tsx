@@ -57,7 +57,7 @@ export function ThemeSelector({ theme, onThemeChange }: ThemeSelectorProps) {
   return (
     <div className="space-y-6">
       <div
-        className="rounded-lg border p-6"
+        className="rounded-2xl border p-6"
         style={{
           backgroundColor: colors.card,
           borderColor: colors.border,
@@ -77,7 +77,7 @@ export function ThemeSelector({ theme, onThemeChange }: ThemeSelectorProps) {
               <button
                 key={t.id}
                 onClick={() => onThemeChange(t.id)}
-                className="p-6 rounded-lg border-2 transition-all text-left hover:opacity-80"
+                className="p-6 rounded-xl border-2 transition-all text-left hover:opacity-80"
                 style={{
                   backgroundColor: colors.card,
                   borderColor: isActive ? colors.primary : colors.border,
@@ -105,7 +105,7 @@ export function ThemeSelector({ theme, onThemeChange }: ThemeSelectorProps) {
 
                 {/* Color Preview */}
                 <div
-                  className="w-full h-12 rounded-md mb-3 border"
+                  className="w-full h-12 rounded-lg mb-3 border"
                   style={{
                     backgroundColor: t.colorPreview,
                     borderColor: colors.border,
