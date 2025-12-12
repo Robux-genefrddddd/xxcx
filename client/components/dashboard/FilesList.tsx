@@ -173,7 +173,7 @@ export function FilesList({
 
   return (
     <div
-      className="rounded-lg border overflow-hidden"
+      className="rounded-2xl border overflow-hidden"
       style={{
         backgroundColor: colors.card,
         borderColor: colors.border,
