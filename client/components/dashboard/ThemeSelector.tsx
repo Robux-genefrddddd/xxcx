@@ -105,7 +105,7 @@ export function ThemeSelector({ theme, onThemeChange }: ThemeSelectorProps) {
 
                 {/* Color Preview */}
                 <div
-                  className="w-full h-12 rounded-md mb-3 border"
+                  className="w-full h-12 rounded-lg mb-3 border"
                   style={{
                     backgroundColor: t.colorPreview,
                     borderColor: colors.border,
