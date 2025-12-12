@@ -391,8 +391,9 @@ export function FilesList({
 
                     <button
                       onClick={() => {
-                        setDeletingId(file.id);
-                        onDelete(file.id);
+                        setDeleteFileId(file.id);
+                        setDeleteFileName(file.name);
+                        setDeleteConfirmOpen(true);
                       }}
                       disabled={deletingId === file.id}
                       className="p-1.5 rounded-lg transition-colors"
