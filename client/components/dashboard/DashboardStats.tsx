@@ -249,8 +249,11 @@ export function DashboardStats({ files, theme, plan }: DashboardStatsProps) {
         </div>
       </div>
 
-      {/* File Size Distribution */}
-      <div
+      {/* File Type Distribution */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.4 }}
         className="rounded-lg border p-6"
         style={{
           backgroundColor: colors.card,
@@ -266,27 +269,41 @@ export function DashboardStats({ files, theme, plan }: DashboardStatsProps) {
             { type: "Images", count: 8, color: "#8B5CF6" },
             { type: "Videos", count: 3, color: "#EC4899" },
             { type: "Other", count: 7, color: "#F59E0B" },
-          ].map((item) => (
-            <div
+          ].map((item, idx) => (
+            <motion.div
               key={item.type}
-              className="text-center p-4 rounded-lg"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.4, delay: 0.4 + idx * 0.1 }}
+              whileHover={{
+                scale: 1.05,
+                boxShadow: `0 10px 30px ${item.color}33`,
+              }}
+              className="text-center p-4 rounded-lg border transition-all"
               style={{
                 backgroundColor: colors.accentLight,
+                borderColor: `${item.color}33`,
               }}
             >
-              <div className="text-2xl font-bold" style={{ color: item.color }}>
+              <motion.div
+                className="text-2xl font-bold"
+                style={{ color: item.color }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.8, delay: 0.5 + idx * 0.1 }}
+              >
                 {item.count}
-              </div>
+              </motion.div>
               <p
                 className="text-sm mt-2"
                 style={{ color: colors.textSecondary }}
               >
                 {item.type}
               </p>
-            </div>
+            </motion.div>
           ))}
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
