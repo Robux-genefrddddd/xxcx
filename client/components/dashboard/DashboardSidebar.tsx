@@ -127,15 +127,11 @@ export function DashboardSidebar({
       >
         {/* User Card */}
         <div className="flex items-start gap-3">
-          <div
-            className="w-10 h-10 rounded-lg text-sm flex items-center justify-center font-bold flex-shrink-0"
-            style={{
-              backgroundColor: colors.primary,
-              color: colors.sidebar,
-            }}
-          >
-            {userName.charAt(0).toUpperCase()}
-          </div>
+          <img
+            src="https://cdn.builder.io/api/v1/image/assets%2F91e2732f1c03487e879c66ee97e72712%2Fee08390eccc04e8dbea3ce5415d97e92?format=webp&width=800"
+            alt="User Avatar"
+            className="w-10 h-10 rounded-full flex-shrink-0"
+          />
           <div className="flex-1 min-w-0">
             <p
               className="text-xs font-semibold truncate"
