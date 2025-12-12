@@ -10,6 +10,7 @@ import { MaintenanceScreen } from "@/components/MaintenanceScreen";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import RecaptchaVerification from "./pages/RecaptchaVerification";
 import Dashboard from "./pages/Dashboard";
 import Share from "./pages/Share";
 import NotFound from "./pages/NotFound";
@@ -27,6 +28,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/recaptcha-verification" element={<RecaptchaVerification />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/share/:fileId" element={<Share />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
