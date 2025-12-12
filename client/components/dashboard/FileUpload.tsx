@@ -47,11 +47,11 @@ export function FileUpload({
 
   return (
     <div
-      className="rounded-xl border-2 p-10 text-center transition-all"
+      className="border p-6 text-center transition-colors"
       style={{
-        backgroundColor: dragActive ? colors.accentLight : colors.card,
+        backgroundColor: dragActive ? colors.accentLight : "transparent",
         borderColor: dragActive ? colors.primary : colors.border,
-        borderStyle: "dashed",
+        borderStyle: dragActive ? "solid" : "dashed",
       }}
       onDragEnter={handleDrag}
       onDragLeave={handleDrag}
@@ -67,53 +67,33 @@ export function FileUpload({
         accept="*/*"
       />
 
-      <div className="flex flex-col items-center gap-4">
-        <div
-          className="w-16 h-16 rounded-full flex items-center justify-center"
+      <div className="flex flex-col items-center gap-3">
+        <p
+          className="text-sm"
           style={{
-            backgroundColor: colors.accentLight,
+            color: colors.text,
           }}
         >
-          <Upload
-            className="w-8 h-8"
+          {dragActive ? "Drop file here" : "Drag file or"}
+          <button
+            onClick={() => inputRef.current?.click()}
+            disabled={uploading}
+            className="font-semibold ml-1 underline cursor-pointer disabled:opacity-50 hover:opacity-70"
             style={{
               color: colors.primary,
             }}
-          />
-        </div>
-
-        <div>
-          <p
-            className="font-semibold text-base"
-            style={{
-              color: colors.text,
-            }}
           >
-            {dragActive
-              ? "Drop your file here"
-              : "Click to upload or drag and drop"}
-          </p>
-          <p
-            className="text-sm mt-1"
-            style={{
-              color: colors.textSecondary,
-            }}
-          >
-            Any file type • Maximum 100MB • Secure cloud storage
-          </p>
-        </div>
-
-        <button
-          onClick={() => inputRef.current?.click()}
-          disabled={uploading}
-          className="mt-2 px-6 py-2 rounded-lg font-medium transition-colors disabled:opacity-50"
+            browse
+          </button>
+        </p>
+        <p
+          className="text-xs"
           style={{
-            backgroundColor: colors.accentLight,
-            color: colors.primary,
+            color: colors.textSecondary,
           }}
         >
-          {uploading ? "Uploading..." : "Browse Files"}
-        </button>
+          Max 100MB
+        </p>
       </div>
     </div>
   );
