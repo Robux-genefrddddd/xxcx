@@ -93,32 +93,25 @@ export function DashboardSidebar({
       </Link>
 
       {/* Navigation */}
-      <nav className="space-y-2 flex-1">
-        {navItems.map((item, idx) => {
+      <nav className="space-y-1 flex-1">
+        {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = activeTab === item.id;
 
           return (
-            <motion.button
+            <button
               key={item.id}
               onClick={() => onTabChange(item.id)}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors text-left"
+              className="w-full flex items-center gap-3 px-3 py-2 text-sm transition-colors text-left border-l-2"
               style={{
                 backgroundColor: isActive ? colors.accentLight : "transparent",
+                borderColor: isActive ? colors.primary : "transparent",
                 color: isActive ? colors.accent : colors.textSecondary,
               }}
-              whileHover={{
-                scale: 1.02,
-                x: 4,
-              }}
-              whileTap={{ scale: 0.98 }}
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: idx * 0.05 }}
             >
-              <Icon className="w-5 h-5" />
+              <Icon className="w-4 h-4" />
               <span>{item.label}</span>
-            </motion.button>
+            </button>
           );
         })}
       </nav>
