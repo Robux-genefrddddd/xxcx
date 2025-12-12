@@ -60,12 +60,33 @@ export default function Share() {
         size: fileData.size,
         uploadedAt: new Date(fileData.uploadedAt).toLocaleDateString(),
         shared: fileData.shared,
+        sharePassword: fileData.sharePassword,
       });
+
+      // Check if file is password protected
+      if (fileData.sharePassword) {
+        setIsPasswordProtected(true);
+        setPasswordVerified(false);
+      } else {
+        setPasswordVerified(true);
+      }
     } catch (err) {
       console.error("Error loading file:", err);
       setError("Failed to load file");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handlePasswordSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordError(null);
+
+    if (enteredPassword === file?.sharePassword) {
+      setPasswordVerified(true);
+    } else {
+      setPasswordError("Incorrect password");
+      setEnteredPassword("");
     }
   };
 
