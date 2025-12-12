@@ -60,6 +60,9 @@ export function FilesList({
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleteFileId, setDeleteFileId] = useState<string | null>(null);
+  const [deleteFileName, setDeleteFileName] = useState("");
 
   const handleDownload = async (file: FileItem) => {
     if (!file.storagePath) {
