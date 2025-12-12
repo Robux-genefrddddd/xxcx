@@ -24,6 +24,20 @@ interface FilesListProps {
   onCopyShareLink: (url: string) => void;
 }
 
+const getFileIcon = (filename: string) => {
+  const ext = filename.split(".").pop()?.toLowerCase() || "";
+  const docs = ["pdf", "doc", "docx", "txt", "xlsx", "xls", "ppt", "pptx"];
+  const imgs = ["jpg", "jpeg", "png", "gif", "webp", "svg", "bmp"];
+  const vids = ["mp4", "avi", "mkv", "mov", "wmv", "flv"];
+  const archs = ["zip", "rar", "7z", "tar", "gz"];
+
+  if (docs.includes(ext)) return { icon: FileText, color: "#3B82F6" };
+  if (imgs.includes(ext)) return { icon: Image, color: "#8B5CF6" };
+  if (vids.includes(ext)) return { icon: Video, color: "#EC4899" };
+  if (archs.includes(ext)) return { icon: Archive, color: "#F59E0B" };
+  return { icon: File, color: "#06B6D4" };
+};
+
 export function FilesList({
   files,
   loading,
@@ -35,6 +49,7 @@ export function FilesList({
   const colors = getThemeColors(theme);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const handleDownload = async (file: FileItem) => {
     if (!file.storagePath) {
