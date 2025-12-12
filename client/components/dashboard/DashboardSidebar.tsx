@@ -4,7 +4,6 @@ import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { getThemeColors } from "@/lib/theme-colors";
 import { UserRole, canAccessAdmin } from "@/lib/auth-utils";
-import { motion } from "framer-motion";
 
 interface UserPlan {
   type: "free" | "premium";
@@ -116,31 +115,21 @@ export function DashboardSidebar({
         })}
       </nav>
 
-      {/* User Card */}
-      <motion.div
-        className="mt-6 p-4 rounded-lg border space-y-4"
-        style={{
-          backgroundColor: colors.card,
-          borderColor: colors.border,
-        }}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-      >
-        <motion.div
-          className="flex items-center gap-3"
-          whileHover={{ scale: 1.02 }}
-        >
-          <motion.img
-            src="https://marketplace.canva.com/Dz63E/MAF4KJDz63E/1/tl/canva-user-icon-MAF4KJDz63E.png"
-            alt="User Avatar"
-            className="w-10 h-10 rounded-lg object-cover"
-            whileHover={{ scale: 1.1 }}
-            transition={{ type: "spring", stiffness: 400, damping: 10 }}
-          />
+      {/* User Info - Minimaliste */}
+      <div className="mt-6 pt-4 border-t space-y-3" style={{ borderColor: colors.border }}>
+        <div className="flex items-start gap-2">
+          <div
+            className="w-8 h-8 rounded text-xs flex items-center justify-center font-bold flex-shrink-0"
+            style={{
+              backgroundColor: colors.accentLight,
+              color: colors.accent,
+            }}
+          >
+            {userName.charAt(0).toUpperCase()}
+          </div>
           <div className="flex-1 min-w-0">
             <p
-              className="text-sm font-semibold truncate"
+              className="text-xs font-semibold truncate"
               style={{ color: colors.sidebarForeground }}
             >
               {userName}
@@ -152,72 +141,29 @@ export function DashboardSidebar({
               {userEmail}
             </p>
           </div>
-        </motion.div>
+        </div>
 
-        {/* Plan Badge */}
+        {/* Storage & Plan */}
         {userPlan && (
-          <motion.div
-            className="px-3 py-2 rounded-lg text-xs font-semibold transition-all"
-            style={{
-              backgroundColor:
-                userPlan.type === "premium"
-                  ? "rgba(34, 197, 94, 0.1)"
-                  : "rgba(59, 130, 246, 0.1)",
-              color: userPlan.type === "premium" ? "#22C55E" : colors.primary,
-              border:
-                userPlan.type === "premium"
-                  ? "1px solid rgba(34, 197, 94, 0.3)"
-                  : "1px solid transparent",
-            }}
-            whileHover={{
-              scale: 1.05,
-              boxShadow:
-                userPlan.type === "premium"
-                  ? "0 0 12px rgba(34, 197, 94, 0.3)"
-                  : "0 0 12px rgba(59, 130, 246, 0.2)",
-            }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.35 }}
-          >
-            {userPlan.type === "premium" ? "✓ Premium" : "Free Plan"}
-          </motion.div>
-        )}
-
-        {/* Storage Progress */}
-        {userPlan && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-          >
-            <div className="flex items-center justify-between mb-2">
-              <p
-                className="text-xs font-medium"
-                style={{
-                  color: colors.textSecondary,
-                }}
-              >
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <p className="text-xs uppercase tracking-widest" style={{ color: colors.textSecondary }}>
                 Storage
               </p>
-              <p
-                className="text-xs font-semibold"
-                style={{
-                  color: colors.text,
-                }}
-              >
-                {storageUsedMB.toFixed(0)}MB / {storageLimitMB.toFixed(0)}MB
+              <p className="text-xs font-semibold" style={{ color: colors.text }}>
+                {storageUsedMB.toFixed(0)}MB
               </p>
             </div>
             <div
-              className="w-full h-1.5 rounded-full overflow-hidden"
+              className="w-full h-1 rounded-full overflow-hidden"
               style={{
-                backgroundColor: colors.accentLight,
+                backgroundColor: colors.border,
               }}
             >
-              <motion.div
-                className="h-full rounded-full"
+              <div
+                className="h-full transition-all duration-300"
                 style={{
+                  width: `${Math.min(storagePercentage, 100)}%`,
                   backgroundColor:
                     storagePercentage > 90
                       ? "#EF4444"
@@ -225,62 +171,41 @@ export function DashboardSidebar({
                         ? "#F59E0B"
                         : colors.primary,
                 }}
-                initial={{ width: 0 }}
-                animate={{
-                  width: `${Math.min(storagePercentage, 100)}%`,
-                }}
-                transition={{ duration: 1, ease: "easeOut" }}
               />
             </div>
-          </motion.div>
+            <p className="text-xs" style={{ color: colors.textSecondary }}>
+              {userPlan.type === "premium" ? "Premium" : "Free"}
+            </p>
+          </div>
         )}
 
         {userPlan && userPlan.type === "free" && onUpgradeClick && (
-          <motion.button
+          <button
             onClick={onUpgradeClick}
-            className="w-full px-3 py-2 rounded-lg text-xs font-semibold transition-all"
+            className="w-full px-3 py-2 text-xs font-semibold transition-colors border"
             style={{
               backgroundColor: colors.accentLight,
               color: colors.primary,
-              border: `1px solid ${colors.primary}33`,
+              borderColor: colors.primary,
             }}
-            whileHover={{
-              scale: 1.05,
-              boxShadow: `0 0 20px ${colors.primary}44`,
-              backgroundColor: colors.primary,
-              color: colors.card,
-            }}
-            whileTap={{ scale: 0.95 }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.45 }}
           >
-            ✨ Upgrade
-          </motion.button>
+            Upgrade
+          </button>
         )}
 
-        <motion.button
+        <button
           onClick={handleLogout}
-          className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors border font-medium"
+          className="w-full px-3 py-2 text-xs transition-colors border flex items-center justify-center gap-2"
           style={{
-            backgroundColor: colors.card,
+            backgroundColor: "transparent",
             borderColor: colors.border,
             color: colors.textSecondary,
           }}
-          whileHover={{
-            scale: 1.02,
-            color: theme === "dark" ? "#FFFFFF" : "#111827",
-            borderColor: colors.textSecondary,
-          }}
-          whileTap={{ scale: 0.95 }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
         >
           <LogOut className="w-4 h-4" />
-          <span>Logout</span>
-        </motion.button>
-      </motion.div>
+          Logout
+        </button>
+      </div>
     </aside>
   );
 }
