@@ -82,65 +82,58 @@ export function DashboardStats({ files, theme, plan }: DashboardStatsProps) {
   ];
 
   return (
-    <div className="space-y-12">
-      {/* SECTION 1: STORAGE DOMINANTE - L'ÉLÉMENT PRINCIPAL */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Storage (2 colonnes, dominant) */}
-        <div className="lg:col-span-2">
-          <div className="pb-8">
-            <p
-              className="text-sm font-medium uppercase tracking-wide mb-3"
-              style={{ color: colors.textSecondary }}
-            >
-              Storage
-            </p>
-            <p
-              className="text-6xl font-bold mb-2"
-              style={{ color: colors.text }}
-            >
-              {storageUsedMB.toFixed(1)}
-              <span className="text-xl ml-2 font-normal" style={{ color: colors.textSecondary }}>
-                MB
-              </span>
-            </p>
-            <p
-              className="text-sm"
-              style={{ color: colors.textSecondary }}
-            >
-              {storageLimitMB.toFixed(0)} MB available
-              {plan.type === "premium" && " • Premium"}
-            </p>
-          </div>
-
-          {/* Progress bar - subtle */}
-          <div
-            className="h-1 rounded-full"
-            style={{
-              backgroundColor: colors.border,
-              width: "100%",
-            }}
+    <div className="space-y-8">
+      {/* SECTION 1: STORAGE - MINIMALISTE */}
+      <div>
+        <p
+          className="text-xs font-medium uppercase tracking-wide mb-2"
+          style={{ color: colors.textSecondary }}
+        >
+          Storage
+        </p>
+        <div className="flex items-baseline gap-1 mb-3">
+          <p
+            className="text-2xl font-semibold"
+            style={{ color: colors.text }}
           >
-            <div
-              className="h-1 rounded-full transition-all"
-              style={{
-                width: `${Math.min(storagePercent, 100)}%`,
-                backgroundColor: plan.type === "premium" ? "#10B981" : colors.primary,
-              }}
-            />
-          </div>
+            {storageUsedMB.toFixed(1)}
+          </p>
+          <p
+            className="text-sm"
+            style={{ color: colors.textSecondary }}
+          >
+            / {storageLimitMB.toFixed(0)} MB
+          </p>
         </div>
 
-        {/* Quick Stats (colonne latérale, petit, dépouillé) */}
-        <div className="flex flex-col justify-end space-y-6">
+        {/* Progress bar */}
+        <div
+          className="h-1 rounded-full"
+          style={{
+            backgroundColor: colors.border,
+            width: "100%",
+          }}
+        >
+          <div
+            className="h-1 rounded-full transition-all duration-300"
+            style={{
+              width: `${Math.min(storagePercent, 100)}%`,
+              backgroundColor: plan.type === "premium" ? "#10B981" : colors.primary,
+            }}
+          />
+        </div>
+
+        {/* Quick Stats - simple inline */}
+        <div className="flex gap-6 mt-4">
           <div>
             <p
-              className="text-xs font-medium uppercase tracking-widest mb-2"
+              className="text-xs uppercase tracking-widest"
               style={{ color: colors.textSecondary }}
             >
               Files
             </p>
             <p
-              className="text-4xl font-bold"
+              className="text-lg font-semibold mt-1"
               style={{ color: colors.text }}
             >
               {totalFiles}
@@ -148,13 +141,13 @@ export function DashboardStats({ files, theme, plan }: DashboardStatsProps) {
           </div>
           <div>
             <p
-              className="text-xs font-medium uppercase tracking-widest mb-2"
+              className="text-xs uppercase tracking-widest"
               style={{ color: colors.textSecondary }}
             >
               Shared
             </p>
             <p
-              className="text-4xl font-bold"
+              className="text-lg font-semibold mt-1"
               style={{ color: colors.text }}
             >
               {sharedFiles}
@@ -163,50 +156,44 @@ export function DashboardStats({ files, theme, plan }: DashboardStatsProps) {
         </div>
       </div>
 
-      {/* SECTION 2: ACTIVITY CHART - SIMPLE, SANS CARD */}
+      {/* SECTION 2: ACTIVITY CHART - MINIMAL */}
       <div>
         <p
-          className="text-sm font-medium uppercase tracking-wide mb-6"
+          className="text-xs font-medium uppercase tracking-wide mb-3"
           style={{ color: colors.textSecondary }}
         >
-          Upload Activity
+          Activity
         </p>
-        <div
-          style={{
-            backgroundColor: colors.card,
-            borderTop: `1px solid ${colors.border}`,
-            borderBottom: `1px solid ${colors.border}`,
-            padding: "2rem 0",
-          }}
-        >
-          <ResponsiveContainer width="100%" height={250}>
+        <div style={{ borderTop: `1px solid ${colors.border}`, paddingTop: "1rem" }}>
+          <ResponsiveContainer width="100%" height={180}>
             <BarChart data={dailyData}>
               <CartesianGrid
                 strokeDasharray="0"
                 stroke={colors.border}
                 vertical={false}
-                horizontalPoints={[]}
               />
               <XAxis
                 stroke={colors.textSecondary}
-                style={{ fontSize: "12px" }}
+                style={{ fontSize: "11px" }}
               />
               <YAxis
                 stroke={colors.textSecondary}
-                style={{ fontSize: "12px" }}
+                style={{ fontSize: "11px" }}
+                width={30}
               />
               <Tooltip
                 contentStyle={{
                   backgroundColor: colors.card,
                   border: `1px solid ${colors.border}`,
-                  borderRadius: "4px",
+                  borderRadius: "3px",
+                  fontSize: "12px",
                 }}
                 labelStyle={{ color: colors.text }}
               />
               <Bar
                 dataKey="uploads"
                 fill={colors.primary}
-                radius={[4, 4, 0, 0]}
+                radius={[2, 2, 0, 0]}
               />
             </BarChart>
           </ResponsiveContainer>
