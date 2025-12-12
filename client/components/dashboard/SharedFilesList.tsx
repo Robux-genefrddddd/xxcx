@@ -55,6 +55,9 @@ export function SharedFilesList({
   const colors = getThemeColors(theme);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [unsharingId, setUnsharingId] = useState<string | null>(null);
+  const [unshareConfirmOpen, setUnshareConfirmOpen] = useState(false);
+  const [unshareFileId, setUnshareFileId] = useState<string | null>(null);
+  const [unshareFileName, setUnshareFileName] = useState("");
 
   const sharedFiles = files.filter((file) => file.shared);
 
