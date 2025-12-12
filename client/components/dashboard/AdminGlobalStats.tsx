@@ -147,7 +147,7 @@ export function AdminGlobalStats({ theme, userRole }: AdminGlobalStatsProps) {
   if (!canViewStats(userRole)) {
     return (
       <div
-        className="p-6 rounded-lg border"
+        className="p-6 rounded-2xl border"
         style={{
           backgroundColor: colors.card,
           borderColor: colors.border,
