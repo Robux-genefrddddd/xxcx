@@ -1,7 +1,7 @@
 import { getThemeColors } from "@/lib/theme-colors";
 import {
-  BarChart,
-  Bar,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -62,7 +62,7 @@ export function DashboardStats({ files, theme, plan }: DashboardStatsProps) {
     fileTypeMap[type as keyof typeof fileTypeMap]++;
   });
 
-  const dailyData = [
+  const activityData = [
     { day: "Mon", uploads: 4 },
     { day: "Tue", uploads: 3 },
     { day: "Wed", uploads: 7 },
@@ -72,187 +72,223 @@ export function DashboardStats({ files, theme, plan }: DashboardStatsProps) {
     { day: "Sun", uploads: 8 },
   ];
 
-  const fileTypeList = [
-    { type: "Documents", icon: FileText, count: fileTypeMap.Documents },
-    { type: "Images", icon: Image, count: fileTypeMap.Images },
-    { type: "Videos", icon: Video, count: fileTypeMap.Videos },
-    { type: "Archives", icon: Archive, count: fileTypeMap.Archives },
-  ];
+  const storageBreakdown = [
+    { type: "Documents", count: fileTypeMap.Documents, color: "#3B82F6" },
+    { type: "Images", count: fileTypeMap.Images, color: "#8B5CF6" },
+    { type: "Videos", count: fileTypeMap.Videos, color: "#EC4899" },
+    { type: "Archives", count: fileTypeMap.Archives, color: "#F59E0B" },
+  ]
+    .filter((item) => item.count > 0)
+    .sort((a, b) => b.count - a.count);
+
+  const lastUploadFile = files.length > 0 ? files[files.length - 1].uploadedAt : "—";
 
   return (
-    <div className="space-y-8">
-      {/* SECTION 1: STORAGE - MINIMALISTE */}
-      <div>
-        <p
-          className="text-xs font-medium uppercase tracking-wide mb-2"
-          style={{ color: colors.textSecondary }}
-        >
-          Storage
-        </p>
-        <div className="flex items-baseline gap-1 mb-3">
-          <p className="text-2xl font-semibold" style={{ color: colors.text }}>
-            {storageUsedMB.toFixed(1)}
+    <div className="space-y-6">
+      {/* KPI LINE - COMPACT, PROFESSIONAL */}
+      <div
+        className="flex gap-8 pb-6 border-b"
+        style={{ borderColor: colors.border }}
+      >
+        {/* Storage Used */}
+        <div className="flex-1">
+          <p
+            className="text-xs font-medium uppercase tracking-wider mb-3"
+            style={{ color: colors.textSecondary }}
+          >
+            Storage Used
           </p>
-          <p className="text-sm" style={{ color: colors.textSecondary }}>
-            / {storageLimitMB.toFixed(0)} MB
+          <p
+            className="text-3xl font-bold tracking-tight mb-2"
+            style={{ color: colors.text }}
+          >
+            {storageUsedMB.toFixed(1)} MB
           </p>
-        </div>
-
-        {/* Progress bar */}
-        <div
-          className="h-1 rounded-full"
-          style={{
-            backgroundColor: colors.border,
-            width: "100%",
-          }}
-        >
           <div
-            className="h-1 rounded-full transition-all duration-300"
+            className="h-1.5 rounded-full overflow-hidden"
             style={{
-              width: `${Math.min(storagePercent, 100)}%`,
-              backgroundColor:
-                plan.type === "premium" ? "#10B981" : colors.primary,
+              backgroundColor: colors.border,
             }}
-          />
+          >
+            <div
+              className="h-1.5 transition-all duration-500"
+              style={{
+                width: `${Math.min(storagePercent, 100)}%`,
+                backgroundColor:
+                  storagePercent > 90
+                    ? "#EF4444"
+                    : storagePercent > 70
+                      ? "#F59E0B"
+                      : colors.primary,
+              }}
+            />
+          </div>
+          <p
+            className="text-xs mt-2"
+            style={{ color: colors.textSecondary }}
+          >
+            {storageLimitMB.toFixed(0)} MB limit
+            {plan.type === "premium" && (
+              <span
+                style={{ color: colors.primary }}
+                className="ml-2 font-medium"
+              >
+                (Premium)
+              </span>
+            )}
+          </p>
         </div>
 
-        {/* Quick Stats - simple inline */}
-        <div className="flex gap-6 mt-4">
-          <div>
-            <p
-              className="text-xs uppercase tracking-widest"
-              style={{ color: colors.textSecondary }}
-            >
-              Files
-            </p>
-            <p
-              className="text-lg font-semibold mt-1"
-              style={{ color: colors.text }}
-            >
-              {totalFiles}
-            </p>
-          </div>
-          <div>
-            <p
-              className="text-xs uppercase tracking-widest"
-              style={{ color: colors.textSecondary }}
-            >
-              Shared
-            </p>
-            <p
-              className="text-lg font-semibold mt-1"
-              style={{ color: colors.text }}
-            >
-              {sharedFiles}
-            </p>
-          </div>
+        {/* Total Files */}
+        <div className="text-center">
+          <p
+            className="text-xs font-medium uppercase tracking-wider mb-3"
+            style={{ color: colors.textSecondary }}
+          >
+            Total Files
+          </p>
+          <p
+            className="text-4xl font-bold"
+            style={{ color: colors.text }}
+          >
+            {totalFiles}
+          </p>
+        </div>
+
+        {/* Shared Files */}
+        <div className="text-center">
+          <p
+            className="text-xs font-medium uppercase tracking-wider mb-3"
+            style={{ color: colors.textSecondary }}
+          >
+            Shared
+          </p>
+          <p
+            className="text-4xl font-bold"
+            style={{ color: colors.primary }}
+          >
+            {sharedFiles}
+          </p>
+        </div>
+
+        {/* Last Upload */}
+        <div className="text-right">
+          <p
+            className="text-xs font-medium uppercase tracking-wider mb-3"
+            style={{ color: colors.textSecondary }}
+          >
+            Last Upload
+          </p>
+          <p
+            className="text-sm font-medium"
+            style={{ color: colors.text }}
+          >
+            {lastUploadFile}
+          </p>
         </div>
       </div>
 
-      {/* SECTION 2: ACTIVITY CHART - MINIMAL */}
+      {/* ACTIVITY CHART - AREA CHART, NO GRIDLINES */}
       <div>
         <p
-          className="text-xs font-medium uppercase tracking-wide mb-3"
+          className="text-xs font-medium uppercase tracking-wider mb-4"
           style={{ color: colors.textSecondary }}
         >
           Activity
         </p>
-        <div
-          style={{
-            borderTop: `1px solid ${colors.border}`,
-            paddingTop: "1rem",
-          }}
-        >
-          <ResponsiveContainer width="100%" height={180}>
-            <BarChart data={dailyData}>
-              <CartesianGrid
-                strokeDasharray="0"
-                stroke={colors.border}
-                vertical={false}
-              />
-              <XAxis
-                stroke={colors.textSecondary}
-                style={{ fontSize: "11px" }}
-              />
-              <YAxis
-                stroke={colors.textSecondary}
-                style={{ fontSize: "11px" }}
-                width={30}
-              />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: colors.card,
-                  border: `1px solid ${colors.border}`,
-                  borderRadius: "3px",
-                  fontSize: "12px",
-                }}
-                labelStyle={{ color: colors.text }}
-              />
-              <Bar
-                dataKey="uploads"
-                fill={colors.primary}
-                radius={[2, 2, 0, 0]}
-              />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+        <ResponsiveContainer width="100%" height={240}>
+          <AreaChart data={activityData} margin={{ top: 0, right: 0, left: -35, bottom: 0 }}>
+            <defs>
+              <linearGradient id="colorUploads" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={colors.primary} stopOpacity={0.3} />
+                <stop offset="95%" stopColor={colors.primary} stopOpacity={0} />
+              </linearGradient>
+            </defs>
+            <XAxis
+              dataKey="day"
+              stroke={colors.textSecondary}
+              style={{ fontSize: "12px" }}
+              tickLine={false}
+              axisLine={{ stroke: colors.border }}
+            />
+            <YAxis
+              stroke={colors.textSecondary}
+              style={{ fontSize: "12px" }}
+              tickLine={false}
+              axisLine={{ stroke: colors.border }}
+            />
+            <CartesianGrid strokeDasharray="0" stroke={colors.border} vertical={false} />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: colors.sidebar,
+                border: `1px solid ${colors.border}`,
+                borderRadius: "6px",
+                fontSize: "13px",
+                padding: "8px 12px",
+              }}
+              labelStyle={{ color: colors.text }}
+            />
+            <Area
+              type="monotone"
+              dataKey="uploads"
+              stroke={colors.primary}
+              strokeWidth={2}
+              fillOpacity={1}
+              fill="url(#colorUploads)"
+              isAnimationActive={false}
+            />
+          </AreaChart>
+        </ResponsiveContainer>
       </div>
 
-      {/* SECTION 3: FILE TYPE DISTRIBUTION - MINIMALISTE, PAS DE GRILLE */}
+      {/* STORAGE BREAKDOWN - HORIZONTAL BARS */}
       <div>
         <p
-          className="text-sm font-medium uppercase tracking-wide mb-6"
+          className="text-xs font-medium uppercase tracking-wider mb-4"
           style={{ color: colors.textSecondary }}
         >
-          File Types
+          Storage Breakdown
         </p>
-        <div className="space-y-3">
-          {fileTypeList
-            .filter((item) => item.count > 0)
-            .sort((a, b) => b.count - a.count)
-            .map((item) => {
-              const Icon = item.icon;
-              const percentage =
-                totalFiles > 0
-                  ? ((item.count / totalFiles) * 100).toFixed(0)
-                  : "0";
+        <div className="space-y-4">
+          {storageBreakdown.length > 0 ? (
+            storageBreakdown.map((item) => {
+              const percentage = totalFiles > 0 ? (item.count / totalFiles) * 100 : 0;
               return (
-                <div
-                  key={item.type}
-                  className="flex items-center justify-between"
-                >
-                  <div className="flex items-center gap-3">
-                    <Icon
-                      className="w-5 h-5"
-                      style={{ color: colors.textSecondary, strokeWidth: 1.5 }}
-                    />
-                    <span style={{ color: colors.text }} className="text-sm">
+                <div key={item.type}>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium" style={{ color: colors.text }}>
                       {item.type}
                     </span>
+                    <span
+                      className="text-sm font-semibold"
+                      style={{ color: item.color }}
+                    >
+                      {item.count} file{item.count !== 1 ? "s" : ""}
+                    </span>
                   </div>
-                  <div className="flex items-baseline gap-4">
-                    <span
-                      style={{ color: colors.primary }}
-                      className="text-lg font-bold"
-                    >
-                      {item.count}
-                    </span>
-                    <span
-                      style={{ color: colors.textSecondary }}
-                      className="text-xs"
-                    >
-                      {percentage}%
-                    </span>
+                  <div
+                    className="h-2.5 rounded-sm overflow-hidden"
+                    style={{
+                      backgroundColor: colors.border,
+                    }}
+                  >
+                    <div
+                      className="h-2.5 transition-all duration-500"
+                      style={{
+                        width: `${percentage}%`,
+                        backgroundColor: item.color,
+                      }}
+                    />
                   </div>
                 </div>
               );
-            })}
+            })
+          ) : (
+            <p className="text-sm py-6" style={{ color: colors.textSecondary }}>
+              No files yet
+            </p>
+          )}
         </div>
-        {totalFiles === 0 && (
-          <p className="text-sm py-8" style={{ color: colors.textSecondary }}>
-            No files yet
-          </p>
-        )}
       </div>
     </div>
   );
