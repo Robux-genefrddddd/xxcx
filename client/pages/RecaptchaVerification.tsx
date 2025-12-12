@@ -1,22 +1,14 @@
 import { useState, useEffect } from "react";
-import { Mail, CheckCircle } from "lucide-react";
+import { Mail, CheckCircle, Shield } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 declare global {
   interface Window {
     grecaptcha?: {
-      render: (
-        container: string | HTMLElement,
-        options: {
-          sitekey: string;
-          callback?: (token: string) => void;
-          "error-callback"?: () => void;
-        }
-      ) => void;
-      getResponse: (widgetId?: number) => string;
-      reset: (widgetId?: number) => void;
+      enterprise?: {
+        execute: (key: string, options: { action: string }) => Promise<string>;
+      };
     };
-    onRecaptchaSuccess?: (token: string) => void;
   }
 }
 
@@ -27,10 +19,10 @@ interface LocationState {
 }
 
 export default function RecaptchaVerification() {
+  const [verifying, setVerifying] = useState(true);
   const [recaptchaToken, setRecaptchaToken] = useState("");
   const [error, setError] = useState("");
   const [verificationComplete, setVerificationComplete] = useState(false);
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const state = location.state as LocationState || {};
@@ -43,56 +35,43 @@ export default function RecaptchaVerification() {
   }, [email, navigate]);
 
   useEffect(() => {
-    window.onRecaptchaSuccess = (token: string) => {
-      setRecaptchaToken(token);
-      console.log("reCAPTCHA completed with token:", token);
-    };
-
-    const attemptRender = () => {
-      const container = document.getElementById("recaptcha-container");
-      if (window.grecaptcha && container) {
-        try {
-          window.grecaptcha.render("recaptcha-container", {
-            sitekey: RECAPTCHA_KEY,
-            callback: window.onRecaptchaSuccess,
-            "error-callback": () => {
-              setError("reCAPTCHA failed to load. Please refresh and try again.");
-            },
-          });
-        } catch (err: unknown) {
-          const error = err as { message?: string };
-          setError(error.message || "Failed to render reCAPTCHA");
+    const executeRecaptcha = async () => {
+      try {
+        if (!window.grecaptcha?.enterprise) {
+          throw new Error("reCAPTCHA Enterprise not loaded");
         }
-      } else if (!window.grecaptcha) {
-        setTimeout(attemptRender, 100);
+
+        const token = await window.grecaptcha.enterprise.execute(
+          RECAPTCHA_KEY,
+          { action: "login" }
+        );
+
+        console.log("reCAPTCHA Enterprise token generated:", token);
+        setRecaptchaToken(token);
+        setVerifying(false);
+      } catch (err: unknown) {
+        const error = err as { message?: string };
+        setError(error.message || "Failed to verify with reCAPTCHA");
+        setVerifying(false);
       }
     };
 
-    attemptRender();
-  }, []);
+    if (email) {
+      executeRecaptcha();
+    }
+  }, [email]);
 
   const handleContinue = async () => {
     if (!recaptchaToken) {
-      setError("Please complete the reCAPTCHA verification first");
+      setError("Verification failed. Please try again.");
       return;
     }
 
-    setLoading(true);
-    setError("");
+    setVerificationComplete(true);
 
-    try {
-      console.log("Proceeding with reCAPTCHA token:", recaptchaToken);
-      setVerificationComplete(true);
-
-      setTimeout(() => {
-        navigate("/dashboard");
-      }, 1500);
-    } catch (err: unknown) {
-      const error = err as { message?: string };
-      setError(error.message || "Verification failed. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+    setTimeout(() => {
+      navigate("/dashboard");
+    }, 1500);
   };
 
   if (!email) {
@@ -132,10 +111,12 @@ export default function RecaptchaVerification() {
               {/* Header */}
               <div className="text-center mb-8">
                 <h1 className="text-3xl font-bold text-white mb-3 tracking-tight">
-                  Verify Identity
+                  {verifying ? "Verifying Identity" : "Identity Verified"}
                 </h1>
                 <p className="text-slate-400 text-base">
-                  Complete the reCAPTCHA verification to continue
+                  {verifying
+                    ? "Please wait while we verify your identity..."
+                    : "Your identity has been verified successfully"}
                 </p>
               </div>
 
@@ -172,41 +153,58 @@ export default function RecaptchaVerification() {
                 </div>
               )}
 
-              {/* reCAPTCHA Widget */}
-              <div className="flex flex-col items-center">
-                <p className="text-sm text-slate-300 mb-4 text-center">
-                  Please verify that you're not a robot
-                </p>
+              {/* Verification Status */}
+              {verifying && (
                 <div
-                  id="recaptcha-container"
-                  className="flex justify-center mb-6"
-                ></div>
-              </div>
+                  className="p-4 rounded-lg border flex items-center gap-3"
+                  style={{
+                    backgroundColor: "#141518",
+                    borderColor: "#1F2124",
+                  }}
+                >
+                  <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                  <div>
+                    <p className="text-sm text-slate-300">
+                      Running security checks...
+                    </p>
+                    <p className="text-xs text-slate-500">
+                      Powered by reCAPTCHA Enterprise
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {!verifying && !error && (
+                <div
+                  className="p-4 rounded-lg border flex items-center gap-3"
+                  style={{
+                    backgroundColor: "#142414",
+                    borderColor: "#2a4a2a",
+                  }}
+                >
+                  <Shield className="w-5 h-5 text-green-500" />
+                  <div>
+                    <p className="text-sm text-slate-300">
+                      Security verification passed
+                    </p>
+                    <p className="text-xs text-slate-500">
+                      You can now access your account
+                    </p>
+                  </div>
+                </div>
+              )}
 
               {/* Continue Button */}
               <button
                 onClick={handleContinue}
-                disabled={loading || !recaptchaToken}
+                disabled={verifying || !!error}
                 className="w-full py-3 px-4 rounded-lg text-white font-semibold text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 relative"
                 style={{
                   background: `linear-gradient(135deg, #1A2647 0%, #0F0F10 100%)`,
                   boxShadow: "0 2px 8px rgba(0, 0, 0, 0.4)",
                 }}
               >
-                {loading ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    <span>Continuing...</span>
-                  </>
-                ) : recaptchaToken ? (
-                  <>
-                    <span>Continue to Dashboard</span>
-                  </>
-                ) : (
-                  <>
-                    <span>Complete reCAPTCHA</span>
-                  </>
-                )}
+                <span>Continue to Dashboard</span>
               </button>
 
               {/* Back to Login */}
@@ -221,6 +219,25 @@ export default function RecaptchaVerification() {
                   Back to Sign In
                 </button>
               </div>
+
+              {/* reCAPTCHA Badge Info */}
+              <p className="text-xs text-slate-500 text-center">
+                This site is protected by reCAPTCHA and the Google{" "}
+                <a
+                  href="https://policies.google.com/privacy"
+                  className="underline"
+                >
+                  Privacy Policy
+                </a>{" "}
+                and{" "}
+                <a
+                  href="https://policies.google.com/terms"
+                  className="underline"
+                >
+                  Terms of Service
+                </a>{" "}
+                apply.
+              </p>
             </>
           ) : (
             <div className="text-center space-y-6 py-8">
@@ -232,7 +249,7 @@ export default function RecaptchaVerification() {
               </div>
               <div>
                 <h2 className="text-2xl font-bold text-white mb-2">
-                  Verified!
+                  Welcome!
                 </h2>
                 <p className="text-slate-400 text-sm">
                   You have been verified successfully. Redirecting to dashboard...
