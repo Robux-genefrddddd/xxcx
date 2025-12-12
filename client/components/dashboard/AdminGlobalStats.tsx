@@ -306,7 +306,7 @@ export function AdminGlobalStats({ theme, userRole }: AdminGlobalStatsProps) {
 
             {/* Role Distribution Pie Chart */}
             <div
-              className="p-4 rounded-lg border"
+              className="p-4 rounded-xl border"
               style={{
                 backgroundColor: colors.card,
                 borderColor: colors.border,
