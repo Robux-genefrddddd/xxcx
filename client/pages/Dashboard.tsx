@@ -72,6 +72,9 @@ export default function Dashboard() {
   const [uploadFileName, setUploadFileName] = useState("");
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [planUpgradeModalOpen, setPlanUpgradeModalOpen] = useState(false);
+  const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [shareFileId, setShareFileId] = useState<string | null>(null);
+  const [shareFileName, setShareFileName] = useState("");
   const [userPlan, setUserPlan] = useState<UserPlan>({
     type: "free",
     storageLimit: 100 * 1024 * 1024,
