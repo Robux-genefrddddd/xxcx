@@ -330,7 +330,7 @@ export function FilesList({
                     <button
                       onClick={() => handleDownload(file)}
                       disabled={downloadingId === file.id}
-                      className="p-1.5 rounded transition-colors"
+                      className="p-1.5 rounded-lg transition-colors"
                       style={{
                         backgroundColor:
                           downloadingId === file.id
@@ -346,7 +346,7 @@ export function FilesList({
                     {!file.shared ? (
                       <button
                         onClick={() => onShare(file.id)}
-                        className="p-1.5 rounded transition-colors"
+                        className="p-1.5 rounded-lg transition-colors"
                         style={{
                           color: colors.textSecondary,
                         }}
@@ -366,7 +366,7 @@ export function FilesList({
                     ) : (
                       <button
                         onClick={() => handleCopyShare(file.id, file.shareUrl)}
-                        className="p-1.5 rounded transition-colors"
+                        className="p-1.5 rounded-lg transition-colors"
                         style={{
                           backgroundColor:
                             copiedId === file.id
@@ -391,7 +391,7 @@ export function FilesList({
                         onDelete(file.id);
                       }}
                       disabled={deletingId === file.id}
-                      className="p-1.5 rounded transition-colors"
+                      className="p-1.5 rounded-lg transition-colors"
                       style={{
                         color: "#EF4444",
                       }}
