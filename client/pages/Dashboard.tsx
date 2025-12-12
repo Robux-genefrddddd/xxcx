@@ -7,6 +7,7 @@ import { ThemeSelector } from "@/components/dashboard/ThemeSelector";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 import { UploadModal, MAX_FILE_SIZE } from "@/components/dashboard/UploadModal";
 import { PlanUpgradeModal } from "@/components/dashboard/PlanUpgradeModal";
+import { ShareFileModal } from "@/components/dashboard/ShareFileModal";
 import { DashboardStats } from "@/components/dashboard/DashboardStats";
 import { AdminPanel } from "@/components/dashboard/AdminPanel";
 import { auth, db, storage } from "@/lib/firebase";
@@ -71,6 +72,9 @@ export default function Dashboard() {
   const [uploadFileName, setUploadFileName] = useState("");
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [planUpgradeModalOpen, setPlanUpgradeModalOpen] = useState(false);
+  const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [shareFileId, setShareFileId] = useState<string | null>(null);
+  const [shareFileName, setShareFileName] = useState("");
   const [userPlan, setUserPlan] = useState<UserPlan>({
     type: "free",
     storageLimit: 100 * 1024 * 1024,

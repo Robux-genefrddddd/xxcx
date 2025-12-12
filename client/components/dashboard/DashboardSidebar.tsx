@@ -4,6 +4,7 @@ import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { getThemeColors } from "@/lib/theme-colors";
 import { UserRole, canAccessAdmin } from "@/lib/auth-utils";
+import { motion } from "framer-motion";
 
 interface UserPlan {
   type: "free" | "premium";
@@ -93,12 +94,12 @@ export function DashboardSidebar({
 
       {/* Navigation */}
       <nav className="space-y-2 flex-1">
-        {navItems.map((item) => {
+        {navItems.map((item, idx) => {
           const Icon = item.icon;
           const isActive = activeTab === item.id;
 
           return (
-            <button
+            <motion.button
               key={item.id}
               onClick={() => onTabChange(item.id)}
               className="w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors text-left"
@@ -106,27 +107,43 @@ export function DashboardSidebar({
                 backgroundColor: isActive ? colors.accentLight : "transparent",
                 color: isActive ? colors.accent : colors.textSecondary,
               }}
+              whileHover={{
+                scale: 1.02,
+                x: 4,
+              }}
+              whileTap={{ scale: 0.98 }}
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: idx * 0.05 }}
             >
               <Icon className="w-5 h-5" />
               <span>{item.label}</span>
-            </button>
+            </motion.button>
           );
         })}
       </nav>
 
       {/* User Card */}
-      <div
+      <motion.div
         className="mt-6 p-4 rounded-lg border space-y-4"
         style={{
           backgroundColor: colors.card,
           borderColor: colors.border,
         }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
       >
-        <div className="flex items-center gap-3">
-          <img
+        <motion.div
+          className="flex items-center gap-3"
+          whileHover={{ scale: 1.02 }}
+        >
+          <motion.img
             src="https://marketplace.canva.com/Dz63E/MAF4KJDz63E/1/tl/canva-user-icon-MAF4KJDz63E.png"
             alt="User Avatar"
             className="w-10 h-10 rounded-lg object-cover"
+            whileHover={{ scale: 1.1 }}
+            transition={{ type: "spring", stiffness: 400, damping: 10 }}
           />
           <div className="flex-1 min-w-0">
             <p
@@ -142,27 +159,45 @@ export function DashboardSidebar({
               {userEmail}
             </p>
           </div>
-        </div>
+        </motion.div>
 
         {/* Plan Badge */}
         {userPlan && (
-          <div
-            className="px-3 py-2 rounded-lg text-xs font-semibold"
+          <motion.div
+            className="px-3 py-2 rounded-lg text-xs font-semibold transition-all"
             style={{
               backgroundColor:
                 userPlan.type === "premium"
                   ? "rgba(34, 197, 94, 0.1)"
                   : "rgba(59, 130, 246, 0.1)",
               color: userPlan.type === "premium" ? "#22C55E" : colors.primary,
+              border:
+                userPlan.type === "premium"
+                  ? "1px solid rgba(34, 197, 94, 0.3)"
+                  : "1px solid transparent",
             }}
+            whileHover={{
+              scale: 1.05,
+              boxShadow:
+                userPlan.type === "premium"
+                  ? "0 0 12px rgba(34, 197, 94, 0.3)"
+                  : "0 0 12px rgba(59, 130, 246, 0.2)",
+            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.35 }}
           >
             {userPlan.type === "premium" ? "✓ Premium" : "Free Plan"}
-          </div>
+          </motion.div>
         )}
 
         {/* Storage Progress */}
         {userPlan && (
-          <div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+          >
             <div className="flex items-center justify-between mb-2">
               <p
                 className="text-xs font-medium"
@@ -187,10 +222,9 @@ export function DashboardSidebar({
                 backgroundColor: colors.accentLight,
               }}
             >
-              <div
-                className="h-full transition-all duration-300 rounded-full"
+              <motion.div
+                className="h-full rounded-full"
                 style={{
-                  width: `${Math.min(storagePercentage, 100)}%`,
                   backgroundColor:
                     storagePercentage > 90
                       ? "#EF4444"
@@ -198,25 +232,41 @@ export function DashboardSidebar({
                         ? "#F59E0B"
                         : colors.primary,
                 }}
-              ></div>
+                initial={{ width: 0 }}
+                animate={{
+                  width: `${Math.min(storagePercentage, 100)}%`,
+                }}
+                transition={{ duration: 1, ease: "easeOut" }}
+              />
             </div>
-          </div>
+          </motion.div>
         )}
 
         {userPlan && userPlan.type === "free" && onUpgradeClick && (
-          <button
+          <motion.button
             onClick={onUpgradeClick}
-            className="w-full px-3 py-2 rounded-lg text-xs font-semibold transition-opacity hover:opacity-80"
+            className="w-full px-3 py-2 rounded-lg text-xs font-semibold transition-all"
             style={{
               backgroundColor: colors.accentLight,
               color: colors.primary,
+              border: `1px solid ${colors.primary}33`,
             }}
+            whileHover={{
+              scale: 1.05,
+              boxShadow: `0 0 20px ${colors.primary}44`,
+              backgroundColor: colors.primary,
+              color: colors.card,
+            }}
+            whileTap={{ scale: 0.95 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.45 }}
           >
-            Upgrade
-          </button>
+            ✨ Upgrade
+          </motion.button>
         )}
 
-        <button
+        <motion.button
           onClick={handleLogout}
           className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors border font-medium"
           style={{
@@ -224,19 +274,20 @@ export function DashboardSidebar({
             borderColor: colors.border,
             color: colors.textSecondary,
           }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.color =
-              theme === "dark" ? "#FFFFFF" : "#111827";
+          whileHover={{
+            scale: 1.02,
+            color: theme === "dark" ? "#FFFFFF" : "#111827",
+            borderColor: colors.textSecondary,
           }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.color =
-              theme === "dark" ? "#9CA3AF" : "#6B7280";
-          }}
+          whileTap={{ scale: 0.95 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
         >
           <LogOut className="w-4 h-4" />
           <span>Logout</span>
-        </button>
-      </div>
+        </motion.button>
+      </motion.div>
     </aside>
   );
 }

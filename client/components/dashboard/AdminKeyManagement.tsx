@@ -9,6 +9,7 @@ import {
   doc,
   onSnapshot,
   query,
+  setDoc,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { UserRole, canCreateKeys } from "@/lib/auth-utils";
@@ -89,7 +90,14 @@ export function AdminKeyManagement({
 
     setGeneratingKey(true);
     try {
-      const newKey = `KEY_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
+      const generateRandomSegment = () => {
+        return Math.random()
+          .toString(36)
+          .substring(2, 6)
+          .toUpperCase()
+          .padEnd(4, "0");
+      };
+      const newKey = `PINPIN-${generateRandomSegment()}-${generateRandomSegment()}-${generateRandomSegment()}`;
       const now = new Date();
       let expiresAt: string | undefined;
 
@@ -103,12 +111,13 @@ export function AdminKeyManagement({
         expiresAt = expires.toISOString();
       }
 
-      await addDoc(collection(db, "premiumKeys"), {
+      await setDoc(doc(db, "premiumKeys", newKey), {
         key: newKey,
         status: "unused",
         type: formData.type,
         maxEmojis: formData.maxEmojis,
         isActive: true,
+        used: false,
         createdAt: now.toISOString(),
         createdBy: userId,
       } as PremiumKeyData);
