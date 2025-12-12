@@ -282,7 +282,7 @@ export function FilesList({
                   {/* File Icon & Name */}
                   <div className="flex-1 min-w-0 flex items-center gap-3">
                     <div
-                      className="w-8 h-8 rounded flex items-center justify-center flex-shrink-0"
+                      className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
                       style={{
                         backgroundColor: `${color}15`,
                       }}
