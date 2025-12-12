@@ -13,7 +13,16 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { FileIcon, Share2, HardDrive, Upload, FileText, Image, Video, Archive } from "lucide-react";
+import {
+  FileIcon,
+  Share2,
+  HardDrive,
+  Upload,
+  FileText,
+  Image,
+  Video,
+  Archive,
+} from "lucide-react";
 import { motion } from "framer-motion";
 
 interface DashboardStatsProps {
@@ -126,7 +135,8 @@ export function DashboardStats({ files, theme, plan }: DashboardStatsProps) {
       value: plan.type === "premium" ? "Premium" : "Free",
       isPremium: plan.type === "premium",
       color: plan.type === "premium" ? "#22C55E" : colors.primary,
-      bgColor: plan.type === "premium" ? "rgba(34, 197, 94, 0.1)" : colors.accentLight,
+      bgColor:
+        plan.type === "premium" ? "rgba(34, 197, 94, 0.1)" : colors.accentLight,
       borderColor: plan.type === "premium" ? "#22C55E" : colors.border,
     },
   ];
@@ -143,7 +153,10 @@ export function DashboardStats({ files, theme, plan }: DashboardStatsProps) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              whileHover={{ y: -4, boxShadow: "0 20px 40px rgba(0, 0, 0, 0.3)" }}
+              whileHover={{
+                y: -4,
+                boxShadow: "0 20px 40px rgba(0, 0, 0, 0.3)",
+              }}
               className="rounded-lg border p-6"
               style={{
                 backgroundColor: card.isPremium
@@ -186,10 +199,7 @@ export function DashboardStats({ files, theme, plan }: DashboardStatsProps) {
                     backgroundColor: card.bgColor,
                   }}
                 >
-                  <Icon
-                    className="w-6 h-6"
-                    style={{ color: card.color }}
-                  />
+                  <Icon className="w-6 h-6" style={{ color: card.color }} />
                 </motion.div>
               </div>
             </motion.div>
@@ -326,7 +336,8 @@ export function DashboardStats({ files, theme, plan }: DashboardStatsProps) {
           ].map((item, idx) => {
             const Icon = item.icon;
             const count = fileTypeMap[item.type as keyof typeof fileTypeMap];
-            const percentage = totalFiles > 0 ? ((count / totalFiles) * 100).toFixed(1) : "0";
+            const percentage =
+              totalFiles > 0 ? ((count / totalFiles) * 100).toFixed(1) : "0";
 
             return (
               <motion.div
@@ -392,10 +403,7 @@ export function DashboardStats({ files, theme, plan }: DashboardStatsProps) {
             transition={{ delay: 0.5 }}
             className="text-center py-8"
           >
-            <p
-              className="text-sm"
-              style={{ color: colors.textSecondary }}
-            >
+            <p className="text-sm" style={{ color: colors.textSecondary }}>
               No files yet. Upload files to see distribution statistics.
             </p>
           </motion.div>

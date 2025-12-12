@@ -134,11 +134,7 @@ export function PlanUpgradeModal({
                 spread={120}
                 colors={["#22C55E", "#10B981", "#059669", "#FBBF24", "#F59E0B"]}
               />
-              <Confetti
-                particleCount={80}
-                spread={180}
-                y={-200}
-              />
+              <Confetti particleCount={80} spread={180} y={-200} />
             </>
           )}
 
@@ -160,8 +156,7 @@ export function PlanUpgradeModal({
               className="absolute inset-0 opacity-0"
               animate={{ opacity: success ? 0.05 : 0 }}
               style={{
-                background:
-                  "linear-gradient(135deg, #22C55E 0%, #10B981 100%)",
+                background: "linear-gradient(135deg, #22C55E 0%, #10B981 100%)",
               }}
             />
 
@@ -290,7 +285,10 @@ export function PlanUpgradeModal({
                         className="font-semibold text-sm flex items-center gap-2"
                         style={{ color: colors.text }}
                       >
-                        <Star className="w-4 h-4" style={{ color: "#FBBF24" }} />
+                        <Star
+                          className="w-4 h-4"
+                          style={{ color: "#FBBF24" }}
+                        />
                         Premium Benefits:
                       </h3>
                       <ul

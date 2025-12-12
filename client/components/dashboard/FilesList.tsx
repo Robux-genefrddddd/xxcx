@@ -1,4 +1,14 @@
-import { Share2, Trash2, Download, Lock, FileText, Image, Video, Archive, File } from "lucide-react";
+import {
+  Share2,
+  Trash2,
+  Download,
+  Lock,
+  FileText,
+  Image,
+  Video,
+  Archive,
+  File,
+} from "lucide-react";
 import { useState } from "react";
 import { storage } from "@/lib/firebase";
 import { ref, getBytes } from "firebase/storage";
@@ -356,7 +366,10 @@ export function FilesList({
                       disabled={downloadingId === file.id}
                       className="p-2 rounded-lg transition-all"
                       style={{
-                        backgroundColor: downloadingId === file.id ? colors.accentLight : "transparent",
+                        backgroundColor:
+                          downloadingId === file.id
+                            ? colors.accentLight
+                            : "transparent",
                         color: colors.primary,
                       }}
                       whileHover={{ scale: 1.05 }}
