@@ -12,8 +12,9 @@ declare global {
           callback?: (token: string) => void;
           "error-callback"?: () => void;
         }
-      ) => number;
+      ) => void;
       getResponse: (widgetId?: number) => string;
+      reset: (widgetId?: number) => void;
     };
     onRecaptchaSuccess?: (token: string) => void;
   }
