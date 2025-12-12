@@ -67,7 +67,7 @@ export function AdminPanel({ theme, userRole, userId }: AdminPanelProps) {
     <div className="space-y-6">
       {/* Navigation Tabs */}
       <div
-        className="border rounded-lg overflow-hidden"
+        className="border rounded-2xl overflow-hidden"
         style={{
           backgroundColor: colors.card,
           borderColor: colors.border,
@@ -84,7 +84,7 @@ export function AdminPanel({ theme, userRole, userId }: AdminPanelProps) {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className="flex items-center gap-2 px-4 py-3 rounded-lg font-medium text-sm transition-colors"
+              className="flex items-center gap-2 px-4 py-3 rounded-xl font-medium text-sm transition-colors"
               style={{
                 backgroundColor:
                   activeTab === tab.id ? colors.accent : "transparent",
