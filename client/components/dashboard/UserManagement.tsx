@@ -1,6 +1,7 @@
 import { Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { getThemeColors } from "@/lib/theme-colors";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 interface User {
   id: string;
