@@ -13,6 +13,7 @@ import { useState } from "react";
 import { storage } from "@/lib/firebase";
 import { ref, getBytes } from "firebase/storage";
 import { getThemeColors } from "@/lib/theme-colors";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 interface FileItem {
   id: string;
