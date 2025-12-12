@@ -300,49 +300,106 @@ export function DashboardStats({ files, theme, plan }: DashboardStatsProps) {
           borderColor: colors.border,
         }}
       >
-        <h3 className="text-lg font-bold mb-6" style={{ color: colors.text }}>
-          File Type Distribution
-        </h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[
-            { type: "Documents", count: 12, color: "#3B82F6" },
-            { type: "Images", count: 8, color: "#8B5CF6" },
-            { type: "Videos", count: 3, color: "#EC4899" },
-            { type: "Other", count: 7, color: "#F59E0B" },
-          ].map((item, idx) => (
-            <motion.div
-              key={item.type}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.4, delay: 0.4 + idx * 0.1 }}
-              whileHover={{
-                scale: 1.05,
-                boxShadow: `0 10px 30px ${item.color}33`,
-              }}
-              className="text-center p-4 rounded-lg border transition-all"
-              style={{
-                backgroundColor: colors.accentLight,
-                borderColor: `${item.color}33`,
-              }}
-            >
-              <motion.div
-                className="text-2xl font-bold"
-                style={{ color: item.color }}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.8, delay: 0.5 + idx * 0.1 }}
-              >
-                {item.count}
-              </motion.div>
-              <p
-                className="text-sm mt-2"
-                style={{ color: colors.textSecondary }}
-              >
-                {item.type}
-              </p>
-            </motion.div>
-          ))}
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-bold" style={{ color: colors.text }}>
+            File Type Distribution
+          </h3>
+          <motion.div
+            className="px-3 py-1 rounded-full text-xs font-medium"
+            style={{
+              backgroundColor: colors.accentLight,
+              color: colors.primary,
+            }}
+            whileHover={{ scale: 1.05 }}
+          >
+            {totalFiles} files
+          </motion.div>
         </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+          {[
+            { type: "Documents", icon: FileText, color: "#3B82F6" },
+            { type: "Images", icon: Image, color: "#8B5CF6" },
+            { type: "Videos", icon: Video, color: "#EC4899" },
+            { type: "Archives", icon: Archive, color: "#F59E0B" },
+            { type: "Other", icon: FileIcon, color: "#06B6D4" },
+          ].map((item, idx) => {
+            const Icon = item.icon;
+            const count = fileTypeMap[item.type as keyof typeof fileTypeMap];
+            const percentage = totalFiles > 0 ? ((count / totalFiles) * 100).toFixed(1) : "0";
+
+            return (
+              <motion.div
+                key={item.type}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.4, delay: 0.4 + idx * 0.08 }}
+                whileHover={{
+                  scale: 1.08,
+                  boxShadow: `0 12px 32px ${item.color}44`,
+                  y: -2,
+                }}
+                className="p-5 rounded-xl border-2 transition-all cursor-pointer"
+                style={{
+                  backgroundColor: `${item.color}08`,
+                  borderColor: `${item.color}33`,
+                }}
+              >
+                <motion.div
+                  className="flex items-center justify-center mb-3"
+                  whileHover={{ scale: 1.2, rotate: 5 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                >
+                  <div
+                    className="w-10 h-10 rounded-lg flex items-center justify-center"
+                    style={{
+                      backgroundColor: `${item.color}22`,
+                    }}
+                  >
+                    <Icon className="w-5 h-5" style={{ color: item.color }} />
+                  </div>
+                </motion.div>
+                <motion.div
+                  className="text-3xl font-bold text-center"
+                  style={{ color: item.color }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.6, delay: 0.5 + idx * 0.08 }}
+                >
+                  {count}
+                </motion.div>
+                <p
+                  className="text-xs text-center mt-2 font-medium"
+                  style={{ color: colors.textSecondary }}
+                >
+                  {item.type}
+                </p>
+                <p
+                  className="text-xs text-center mt-1"
+                  style={{ color: item.color, opacity: 0.8 }}
+                >
+                  {percentage}%
+                </p>
+              </motion.div>
+            );
+          })}
+        </div>
+
+        {totalFiles === 0 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="text-center py-8"
+          >
+            <p
+              className="text-sm"
+              style={{ color: colors.textSecondary }}
+            >
+              No files yet. Upload files to see distribution statistics.
+            </p>
+          </motion.div>
+        )}
       </motion.div>
     </div>
   );
