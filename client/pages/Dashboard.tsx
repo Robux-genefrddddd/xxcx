@@ -463,36 +463,38 @@ export default function Dashboard() {
       <main className="flex-1 ml-64 overflow-auto">
         {/* Header */}
         <header
-          className="border-b px-8 py-6 sticky top-0 z-40"
+          className="border-b px-10 py-8 sticky top-0 z-40"
           style={{
-            backgroundColor: theme === "dark" ? "#111214" : "#FFFFFF",
-            borderColor: theme === "dark" ? "#1F2124" : "#E5E7EB",
+            backgroundColor: themeColors.background,
+            borderColor: themeColors.border,
           }}
         >
-          <div className="flex items-center justify-between">
-            <div>
-              <h1
-                className="text-3xl font-bold mb-1"
-                style={{ color: theme === "dark" ? "#FFFFFF" : "#111827" }}
-              >
-                Welcome {userName}!
-              </h1>
-              <p style={{ color: theme === "dark" ? "#9CA3AF" : "#6B7280" }}>
-                {activeTab === "files" &&
-                  "Upload, organize and share your files securely"}
-                {activeTab === "users" &&
-                  "Manage your team members and their roles"}
-                {activeTab === "theme" &&
-                  "Personalize your dashboard appearance"}
-                {activeTab === "admin" &&
-                  "Manage system settings, users, and keys"}
-              </p>
-            </div>
+          <div className="max-w-7xl mx-auto">
+            <h1
+              className="text-2xl font-bold mb-2"
+              style={{ color: themeColors.text }}
+            >
+              {activeTab === "files" && "Files"}
+              {activeTab === "users" && "User Management"}
+              {activeTab === "theme" && "Appearance"}
+              {activeTab === "admin" && "Admin Panel"}
+            </h1>
+            <p style={{ color: themeColors.textSecondary }} className="text-sm">
+              {activeTab === "files" &&
+                "Manage, share, and organize your cloud storage"}
+              {activeTab === "users" &&
+                "Control team members and access permissions"}
+              {activeTab === "theme" &&
+                "Customize the look and feel of your dashboard"}
+              {activeTab === "admin" &&
+                "System administration and configuration"}
+            </p>
           </div>
         </header>
 
         {/* Content Area */}
-        <div className="p-8">
+        <div className="p-10" style={{ backgroundColor: themeColors.background }}>
+          <div className="max-w-7xl mx-auto">
           {/* Files Tab */}
           {activeTab === "files" && (
             <div className="space-y-6">
@@ -539,6 +541,7 @@ export default function Dashboard() {
               userId={userId || ""}
             />
           )}
+          </div>
         </div>
       </main>
 
